@@ -5,6 +5,7 @@ import {
     AlexaLMTypeObject,
     AlexaLMTypeValue,
     IntentInputAlexa,
+    JovoModelAlexa
 } from '.';
 
 import {
@@ -13,7 +14,6 @@ import {
     InputTypeValue,
     Intent,
     JovoModel,
-    JovoModelAlexa,
     JovoModelBuilder,
 } from 'jovo-model-core';
 

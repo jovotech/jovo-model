@@ -14,7 +14,6 @@ import {
     IntentInput,
     JovoModel,
     JovoModelBuilder,
-    JovoModelDialogflow,
 } from 'jovo-model-core';
 
 import { JovoConfigReader } from 'jovo-config';
