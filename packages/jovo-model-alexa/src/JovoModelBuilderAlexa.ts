@@ -331,8 +331,7 @@ export class JovoModelBuilderAlexa extends JovoModelBuilder {
 
         // types
         if (_.get(model, 'inputTypes')) {
-            // @ts-ignore
-            for (const inputType of model.inputTypes) {
+            for (const inputType of model.inputTypes!) {
                 let findings: AlexaLMTypeObject[] = [];
 
                 // skip input types that are already in alexa types

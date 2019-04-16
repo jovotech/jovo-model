@@ -65,7 +65,7 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
      * @memberof JovoModelBuilderDialogflow
      */
     toJovoModel(inputData: ExternalModelFile[], locale: string): JovoModelDialogflow {
-        const jovoModel: JovoModel = {
+        const jovoModel: JovoModelDialogflow = {
             invocation: '',
             intents: [],
             inputTypes: [],
@@ -104,9 +104,8 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
 
             // is fallback intent?
             if (dialogFlowIntent.fallbackIntent === true) {
-                // @ts-ignore
-                const fallbackIntent: IntentDialogflow = jovoIntent.dialogflow;
-                fallbackIntent.name = dialogFlowIntent.name;
+                const fallbackIntent = jovoIntent.dialogflow;
+                fallbackIntent!.name = dialogFlowIntent.name;
                 _.set(jovoModel, 'dialogflow.intents', [fallbackIntent]);
                 continue;
             }
@@ -114,8 +113,7 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
             // is welcome intent?
             if (_.get(dialogFlowIntent, 'events[0].name') === 'WELCOME') {
                 const welcomeIntent = jovoIntent.dialogflow;
-                // @ts-ignore
-                welcomeIntent.name = dialogFlowIntent.name;
+                welcomeIntent!.name = dialogFlowIntent.name;
 
                 if (!_.get(jovoModel, 'dialogflow.intents')) {
                     _.set(jovoModel, 'dialogflow.intents', [welcomeIntent]);
@@ -176,13 +174,11 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
                             }
                         }
                     }
-                    // @ts-ignore
-                    jovoIntent.phrases.push(phrase);
+                    jovoIntent.phrases!.push(phrase);
                 }
             }
 
-            // @ts-ignore
-            jovoModel.intents.push(jovoIntent);
+            jovoModel.intents!.push(jovoIntent);
         }
 
         const entityFiles = inputData.filter((file) => {
@@ -236,7 +232,6 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
                         // @ts-ignore
                         value.synonyms.push(synonym);
                     }
-                    // @ts-ignore
                     values.push(value);
                 }
                 if (values.length > 0) {
@@ -475,8 +470,7 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
 
                     // create entity object based on parameters objects
                     if (_.get(dfIntentObj, 'responses[0].parameters')) {
-                        // @ts-ignore
-                        dfIntentObj.responses[0].parameters.forEach((item) => {
+                        dfIntentObj.responses![0].parameters.forEach((item) => {
                             if (item.name === entity) {
                                 dataEntityObj.alias = item.name;
                                 dataEntityObj.meta = item.dataType;
