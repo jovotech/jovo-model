@@ -8,7 +8,7 @@
         "tslint": "lerna exec npm run tslint",
         "test": "lerna exec npm test",
         "clean": "lerna clean",
-        "bootstrap": "lerna bootstrap --hoist --no-ci",
+        "bootstrap": "lerna bootstrap --hoist",
         "rimraf": "lerna exec npm run rimraf",
         "typedoc": "npm run lerna exec npm run typedoc",
         "preparePublish": "npm run rimraf && npm run tsc && npm run tslint && npm run test",
