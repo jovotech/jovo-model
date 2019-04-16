@@ -1,6 +1,6 @@
 {
     "name": "jovo-model-dialogflow",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Jovo Model for Dialogflow",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -31,7 +31,7 @@
     },
     "dependencies": {
         "jovo-config": "^0.1.0",
-        "jovo-model-core": "^0.1.0"
+        "jovo-model-core": "^0.1.1"
     },
     "jest": {
         "transform": {
