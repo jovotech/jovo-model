@@ -10,8 +10,10 @@ import {
 import {
     ExternalModelFile,
     InputType,
+    InputTypeValue,
     Intent,
     IntentInput,
+    JovoModel,
     JovoModelBuilder,
 } from 'jovo-model-core';
 
@@ -24,6 +26,180 @@ import * as _ from 'lodash';
 
 export class JovoModelBuilderRasa extends JovoModelBuilder {
     static MODEL_KEY = 'rasa';
+
+
+    /**
+     * Converts Rasa files to JovoModel
+     *
+     * @param {ExternalModelFile[]} inputData The rasa files
+     * @param {string} locale The locale of the files
+     * @returns {JovoModelRasa}
+     * @memberof JovoModelBuilderDialogflow
+     */
+    toJovoModel(inputFiles: ExternalModelFile[], locale: string): JovoModelRasa {
+        const inputData = inputFiles[0].content;
+
+        const jovoModel: JovoModel = {
+            invocation: '',
+            intents: [],
+            inputTypes: [],
+        };
+
+        const intentDirectory: {
+            [key: string]: Intent;
+        } = {};
+
+        const synonymDirectory: {
+            [key: string]: RasaEntitySynonym;
+        } = {};
+
+        const lookupTableDirectory: {
+            [key: string]: RasaLookupTable;
+        } = {};
+
+        const existingIntentInputsDirectory: {
+            [key: string]: string[];
+        } = {};
+
+        const inputTypes: {
+            [key: string]: string[];
+        } = {};
+
+        if (inputData.rasa_nlu_data !== undefined) {
+            let example: RasaCommonExample;
+            let phraseText: string;
+
+            // Convert the Rasa examples to intents and InputTypes
+            for (example of inputData.rasa_nlu_data.common_examples) {
+                if (example.intent === undefined) {
+                    // If the example does not have an intent defined
+                    // it can not be added and has to get skipped
+                    continue;
+                }
+
+                if (intentDirectory[example.intent] === undefined) {
+                    intentDirectory[example.intent] = {
+                        name: example.intent,
+                        phrases: [],
+                    };
+                }
+
+                // Make sure that the entities later in the text come first
+                // that it does not mess up the position of the earlier ones.
+                if (example.entities !== undefined && example.entities.length !== 0) {
+                    example.entities.sort((a, b) => a.start < b.start ? 1 : -1 );
+                }
+
+                // Replace the example entity texts with placeholders and save all
+                // the used inputs
+                phraseText = example.text;
+                const inputNames: string[] = [];
+                for (const entity of example.entities) {
+                    phraseText = phraseText.slice(0, entity.start) + `{${entity.entity}}` + phraseText.slice(entity.end);
+
+                    if (!inputNames.includes(entity.entity)) {
+                        inputNames.unshift(entity.entity);
+
+                        // Save all the InputTypes which exist
+                        if (inputTypes[entity.entity] === undefined) {
+                            inputTypes[entity.entity] = [entity.value];
+                        } else if (!inputTypes[entity.entity].includes(entity.value)) {
+                            inputTypes[entity.entity].push(entity.value);
+                        }
+                    }
+                }
+
+                // Add all the inputs the phrase used
+                if (inputNames.length !== 0) {
+                    // Prepare the directory for the inputs for each intent
+                    // which gets added in the end to the model once everything
+                    // got processed.
+                    if (intentDirectory[example.intent].inputs === undefined) {
+                        intentDirectory[example.intent].inputs = [];
+                    }
+
+                    // Prepare the directory for the inputs for each intent
+                    // to not add some multiple times and to not having to look
+                    // through all the already added ones on the intent very time.
+                    if (existingIntentInputsDirectory[example.intent] === undefined) {
+                        existingIntentInputsDirectory[example.intent] = [];
+                    }
+
+                    for (const inputName of inputNames) {
+                        if (existingIntentInputsDirectory[example.intent].includes(inputName)) {
+                            continue;
+                        }
+
+                        existingIntentInputsDirectory[example.intent].push(inputName);
+
+                        intentDirectory[example.intent].inputs!.push({
+                            name: inputName,
+                            type: inputName
+                        });
+                    }
+                }
+
+                intentDirectory[example.intent].phrases!.push(phraseText);
+            }
+
+            // Save the synonyms by name that they are easily accessible
+            // when they are needed to create the inputTypes
+            for (const synonym of inputData.rasa_nlu_data.entity_synonyms) {
+                synonymDirectory[synonym.value] = synonym;
+            }
+
+            // Save the lookupTable by name that we can add all its values
+            // to the inputType
+            for (const lookupTable of inputData.rasa_nlu_data.lookup_tables) {
+                lookupTableDirectory[lookupTable.name] = lookupTable;
+            }
+
+            let inputType: InputType;
+            let values: string[];
+            for (const inputTypeName of Object.keys(inputTypes)) {
+
+                values = inputTypes[inputTypeName];
+
+                if (lookupTableDirectory[inputTypeName] !== undefined) {
+                    if (Array.isArray(lookupTableDirectory[inputTypeName].elements)) {
+                        // Is an array of values
+                        for (const value of lookupTableDirectory[inputTypeName].elements) {
+                            if (!values.includes(value)) {
+                                values.push(value);
+                            }
+                        }
+                    } else {
+                        // Is a file reference
+                        // TODO: Add support
+                    }
+                }
+
+                inputType = {
+                    name: inputTypeName,
+                    values: values.map((value) => {
+                        // Add all the inputType values with the synonyms
+                        // which got found
+                        const returnData: InputTypeValue = {
+                            value,
+                        };
+
+                        if (synonymDirectory[value] !== undefined && synonymDirectory[value].synonyms !== undefined) {
+                            returnData.synonyms = synonymDirectory[value].synonyms;
+                        }
+
+                        return returnData;
+                    }),
+                };
+
+
+                jovoModel.inputTypes!.push(inputType);
+            }
+        }
+
+        jovoModel.intents = Object.values(intentDirectory);
+
+        return jovoModel;
+    }
 
 
     /**
