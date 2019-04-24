@@ -636,18 +636,18 @@ describe("JovoModelBuilderRasa.ts", () => {
                                         ],
                                     },
                                     {
-                                        "text": "show me a chinese place in the centre",
+                                        "text": "show me a vegetarian place in the centre",
                                         "intent": "restaurant_search",
                                         "entities": [
                                             {
                                                 "start": 10,
-                                                "end": 17,
-                                                "value": "chinese",
+                                                "end": 20,
+                                                "value": "vegetarian",
                                                 "entity": "cuisine",
                                             },
                                             {
-                                                "start": 31,
-                                                "end": 37,
+                                                "start": 34,
+                                                "end": 40,
                                                 "value": "centre",
                                                 "entity": "location",
                                             },
@@ -896,18 +896,18 @@ describe("JovoModelBuilderRasa.ts", () => {
                                         ],
                                     },
                                     {
-                                        "text": "show me a chinese place in the centre",
+                                        "text": "show me a vegetarian place in the centre",
                                         "intent": "restaurant_search",
                                         "entities": [
                                             {
                                                 "start": 10,
-                                                "end": 17,
-                                                "value": "chinese",
+                                                "end": 20,
+                                                "value": "vegetarian",
                                                 "entity": "cuisine",
                                             },
                                             {
-                                                "start": 31,
-                                                "end": 37,
+                                                "start": 34,
+                                                "end": 40,
                                                 "value": "centre",
                                                 "entity": "location",
                                             },

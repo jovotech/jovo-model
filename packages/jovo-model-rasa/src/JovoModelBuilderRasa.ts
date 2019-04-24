@@ -24,6 +24,11 @@ import * as JovoModelRasaValidator from '../validators/JovoModelRasa.json';
 import * as _ from 'lodash';
 
 
+export interface InputTypeNameUsedCounter {
+    [key: string]: number;
+}
+
+
 export class JovoModelBuilderRasa extends JovoModelBuilder {
     static MODEL_KEY = 'rasa';
 
@@ -220,12 +225,14 @@ export class JovoModelBuilderRasa extends JovoModelBuilder {
             lookup_tables: [],
         };
 
+        const inputTypeNameUsedCounter: InputTypeNameUsedCounter = {};
+
         let rasaExample: RasaCommonExample | undefined;
         if (model.intents !== undefined) {
             for (const intent of model.intents) {
                 if (intent.phrases) {
                     for (const phrase of intent.phrases) {
-                        rasaExample = this.getRasaExampleFromPhrase(phrase, intent, model.inputTypes);
+                        rasaExample = this.getRasaExampleFromPhrase(phrase, intent, model.inputTypes, inputTypeNameUsedCounter);
                         returnData.common_examples.push(rasaExample);
                     }
                 }
@@ -235,7 +242,6 @@ export class JovoModelBuilderRasa extends JovoModelBuilder {
         let saveAsLookupTable: boolean;
         let rasaSynonym: RasaEntitySynonym;
         if (model.inputTypes !== undefined) {
-            // returnData.entity_synonyms = [];
             for (const inputType of model.inputTypes) {
                 saveAsLookupTable = true;
 
@@ -299,10 +305,11 @@ export class JovoModelBuilderRasa extends JovoModelBuilder {
      * @param {string} phrase The phrase to return the example for
      * @param {Intent} intent The intent in which it gets ued
      * @param {(InputType[] | undefined)} inputTypes All the inputTypes of the model
+     * @param {InputTypeNameUsedCounter} inputTypeNameUsedCounter Counts which values of the input types got used
      * @returns {RasaCommonExample}
      * @memberof JovoModelBuilderRasa
      */
-    getRasaExampleFromPhrase(phrase: string, intent: Intent, inputTypes: InputType[] | undefined): RasaCommonExample {
+    getRasaExampleFromPhrase(phrase: string, intent: Intent, inputTypes: InputType[] | undefined, inputTypeNameUsedCounter: InputTypeNameUsedCounter): RasaCommonExample {
         const returnData: RasaCommonExample = {
             text: phrase,
             intent: intent.name,
@@ -352,7 +359,14 @@ export class JovoModelBuilderRasa extends JovoModelBuilder {
                 // via stringe the placeholder got replaced with.
                 startIndex = returnData.text.indexOf(`{${inputName}}`);
 
-                exampleValue = inputType.values[0].value;
+                // Make sure that different example values get used becaues if not
+                // entities do not seem to get extracted properly
+                if (inputTypeNameUsedCounter[inputName] === undefined) {
+                    inputTypeNameUsedCounter[inputName] = 0;
+                }
+                const exampleInputIndex = inputTypeNameUsedCounter[inputName]++ % inputType.values.length;
+                exampleValue = inputType.values[exampleInputIndex].value;
+
                 returnData.entities.push({
                     value: exampleValue,
                     entity: inputName,
