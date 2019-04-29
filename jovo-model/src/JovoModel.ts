@@ -4,7 +4,7 @@ import {
 } from '.';
 
 
-export abstract class JovoModel {
+export class JovoModel {
     static MODEL_KEY = '';
     private data: JovoModelData | undefined;
     private locale: string | undefined;
