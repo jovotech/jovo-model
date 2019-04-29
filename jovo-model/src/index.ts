@@ -1,5 +1,5 @@
 export * from './Interfaces';
-export * from './JovoModelBuilder';
+export * from './JovoModel';
 export * from './ModelValidationError';
 import { createValidators } from './CreateValidators';
 

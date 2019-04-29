@@ -30,8 +30,7 @@
         "typescript-json-schema": "^0.34.0"
     },
     "dependencies": {
-        "jovo-config": "^0.1.0",
-        "jovo-model-core": "^0.1.1"
+        "jovo-model": "^0.1.1"
     },
     "jest": {
         "transform": {

@@ -1,7 +1,7 @@
 {
-    "name": "jovo-model-core",
+    "name": "jovo-model",
     "version": "0.1.1",
-    "description": "Jovo Model Core",
+    "description": "Jovo Model",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
     "scripts": {
@@ -28,7 +28,6 @@
         "typescript": "^3.0.3"
     },
     "dependencies": {
-        "jovo-config": "^0.1.0",
         "typescript-json-schema": "^0.34.0"
     },
     "jest": {

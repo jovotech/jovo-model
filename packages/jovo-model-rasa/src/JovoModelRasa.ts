@@ -1,8 +1,7 @@
 import {
-    JovoModelRasa,
+    JovoModelRasaData,
     RasaNluData,
     RasaCommonExample,
-    RasaCommonExampleEntity,
     RasaEntitySynonym,
     RasaLookupTable,
 } from '.';
@@ -14,10 +13,8 @@ import {
     Intent,
     IntentInput,
     JovoModel,
-    JovoModelBuilder,
-} from 'jovo-model-core';
-
-import { JovoConfigReader } from 'jovo-config';
+    JovoModelData,
+} from 'jovo-model';
 
 import * as JovoModelRasaValidator from '../validators/JovoModelRasa.json';
 
@@ -29,7 +26,7 @@ export interface InputTypeNameUsedCounter {
 }
 
 
-export class JovoModelBuilderRasa extends JovoModelBuilder {
+export class JovoModelRasa extends JovoModel {
     static MODEL_KEY = 'rasa';
 
 
@@ -38,13 +35,12 @@ export class JovoModelBuilderRasa extends JovoModelBuilder {
      *
      * @param {ExternalModelFile[]} inputData The rasa files
      * @param {string} locale The locale of the files
-     * @returns {JovoModelRasa}
-     * @memberof JovoModelBuilderDialogflow
+     * @memberof JovoModelRasa
      */
-    toJovoModel(inputFiles: ExternalModelFile[], locale: string): JovoModelRasa {
+    toJovoModel(inputFiles: ExternalModelFile[], locale: string): JovoModelData {
         const inputData = inputFiles[0].content;
 
-        const jovoModel: JovoModel = {
+        const jovoModel: JovoModelData = {
             invocation: '',
             intents: [],
             inputTypes: [],
@@ -210,14 +206,12 @@ export class JovoModelBuilderRasa extends JovoModelBuilder {
     /**
      * Converts JovoModel in Raza files
      *
-     * @param {JovoConfigReader} configReader ConfigReader instance to read data from configuration
-     * @param {JovoModelRasa} model The JovoModel to convert
+     * @param {JovoModelRasaData} model The JovoModel to convert
      * @param {string} locale The locale of the JovoModel
-     * @param {string} [stage] Stage to use for configuration data
      * @returns {ExternalModelFile[]}
-     * @memberof JovoModelBuilderDialogflow
+     * @memberof JovoModelRasa
      */
-    fromJovoModel(configReader: JovoConfigReader, model: JovoModelRasa, locale: string, stage?: string): ExternalModelFile[] {
+    fromJovoModel(model: JovoModelRasaData, locale: string): ExternalModelFile[] {
 
         const returnData: RasaNluData = {
             common_examples: [],

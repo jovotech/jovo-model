@@ -1,11 +1,13 @@
 import {
+    Intent,
+    InputType,
     ExternalModelFile,
-    JovoModel,
+    JovoModelData,
 } from '.';
-import { JovoConfigReader } from 'jovo-config';
 
 
-export abstract class JovoModelBuilder {
+// export abstract class JovoModelBuilder {
+export abstract class JovoModel {
     static MODEL_KEY = '';
 
 
@@ -14,10 +16,10 @@ export abstract class JovoModelBuilder {
      *
      * @param {ExternalModelFile[]} inputFiles The files in the external format
      * @param {string} locale The locale of the files
-     * @returns {JovoModel}
-     * @memberof JovoModelBuilder
+     * @returns {JovoModelData}
+     * @memberof JovoModel
      */
-    toJovoModel(inputFiles: ExternalModelFile[], locale: string): JovoModel {
+    toJovoModel(inputFiles: ExternalModelFile[], locale: string): JovoModelData {
         // @ts-ignore
         throw new Error(`Method "toJovoModel" is not implemented for model "${this.constructor.MODEL_KEY}"!`);
     }
@@ -26,14 +28,12 @@ export abstract class JovoModelBuilder {
     /**
      * Converts JovoModel in external model files
      *
-     * @param {JovoConfigReader} configReader ConfigReader instance to read data from configuration
      * @param {JovoModel} model The JovoModel to convert
      * @param {string} locale The locale of the JovoModel
-     * @param {string} [stage] Stage to use for configuration data
      * @returns {ExternalModelFile[]}
-     * @memberof JovoModelBuilder
+     * @memberof JovoModel
      */
-    fromJovoModel(configReader: JovoConfigReader, model: JovoModel, locale: string, stage?: string): ExternalModelFile[] {
+    fromJovoModel(model: JovoModelData, locale: string): ExternalModelFile[] {
         // @ts-ignore
         throw new Error(`Method "fromJovoModel" is not implemented for model "${this.constructor.MODEL_KEY}"!`);
     }

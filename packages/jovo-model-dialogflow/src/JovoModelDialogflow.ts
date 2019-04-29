@@ -1,6 +1,6 @@
 import {
     IntentDialogflow,
-    JovoModelDialogflow,
+    JovoModelDialogflowData,
     DialogflowLMEntity,
     DialogflowLMInputObject,
     DialogflowLMInputParameterObject,
@@ -13,10 +13,7 @@ import {
     InputType,
     IntentInput,
     JovoModel,
-    JovoModelBuilder,
-} from 'jovo-model-core';
-
-import { JovoConfigReader } from 'jovo-config';
+} from 'jovo-model';
 
 import * as JovoModelDialogflowValidator from '../validators/JovoModelDialogflow.json';
 
@@ -52,7 +49,7 @@ const DEFAULT_ENTITY = {
 
 
 
-export class JovoModelBuilderDialogflow extends JovoModelBuilder {
+export class JovoModelDialogflow extends JovoModel {
     static MODEL_KEY = 'dialogflow';
 
 
@@ -61,11 +58,11 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
      *
      * @param {ExternalModelFile[]} inputData The Dialogflow files
      * @param {string} locale The locale of the files
-     * @returns {JovoModelDialogflow}
-     * @memberof JovoModelBuilderDialogflow
+     * @returns {JovoModelDialogflowData}
+     * @memberof JovoModelDialogflow
      */
-    toJovoModel(inputData: ExternalModelFile[], locale: string): JovoModelDialogflow {
-        const jovoModel: JovoModelDialogflow = {
+    toJovoModel(inputData: ExternalModelFile[], locale: string): JovoModelDialogflowData {
+        const jovoModel: JovoModelDialogflowData = {
             invocation: '',
             intents: [],
             inputTypes: [],
@@ -100,7 +97,7 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
                 phrases: [],
             };
             // skip default intent properties
-            JovoModelBuilderDialogflow.skipDefaultIntentProps(jovoIntent, dialogFlowIntent, locale);
+            JovoModelDialogflow.skipDefaultIntentProps(jovoIntent, dialogFlowIntent, locale);
 
             // is fallback intent?
             if (dialogFlowIntent.fallbackIntent === true) {
@@ -205,7 +202,7 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
                 name: dialogFlowEntity.name,
             };
             // skip default intent properties
-            JovoModelBuilderDialogflow.skipDefaultEntityProps(jovoInput, dialogFlowEntity);
+            JovoModelDialogflow.skipDefaultEntityProps(jovoInput, dialogFlowEntity);
 
             // iterate through usersays intent files and generate sample phrases
             const userSaysFile = intentFiles.find((file) => {
@@ -254,36 +251,13 @@ export class JovoModelBuilderDialogflow extends JovoModelBuilder {
     /**
      * Converts JovoModel in Alexa model files
      *
-     * @param {JovoConfigReader} configReader ConfigReader instance to read data from configuration
-     * @param {JovoModelDialogflow} model The JovoModel to convert
+     * @param {JovoModelDialogflowData} model The JovoModel to convert
      * @param {string} locale The locale of the JovoModel
-     * @param {string} [stage] Stage to use for configuration data
      * @returns {ExternalModelFile[]}
-     * @memberof JovoModelBuilderDialogflow
+     * @memberof JovoModelDialogflow
      */
-    fromJovoModel(configReader: JovoConfigReader, model: JovoModelDialogflow, locale: string, stage?: string): ExternalModelFile[] {
+    fromJovoModel(model: JovoModelDialogflowData, locale: string): ExternalModelFile[] {
         const returnFiles: ExternalModelFile[] = [];
-
-        const concatArrays = function customizer(objValue: any[], srcValue: any) { // tslint:disable-line
-            if (_.isArray(objValue)) {
-                return objValue.concat(srcValue);
-            }
-        };
-
-        if (configReader.getConfigParameter(`languageModel.${locale}`, stage)) {
-            model = _.mergeWith(
-                model,
-                configReader.getConfigParameter(`languageModel.${locale}`, stage),
-                concatArrays);
-        }
-        if (configReader.getConfigParameter(
-            `googleAction.dialogflow.languageModel.${locale}`, stage)) {
-            model = _.mergeWith(
-                model,
-                configReader.getConfigParameter(
-                    `googleAction.dialogflow.languageModel.${locale}`, stage),
-                concatArrays);
-        }
 
         for (const intent of (model.intents || []) as IntentDialogflow[]) {
 

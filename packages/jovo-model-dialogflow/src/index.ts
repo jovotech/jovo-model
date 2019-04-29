@@ -1,2 +1,2 @@
 export * from './Interfaces';
-export * from './JovoModelBuilderDialogflow';
+export * from './JovoModelDialogflow';

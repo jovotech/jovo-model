@@ -1,11 +1,11 @@
 import {
-    JovoModel,
-} from 'jovo-model-core';
+    JovoModelData,
+} from 'jovo-model';
 
 
 // Jovo Model Rasa Format
 
-export interface JovoModelRasa extends JovoModel {
+export interface JovoModelRasaData extends JovoModelData {
 }
 
 

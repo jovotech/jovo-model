@@ -2,8 +2,8 @@ import {
     InputType,
     Intent,
     IntentInput,
-    JovoModel,
-} from 'jovo-model-core';
+    JovoModelData,
+} from 'jovo-model';
 
 
 export interface DialogflowLMInputObject {
@@ -73,7 +73,7 @@ export interface DialogflowInputType extends InputType {
 }
 
 
-export interface JovoModelDialogflow extends JovoModel {
+export interface JovoModelDialogflowData extends JovoModelData {
     inputTypes?: DialogflowInputType[];
     dialogflow?: DialogflowModel;
 }

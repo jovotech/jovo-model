@@ -1,2 +1,2 @@
 export * from './Interfaces';
-export * from './JovoModelBuilderAlexa';
+export * from './JovoModelAlexa';

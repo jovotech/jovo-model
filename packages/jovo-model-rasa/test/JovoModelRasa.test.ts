@@ -1,20 +1,15 @@
 import {
-    JovoModelBuilderRasa,
+    JovoModelRasa,
 } from '../src';
 
 import {
-    JovoConfigReader,
-} from 'jovo-config';
-
-
-import {
     ExternalModelFile,
-    JovoModel,
-} from 'jovo-model-core';
+    JovoModelData,
+} from 'jovo-model';
 
 
 
-describe("JovoModelBuilderRasa.ts", () => {
+describe("JovoModelRasa.ts", () => {
 
     describe("toJovoModel", () => {
 
@@ -490,7 +485,7 @@ describe("JovoModelBuilderRasa.ts", () => {
         ];
 
         for (const testData of testsData) {
-            const jovoModelBuilder = new JovoModelBuilderRasa();
+            const jovoModelBuilder = new JovoModelRasa();
             test(testData.description, () => {
                 expect(jovoModelBuilder.toJovoModel(testData.input.inputFiles as ExternalModelFile[], testData.input.locale)).toEqual(testData.result);
             });
@@ -950,12 +945,10 @@ describe("JovoModelBuilderRasa.ts", () => {
             },
         ];
 
-        const stage = '';
-        const configReader = new JovoConfigReader({});
         for (const testData of testsData) {
-            const jovoModelBuilder = new JovoModelBuilderRasa();
+            const jovoModelBuilder = new JovoModelRasa();
             test(testData.description, () => {
-                expect(jovoModelBuilder.fromJovoModel(configReader, testData.input.data as JovoModel, testData.input.locale, stage)).toEqual(testData.result);
+                expect(jovoModelBuilder.fromJovoModel(testData.input.data as JovoModelData, testData.input.locale)).toEqual(testData.result);
             });
         }
 

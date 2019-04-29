@@ -5,7 +5,7 @@ import {
     AlexaLMTypeObject,
     AlexaLMTypeValue,
     IntentInputAlexa,
-    JovoModelAlexa
+    JovoModelAlexaData
 } from '.';
 
 import {
@@ -14,10 +14,8 @@ import {
     InputTypeValue,
     Intent,
     JovoModel,
-    JovoModelBuilder,
-} from 'jovo-model-core';
-
-import { JovoConfigReader } from 'jovo-config';
+    JovoModelData,
+} from 'jovo-model';
 
 import * as JovoModelAlexaValidator from '../validators/JovoModelAlexa.json';
 
@@ -26,7 +24,7 @@ import * as _ from 'lodash';
 const BUILTIN_PREFIX = 'AMAZON.';
 
 
-export class JovoModelBuilderAlexa extends JovoModelBuilder {
+export class JovoModelAlexa extends JovoModel {
     static MODEL_KEY = 'alexa';
 
 
@@ -35,13 +33,13 @@ export class JovoModelBuilderAlexa extends JovoModelBuilder {
      *
      * @param {ExternalModelFile[]} inputData The Dialogflow files
      * @param {string} locale The locale of the files
-     * @returns {JovoModelAlexa}
-     * @memberof JovoModelBuilderDialogflow
+     * @returns {JovoModelAlexaData}
+     * @memberof JovoModelAlexa
      */
-    toJovoModel(inputFiles: ExternalModelFile[], locale: string): JovoModelAlexa {
+    toJovoModel(inputFiles: ExternalModelFile[], locale: string): JovoModelAlexaData {
         const inputData = inputFiles[0].content;
 
-        const jovoModel: JovoModel = {
+        const jovoModel: JovoModelData = {
             invocation: _.get(inputData, 'interactionModel.languageModel.invocationName')
         };
 
@@ -130,34 +128,13 @@ export class JovoModelBuilderAlexa extends JovoModelBuilder {
     /**
      * Converts JovoModel in Dialogflow model files
      *
-     * @param {JovoConfigReader} configReader ConfigReader instance to read data from configuration
      * @param {JovoModelAlexa} model The JovoModel to convert
      * @param {string} locale The locale of the JovoModel
-     * @param {string} [stage] Stage to use for configuration data
      * @returns {ExternalModelFile[]}
-     * @memberof JovoModelBuilderDialogflow
+     * @memberof JovoModelAlexa
      */
-    fromJovoModel(configReader: JovoConfigReader, model: JovoModelAlexa, locale: string, stage?: string): ExternalModelFile[] {
+    fromJovoModel(model: JovoModelAlexaData, locale: string): ExternalModelFile[] {
         const errorPrefix = '/models/' + locale + '.json - ';
-
-        const concatArrays = function customizer(objValue: any[], srcValue: any) { // tslint:disable-line:no-any
-            if (_.isArray(objValue)) {
-                return objValue.concat(srcValue);
-            }
-        };
-
-        if (configReader.getConfigParameter(`languageModel.${locale}`, stage)) {
-            model = _.mergeWith(
-                model,
-                configReader.getConfigParameter(`languageModel.${locale}`, stage),
-                concatArrays);
-        }
-        if (configReader.getConfigParameter(`alexaSkill.languageModel.${locale}`, stage)) {
-            model = _.mergeWith(
-                model,
-                configReader.getConfigParameter(`alexaSkill.languageModel.${locale}`, stage),
-                concatArrays);
-        }
 
         const alexaModel: AlexaModel = {
             interactionModel: {

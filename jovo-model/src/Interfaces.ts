@@ -29,7 +29,7 @@ export interface IntentInput {
 }
 
 
-export interface JovoModel {
+export interface JovoModelData {
     inputTypes?: InputType[];
     intents?: Intent[];
     invocation: string;
