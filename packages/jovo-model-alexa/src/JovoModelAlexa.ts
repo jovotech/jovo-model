@@ -9,12 +9,12 @@ import {
 } from '.';
 
 import {
-    ExternalModelFile,
     InputType,
     InputTypeValue,
     Intent,
     JovoModel,
     JovoModelData,
+    NativeFileInformation,
 } from 'jovo-model';
 
 import * as JovoModelAlexaValidator from '../validators/JovoModelAlexa.json';
@@ -31,12 +31,12 @@ export class JovoModelAlexa extends JovoModel {
     /**
      * Converts Alexa model files to JovoModel
      *
-     * @param {ExternalModelFile[]} inputData The Dialogflow files
+     * @param {NativeFileInformation[]} inputData The Dialogflow files
      * @param {string} locale The locale of the files
      * @returns {JovoModelAlexaData}
      * @memberof JovoModelAlexa
      */
-    toJovoModel(inputFiles: ExternalModelFile[], locale: string): JovoModelAlexaData {
+    static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelAlexaData {
         const inputData = inputFiles[0].content;
 
         const jovoModel: JovoModelData = {
@@ -130,10 +130,10 @@ export class JovoModelAlexa extends JovoModel {
      *
      * @param {JovoModelAlexa} model The JovoModel to convert
      * @param {string} locale The locale of the JovoModel
-     * @returns {ExternalModelFile[]}
+     * @returns {NativeFileInformation[]}
      * @memberof JovoModelAlexa
      */
-    fromJovoModel(model: JovoModelAlexaData, locale: string): ExternalModelFile[] {
+    static fromJovoModel(model: JovoModelAlexaData, locale: string): NativeFileInformation[] {
         const errorPrefix = '/models/' + locale + '.json - ';
 
         const alexaModel: AlexaModel = {
@@ -359,7 +359,7 @@ export class JovoModelAlexa extends JovoModel {
     }
 
 
-    getValidator(): tv4.JsonSchema {
+    static getValidator(): tv4.JsonSchema {
         return JovoModelAlexaValidator;
     }
 }

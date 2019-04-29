@@ -3,7 +3,7 @@ import {
 } from '../src';
 
 import {
-    ExternalModelFile,
+    NativeFileInformation,
     JovoModelData,
 } from 'jovo-model';
 
@@ -11,7 +11,7 @@ import {
 
 describe("JovoModelRasa.ts", () => {
 
-    describe("toJovoModel", () => {
+    describe("exportJovoModel", () => {
 
         const testsData = [
             {
@@ -485,16 +485,17 @@ describe("JovoModelRasa.ts", () => {
         ];
 
         for (const testData of testsData) {
-            const jovoModelBuilder = new JovoModelRasa();
+            const jovoModel = new JovoModelRasa();
             test(testData.description, () => {
-                expect(jovoModelBuilder.toJovoModel(testData.input.inputFiles as ExternalModelFile[], testData.input.locale)).toEqual(testData.result);
+                jovoModel.importNative(testData.input.inputFiles as NativeFileInformation[], testData.input.locale);
+                expect(jovoModel.exportJovoModel()).toEqual(testData.result);
             });
         }
 
     });
 
 
-    describe("fromJovoModel", () => {
+    describe("exportNative", () => {
 
         const testsData = [
             {
@@ -946,9 +947,9 @@ describe("JovoModelRasa.ts", () => {
         ];
 
         for (const testData of testsData) {
-            const jovoModelBuilder = new JovoModelRasa();
+            const jovoModel = new JovoModelRasa(testData.input.data as JovoModelData, testData.input.locale);
             test(testData.description, () => {
-                expect(jovoModelBuilder.fromJovoModel(testData.input.data as JovoModelData, testData.input.locale)).toEqual(testData.result);
+                expect(jovoModel.exportNative()).toEqual(testData.result);
             });
         }
 

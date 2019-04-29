@@ -42,7 +42,7 @@ export interface RunValidator {
 }
 
 
-export interface ExternalModelFile {
+export interface NativeFileInformation {
     path: string[];
     content: any; // tslint:disable-line:no-any
 }

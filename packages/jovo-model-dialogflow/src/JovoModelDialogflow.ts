@@ -9,10 +9,10 @@ import {
 } from '.';
 
 import {
-    ExternalModelFile,
     InputType,
     IntentInput,
     JovoModel,
+    NativeFileInformation,
 } from 'jovo-model';
 
 import * as JovoModelDialogflowValidator from '../validators/JovoModelDialogflow.json';
@@ -56,12 +56,12 @@ export class JovoModelDialogflow extends JovoModel {
     /**
      * Converts Dialogflow model files to JovoModel
      *
-     * @param {ExternalModelFile[]} inputData The Dialogflow files
+     * @param {NativeFileInformation[]} inputData The Dialogflow files
      * @param {string} locale The locale of the files
      * @returns {JovoModelDialogflowData}
      * @memberof JovoModelDialogflow
      */
-    toJovoModel(inputData: ExternalModelFile[], locale: string): JovoModelDialogflowData {
+    static toJovoModel(inputData: NativeFileInformation[], locale: string): JovoModelDialogflowData {
         const jovoModel: JovoModelDialogflowData = {
             invocation: '',
             intents: [],
@@ -81,7 +81,7 @@ export class JovoModelDialogflow extends JovoModel {
 
         // iterate through intent files
         let file: string;
-        let fileInformation: ExternalModelFile;
+        let fileInformation: NativeFileInformation;
         for (fileInformation of intentFiles) {
             file = fileInformation.path[1];
 
@@ -253,11 +253,11 @@ export class JovoModelDialogflow extends JovoModel {
      *
      * @param {JovoModelDialogflowData} model The JovoModel to convert
      * @param {string} locale The locale of the JovoModel
-     * @returns {ExternalModelFile[]}
+     * @returns {NativeFileInformation[]}
      * @memberof JovoModelDialogflow
      */
-    fromJovoModel(model: JovoModelDialogflowData, locale: string): ExternalModelFile[] {
-        const returnFiles: ExternalModelFile[] = [];
+    static fromJovoModel(model: JovoModelDialogflowData, locale: string): NativeFileInformation[] {
+        const returnFiles: NativeFileInformation[] = [];
 
         for (const intent of (model.intents || []) as IntentDialogflow[]) {
 
@@ -540,7 +540,7 @@ export class JovoModelDialogflow extends JovoModel {
     }
 
 
-    getValidator(): tv4.JsonSchema {
+    static getValidator(): tv4.JsonSchema {
         return JovoModelDialogflowValidator;
     }
 

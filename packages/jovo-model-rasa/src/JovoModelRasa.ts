@@ -7,13 +7,13 @@ import {
 } from '.';
 
 import {
-    ExternalModelFile,
     InputType,
     InputTypeValue,
     Intent,
     IntentInput,
     JovoModel,
     JovoModelData,
+    NativeFileInformation,
 } from 'jovo-model';
 
 import * as JovoModelRasaValidator from '../validators/JovoModelRasa.json';
@@ -33,11 +33,11 @@ export class JovoModelRasa extends JovoModel {
     /**
      * Converts Rasa files to JovoModel
      *
-     * @param {ExternalModelFile[]} inputData The rasa files
+     * @param {NativeFileInformation[]} inputData The rasa files
      * @param {string} locale The locale of the files
      * @memberof JovoModelRasa
      */
-    toJovoModel(inputFiles: ExternalModelFile[], locale: string): JovoModelData {
+    static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
         const inputData = inputFiles[0].content;
 
         const jovoModel: JovoModelData = {
@@ -208,10 +208,10 @@ export class JovoModelRasa extends JovoModel {
      *
      * @param {JovoModelRasaData} model The JovoModel to convert
      * @param {string} locale The locale of the JovoModel
-     * @returns {ExternalModelFile[]}
+     * @returns {NativeFileInformation[]}
      * @memberof JovoModelRasa
      */
-    fromJovoModel(model: JovoModelRasaData, locale: string): ExternalModelFile[] {
+    static fromJovoModel(model: JovoModelRasaData, locale: string): NativeFileInformation[] {
 
         const returnData: RasaNluData = {
             common_examples: [],
@@ -303,7 +303,7 @@ export class JovoModelRasa extends JovoModel {
      * @returns {RasaCommonExample}
      * @memberof JovoModelBuilderRasa
      */
-    getRasaExampleFromPhrase(phrase: string, intent: Intent, inputTypes: InputType[] | undefined, inputTypeNameUsedCounter: InputTypeNameUsedCounter): RasaCommonExample {
+    static getRasaExampleFromPhrase(phrase: string, intent: Intent, inputTypes: InputType[] | undefined, inputTypeNameUsedCounter: InputTypeNameUsedCounter): RasaCommonExample {
         const returnData: RasaCommonExample = {
             text: phrase,
             intent: intent.name,
@@ -377,7 +377,7 @@ export class JovoModelRasa extends JovoModel {
     }
 
 
-    getValidator(): tv4.JsonSchema {
+    static getValidator(): tv4.JsonSchema {
         return JovoModelRasaValidator;
     }
 }
