@@ -15,7 +15,7 @@ import {
     NativeFileInformation,
 } from 'jovo-model';
 
-import * as JovoModelDialogflowValidator from '../validators/JovoModelDialogflow.json';
+import * as JovoModelDialogflowValidator from '../validators/JovoModelDialogflowData.json';
 
 import * as _ from 'lodash';
 

@@ -16,7 +16,7 @@ import {
     NativeFileInformation,
 } from 'jovo-model';
 
-import * as JovoModelRasaValidator from '../validators/JovoModelRasa.json';
+import * as JovoModelRasaValidator from '../validators/JovoModelRasaData.json';
 
 import * as _ from 'lodash';
 

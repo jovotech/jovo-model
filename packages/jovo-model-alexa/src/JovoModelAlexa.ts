@@ -17,7 +17,7 @@ import {
     NativeFileInformation,
 } from 'jovo-model';
 
-import * as JovoModelAlexaValidator from '../validators/JovoModelAlexa.json';
+import * as JovoModelAlexaValidator from '../validators/JovoModelAlexaData.json';
 
 import * as _ from 'lodash';
 
