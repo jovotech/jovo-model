@@ -11,7 +11,7 @@ import {
 
 describe("JovoModelRasa.ts", () => {
 
-    describe("exportJovoModel", () => {
+    describe("exportJovoModel (toJovoModel)", () => {
 
         const testsData = [
             {
@@ -83,7 +83,7 @@ describe("JovoModelRasa.ts", () => {
                                                     "start": 8,
                                                     "end": 15,
                                                     "value": "chinese",
-                                                    "entity": "cuisine",
+                                                    "entity": "Cuisine",
                                                 },
                                             ],
                                         },
@@ -95,13 +95,13 @@ describe("JovoModelRasa.ts", () => {
                                                     "start": 10,
                                                     "end": 17,
                                                     "value": "mexican",
-                                                    "entity": "cuisine",
+                                                    "entity": "Cuisine",
                                                 },
                                                 {
                                                     "start": 31,
                                                     "end": 37,
                                                     "value": "centre",
-                                                    "entity": "location",
+                                                    "entity": "Location",
                                                 },
                                             ],
                                         },
@@ -142,24 +142,24 @@ describe("JovoModelRasa.ts", () => {
                             "name": "restaurant_search",
                             "phrases": [
                                 "i'm looking for a place to eat",
-                                "show me {cuisine} restaurants",
-                                "show me a {cuisine} place in the {location}",
+                                "show me {Cuisine} restaurants",
+                                "show me a {Cuisine} place in the {Location}",
                             ],
                             "inputs": [
                                 {
-                                    "name": "cuisine",
-                                    "type": "cuisine"
+                                    "name": "Cuisine",
+                                    "type": "Cuisine"
                                 },
                                 {
-                                    "name": "location",
-                                    "type": "location"
+                                    "name": "Location",
+                                    "type": "Location"
                                 },
                             ]
                         },
                     ],
                     "inputTypes": [
                         {
-                            "name": "cuisine",
+                            "name": "Cuisine",
                             "values": [
                                 {
                                     "value": "chinese",
@@ -179,7 +179,7 @@ describe("JovoModelRasa.ts", () => {
                             ]
                         },
                         {
-                            "name": "location",
+                            "name": "Location",
                             "values": [
                                 {
                                     "value": "centre",
@@ -212,20 +212,20 @@ describe("JovoModelRasa.ts", () => {
                                                     "start": 10,
                                                     "end": 17,
                                                     "value": "chinese",
-                                                    "entity": "cuisine",
+                                                    "entity": "Cuisine",
                                                 },
                                                 {
                                                     "start": 36,
                                                     "end": 41,
                                                     "value": "beans",
-                                                    "entity": "plates",
+                                                    "entity": "Plates",
                                                 },
                                             ],
                                         },
                                     ],
                                     "lookup_tables": [
                                         {
-                                            "name": "plates",
+                                            "name": "Plates",
                                             "elements": ["beans", "cheese", "rice", "tacos"]
                                         }
                                     ],
@@ -250,23 +250,23 @@ describe("JovoModelRasa.ts", () => {
                         {
                             "name": "restaurant_search",
                             "phrases": [
-                                "show me a {cuisine} place which sells {plates}",
+                                "show me a {Cuisine} place which sells {Plates}",
                             ],
                             "inputs": [
                                 {
-                                    "name": "cuisine",
-                                    "type": "cuisine"
+                                    "name": "Cuisine",
+                                    "type": "Cuisine"
                                 },
                                 {
-                                    "name": "plates",
-                                    "type": "plates"
+                                    "name": "Plates",
+                                    "type": "Plates"
                                 },
                             ]
                         },
                     ],
                     "inputTypes": [
                         {
-                            "name": "plates",
+                            "name": "Plates",
                             "values": [
                                 {
                                     "value": "beans",
@@ -283,7 +283,7 @@ describe("JovoModelRasa.ts", () => {
                             ]
                         },
                         {
-                            "name": "cuisine",
+                            "name": "Cuisine",
                             "values": [
                                 {
                                     "value": "chinese",
@@ -333,7 +333,7 @@ describe("JovoModelRasa.ts", () => {
                                                     "start": 31,
                                                     "end": 36,
                                                     "value": "beans",
-                                                    "entity": "plates",
+                                                    "entity": "Plates",
                                                 },
                                             ],
                                         },
@@ -345,7 +345,7 @@ describe("JovoModelRasa.ts", () => {
                                                     "start": 8,
                                                     "end": 15,
                                                     "value": "chinese",
-                                                    "entity": "cuisine",
+                                                    "entity": "Cuisine",
                                                 },
                                             ],
                                         },
@@ -357,20 +357,20 @@ describe("JovoModelRasa.ts", () => {
                                                     "start": 10,
                                                     "end": 17,
                                                     "value": "chinese",
-                                                    "entity": "cuisine",
+                                                    "entity": "Cuisine",
                                                 },
                                                 {
                                                     "start": 31,
                                                     "end": 37,
                                                     "value": "centre",
-                                                    "entity": "location",
+                                                    "entity": "Location",
                                                 },
                                             ],
                                         },
                                     ],
                                     "lookup_tables": [
                                         {
-                                            "name": "plates",
+                                            "name": "Plates",
                                             "elements": ["beans", "cheese", "rice", "tacos"],
                                         }
                                     ],
@@ -416,29 +416,29 @@ describe("JovoModelRasa.ts", () => {
                             "name": "restaurant_search",
                             "phrases": [
                                 "i'm looking for a place to eat",
-                                "i'm looking for a place to eat {plates}",
-                                "show me {cuisine} restaurants",
-                                "show me a {cuisine} place in the {location}",
+                                "i'm looking for a place to eat {Plates}",
+                                "show me {Cuisine} restaurants",
+                                "show me a {Cuisine} place in the {Location}",
                             ],
                             "inputs": [
                                 {
-                                    "name": "plates",
-                                    "type": "plates"
+                                    "name": "Plates",
+                                    "type": "Plates"
                                 },
                                 {
-                                    "name": "cuisine",
-                                    "type": "cuisine"
+                                    "name": "Cuisine",
+                                    "type": "Cuisine"
                                 },
                                 {
-                                    "name": "location",
-                                    "type": "location"
+                                    "name": "Location",
+                                    "type": "Location"
                                 },
                             ]
                         },
                     ],
                     "inputTypes": [
                         {
-                            "name": "plates",
+                            "name": "Plates",
                             "values": [
                                 {
                                     "value": "beans",
@@ -455,7 +455,7 @@ describe("JovoModelRasa.ts", () => {
                             ]
                         },
                         {
-                            "name": "cuisine",
+                            "name": "Cuisine",
                             "values": [
                                 {
                                     "value": "chinese",
@@ -468,7 +468,7 @@ describe("JovoModelRasa.ts", () => {
                             ]
                         },
                         {
-                            "name": "location",
+                            "name": "Location",
                             "values": [
                                 {
                                     "value": "centre",
@@ -495,7 +495,7 @@ describe("JovoModelRasa.ts", () => {
     });
 
 
-    describe("exportNative", () => {
+    describe("exportNative (fromJovoModel)", () => {
 
         const testsData = [
             {
@@ -558,18 +558,18 @@ describe("JovoModelRasa.ts", () => {
                                 "inputs": [
                                     {
                                         "name": "cuisine",
-                                        "type": "cuisine"
+                                        "type": "Cuisine"
                                     },
                                     {
                                         "name": "location",
-                                        "type": "location"
+                                        "type": "Location"
                                     },
                                 ]
                             },
                         ],
                         "inputTypes": [
                             {
-                                "name": "cuisine",
+                                "name": "Cuisine",
                                 "values": [
                                     {
                                         "id": 1,
@@ -593,7 +593,7 @@ describe("JovoModelRasa.ts", () => {
                                 ]
                             },
                             {
-                                "name": "location",
+                                "name": "Location",
                                 "values": [
                                     {
                                         "value": "centre",
@@ -627,7 +627,7 @@ describe("JovoModelRasa.ts", () => {
                                                 "start": 8,
                                                 "end": 15,
                                                 "value": "chinese",
-                                                "entity": "cuisine",
+                                                "entity": "Cuisine",
                                             },
                                         ],
                                     },
@@ -639,13 +639,13 @@ describe("JovoModelRasa.ts", () => {
                                                 "start": 10,
                                                 "end": 20,
                                                 "value": "vegetarian",
-                                                "entity": "cuisine",
+                                                "entity": "Cuisine",
                                             },
                                             {
                                                 "start": 34,
                                                 "end": 40,
                                                 "value": "centre",
-                                                "entity": "location",
+                                                "entity": "Location",
                                             },
                                         ],
                                     },
@@ -680,6 +680,165 @@ describe("JovoModelRasa.ts", () => {
                 ]
             },
             {
+                "description": "should replace placeholders with an example value and add it to 'common_examples' (Spacy built in type, still needs example values defined to create common_examples)",
+                "input": {
+                    "locale": "en",
+                    "data": {
+                        "invocation": "",
+                        "intents": [
+                            {
+                                "name": "HelloWorldIntent",
+                                "phrases": [
+                                    "hello",
+                                    "say hello",
+                                    "say hello world"
+                                ]
+                            },
+                            {
+                                "name": "MyNameIsIntent",
+                                "phrases": [
+                                    "{name}",
+                                    "my name is {name}",
+                                    "i am {name}",
+                                    "you can call me {name}"
+                                ],
+                                "inputs": [
+                                    {
+                                        "name": "name",
+                                        "type": {
+                                            "rasa": "PERSON"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "inputTypes": [
+                            {
+                                "name": "PERSON",
+                                "values": [
+                                    {
+                                        "value": "Alex"
+                                    },
+                                    {
+                                        "value": "Andre"
+                                    },
+                                    {
+                                        "value": "Florian"
+                                    },
+                                    {
+                                        "value": "Jan"
+                                    },
+                                    {
+                                        "value": "Kaan"
+                                    },
+                                    {
+                                        "value": "Max"
+                                    },
+                                    {
+                                        "value": "Pia"
+                                    },
+                                    {
+                                        "value": "Ruben"
+                                    }
+                                ]
+                            }
+                        ],
+                    },
+                },
+                "result": [
+                    {
+                        "path": [
+                            "en.json"
+                        ],
+                        "content": {
+                            "rasa_nlu_data": {
+                                "common_examples": [
+                                    {
+                                        "text": "hello",
+                                        "intent": "HelloWorldIntent",
+                                        "entities": []
+                                    },
+                                    {
+                                        "text": "say hello",
+                                        "intent": "HelloWorldIntent",
+                                        "entities": []
+                                    },
+                                    {
+                                        "text": "say hello world",
+                                        "intent": "HelloWorldIntent",
+                                        "entities": []
+                                    },
+                                    {
+                                        "text": "Alex",
+                                        "intent": "MyNameIsIntent",
+                                        "entities": [
+                                            {
+                                                "value": "Alex",
+                                                "entity": "PERSON",
+                                                "start": 0,
+                                                "end": 4
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "text": "my name is Andre",
+                                        "intent": "MyNameIsIntent",
+                                        "entities": [
+                                            {
+                                                "value": "Andre",
+                                                "entity": "PERSON",
+                                                "start": 11,
+                                                "end": 16
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "text": "i am Florian",
+                                        "intent": "MyNameIsIntent",
+                                        "entities": [
+                                            {
+                                                "value": "Florian",
+                                                "entity": "PERSON",
+                                                "start": 5,
+                                                "end": 12
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "text": "you can call me Jan",
+                                        "intent": "MyNameIsIntent",
+                                        "entities": [
+                                            {
+                                                "value": "Jan",
+                                                "entity": "PERSON",
+                                                "start": 16,
+                                                "end": 19
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "lookup_tables": [
+                                    {
+                                        "name": "PERSON",
+                                        "elements": [
+                                            "Alex",
+                                            "Andre",
+                                            "Florian",
+                                            "Jan",
+                                            "Kaan",
+                                            "Max",
+                                            "Pia",
+                                            "Ruben"
+                                        ]
+                                    }
+                                ],
+                                "entity_synonyms": [],
+                            },
+                        },
+                    }
+                ]
+            },
+            {
                 "description": "should export 'inputTypes' values with only 'value' set as 'lookup_tables' and all other ones as 'entity_synonyms'",
                 "input": {
                     "locale": "en",
@@ -687,7 +846,7 @@ describe("JovoModelRasa.ts", () => {
                         "invocation": "",
                         "inputTypes": [
                             {
-                                "name": "cuisine",
+                                "name": "Cuisine",
                                 "values": [
                                     {
                                         "id": 1,
@@ -702,7 +861,7 @@ describe("JovoModelRasa.ts", () => {
                                 ]
                             },
                             {
-                                "name": "plates",
+                                "name": "Plates",
                                 "values": [
                                     {
                                         "value": "beans",
@@ -731,7 +890,7 @@ describe("JovoModelRasa.ts", () => {
                                 "common_examples": [],
                                 "lookup_tables": [
                                     {
-                                        "name": "plates",
+                                        "name": "Plates",
                                         "elements": ["beans", "cheese", "rice", "tacos"]
                                     }
                                 ],
@@ -775,22 +934,22 @@ describe("JovoModelRasa.ts", () => {
                                 "inputs": [
                                     {
                                         "name": "cuisine",
-                                        "type": "cuisine"
+                                        "type": "Cuisine"
                                     },
                                     {
                                         "name": "location",
-                                        "type": "location"
+                                        "type": "Location"
                                     },
                                     {
                                         "name": "plates",
-                                        "type": "plates"
+                                        "type": "Plates"
                                     },
                                 ]
                             },
                         ],
                         "inputTypes": [
                             {
-                                "name": "cuisine",
+                                "name": "Cuisine",
                                 "values": [
                                     {
                                         "id": 1,
@@ -814,7 +973,7 @@ describe("JovoModelRasa.ts", () => {
                                 ]
                             },
                             {
-                                "name": "location",
+                                "name": "Location",
                                 "values": [
                                     {
                                         "value": "centre",
@@ -825,7 +984,7 @@ describe("JovoModelRasa.ts", () => {
                                 ]
                             },
                             {
-                                "name": "plates",
+                                "name": "Plates",
                                 "values": [
                                     {
                                         "value": "beans",
@@ -875,7 +1034,7 @@ describe("JovoModelRasa.ts", () => {
                                                 "start": 31,
                                                 "end": 36,
                                                 "value": "beans",
-                                                "entity": "plates",
+                                                "entity": "Plates",
                                             },
                                         ],
                                     },
@@ -887,7 +1046,7 @@ describe("JovoModelRasa.ts", () => {
                                                 "start": 8,
                                                 "end": 15,
                                                 "value": "chinese",
-                                                "entity": "cuisine",
+                                                "entity": "Cuisine",
                                             },
                                         ],
                                     },
@@ -899,20 +1058,20 @@ describe("JovoModelRasa.ts", () => {
                                                 "start": 10,
                                                 "end": 20,
                                                 "value": "vegetarian",
-                                                "entity": "cuisine",
+                                                "entity": "Cuisine",
                                             },
                                             {
                                                 "start": 34,
                                                 "end": 40,
                                                 "value": "centre",
-                                                "entity": "location",
+                                                "entity": "Location",
                                             },
                                         ],
                                     },
                                 ],
                                 "lookup_tables": [
                                     {
-                                        "name": "plates",
+                                        "name": "Plates",
                                         "elements": ["beans", "cheese", "rice", "tacos"]
                                     }
                                 ],

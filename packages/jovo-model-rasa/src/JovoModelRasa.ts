@@ -172,6 +172,7 @@ export class JovoModelRasa extends JovoModel {
                     } else {
                         // Is a file reference
                         // TODO: Add support
+                        throw new Error('File references in lookup_tables are not supported yet!');
                     }
                 }
 
@@ -314,6 +315,9 @@ export class JovoModelRasa extends JovoModel {
         let inputType: InputType | undefined;
         let intentInput: IntentInput | undefined;
         let exampleValue = '';
+        let inputTypeName: string | {
+            [key: string]: string;
+        };
 
         // Get the inputs of the phrase
         const phraseInputs = phrase.match(/{[^}]*}/g);
@@ -336,16 +340,32 @@ export class JovoModelRasa extends JovoModel {
                     continue;
                 }
 
+                if (intentInput.type === undefined) {
+                    throw new Error(`No type is defined for input "${inputName}" which is used in phrase "${phrase}"!`);
+                }
+
                 // Get the InputType data to get an example value to replace the placeholder with
                 if (inputTypes === undefined) {
                     throw new Error(`No InputTypes are defined but type "${inputName}" is used in phrase "${phrase}"!`);
                 }
-                inputType = inputTypes.find((data) => data.name === inputName);
+
+                inputTypeName = intentInput.type;
+                if (typeof intentInput.type === 'object') {
+                    if (intentInput.type.rasa === undefined) {
+                        throw new Error(`No Rasa-Type is defined for input "${inputName}" which is used in phrase "${phrase}"!`);
+                    } else {
+                        inputTypeName = intentInput.type.rasa as string;
+                    }
+                } else {
+                    inputTypeName = inputTypeName as string;
+                }
+
+                inputType = inputTypes.find((data) => data.name === inputTypeName);
                 if (inputType === undefined) {
-                    throw new Error(`InputType "${inputName}" is not defined but is used in phrase "${phrase}"!`);
+                    throw new Error(`InputType "${inputTypeName}" is not defined but is used in phrase "${phrase}"!`);
                 }
                 if (inputType.values === undefined || inputType.values.length === 0) {
-                    throw new Error(`InputType "${inputName}" does not have any values!`);
+                    throw new Error(`InputType "${inputTypeName}" does not have any values!`);
                 }
 
                 // As we are going in order of appearance in the text we can be sure
@@ -355,15 +375,15 @@ export class JovoModelRasa extends JovoModel {
 
                 // Make sure that different example values get used becaues if not
                 // entities do not seem to get extracted properly
-                if (inputTypeNameUsedCounter[inputName] === undefined) {
-                    inputTypeNameUsedCounter[inputName] = 0;
+                if (inputTypeNameUsedCounter[inputTypeName] === undefined) {
+                    inputTypeNameUsedCounter[inputTypeName] = 0;
                 }
-                const exampleInputIndex = inputTypeNameUsedCounter[inputName]++ % inputType.values.length;
+                const exampleInputIndex = inputTypeNameUsedCounter[inputTypeName]++ % inputType.values.length;
                 exampleValue = inputType.values[exampleInputIndex].value;
 
                 returnData.entities.push({
                     value: exampleValue,
-                    entity: inputName,
+                    entity: inputTypeName,
                     start: startIndex,
                     end: startIndex + exampleValue.length,
                 });
