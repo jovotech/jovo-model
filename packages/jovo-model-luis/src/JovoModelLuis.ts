@@ -13,7 +13,9 @@ import {
     InputType,
     Intent,
     IntentInput,
+    InputTypeValue,
     JovoModel,
+    JovoModelData,
     NativeFileInformation,
 } from 'jovo-model';
 
@@ -34,6 +36,118 @@ export interface IntentInformation {
 
 export class JovoModelLuis extends JovoModel {
     static MODEL_KEY = 'luis';
+
+
+    /**
+     * Converts Luis files to JovoModel
+     *
+     * @param {NativeFileInformation[]} inputData The luis files
+     * @param {string} locale The locale of the files
+     * @memberof JovoModelLuis
+     */
+    static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
+        const inputData: LuisModelFile = inputFiles[0].content;
+
+        const jovoModel: JovoModelData = {
+            invocation: '',
+            intents: [],
+            inputTypes: [],
+        };
+
+        let tempInputType: InputType;
+        let tempInputTypeValue: InputTypeValue;
+        for (const closedList of inputData.closedLists) {
+            tempInputType = {
+                name: closedList.name,
+                values: [],
+            };
+
+            if (closedList.subLists === undefined) {
+                continue;
+            }
+            for (const subList of closedList.subLists) {
+                tempInputTypeValue = {
+                    value: subList.canonicalForm,
+                };
+
+                if (subList.list !== undefined) {
+                    tempInputTypeValue.synonyms = subList.list;
+                }
+
+                tempInputType.values!.push(tempInputTypeValue);
+            }
+
+            jovoModel.inputTypes!.push(tempInputType);
+        }
+
+        const tempIntents: {
+            [key: string]: Intent;
+        } = {};
+
+        const inputNamesByIntent: {
+            [key: string]: string[]
+        } = {};
+        for (const utterance of inputData.utterances) {
+
+            let phraseText = utterance.text;
+            if (tempIntents[utterance.intent] === undefined) {
+                tempIntents[utterance.intent] = {
+                    name: utterance.intent,
+                    phrases: [],
+                };
+            }
+
+            // Make sure that the entities later in the text come first
+            // that it does not mess up the position of the earlier ones.
+            if (utterance.entities !== undefined && utterance.entities.length !== 0) {
+                utterance.entities.sort((a, b) => a.startPos < b.startPos ? 1 : -1);
+            }
+
+            let entityName: string;
+            for (const entity of utterance.entities) {
+                if (inputNamesByIntent[utterance.intent] === undefined) {
+                    inputNamesByIntent[utterance.intent] = [entity.entity];
+                } else if (!inputNamesByIntent[utterance.intent].includes(entity.entity)) {
+                    inputNamesByIntent[utterance.intent].push(entity.entity);
+                }
+
+                entityName = entity.entity;
+                if (entityName.startsWith('builtin.')) {
+                    entityName = entityName.slice(8);
+                }
+
+                phraseText = phraseText.slice(0, entity.startPos) + `{${entityName}}` + phraseText.slice(entity.endPos + 1);
+            }
+
+            tempIntents[utterance.intent].phrases!.push(phraseText);
+        }
+
+        // Now that we did itterate over all utterances we can add all the found intents
+        for (const intentName of Object.keys(inputNamesByIntent)) {
+            tempIntents[intentName].inputs = [];
+            for (const inputName of inputNamesByIntent[intentName]) {
+                if (inputName.startsWith('builtin.')) {
+                    // Is a built-in luis type
+                    tempIntents[intentName].inputs!.unshift({
+                        name: inputName.slice(8),
+                        type: {
+                            luis: inputName,
+                        },
+                    });
+                } else {
+                    // Is a regular type
+                    tempIntents[intentName].inputs!.unshift({
+                        name: inputName,
+                        type: inputName,
+                    });
+                }
+            }
+        }
+
+        jovoModel.intents = Object.values(tempIntents);
+
+        return jovoModel;
+    }
 
 
     /**
