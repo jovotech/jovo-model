@@ -113,9 +113,12 @@ describe("JovoModelLuis.ts", () => {
                             "en-US.json"
                         ],
                         "content": {
-                            "luis_schema_version": "2.1.0",
+                            "luis_schema_version": "3.2.0",
                             "versionId": "0.1",
+                            "name": "Jovo App",
+                            "desc": "",
                             "culture": "en-us",
+                            "tokenizerVersion": "1.0.0",
                             "intents": [
                                 {
                                     "name": "Welcome",
@@ -136,6 +139,7 @@ describe("JovoModelLuis.ts", () => {
                                 },
 
                             ],
+                            "composites": [],
                             "closedLists": [
                                 {
                                     "name": "Cuisine",
@@ -186,6 +190,12 @@ describe("JovoModelLuis.ts", () => {
                                     ]
                                 }
                             ],
+                            "patternAnyEntities": [],
+                            "regex_entities": [],
+                            "prebuiltEntities": [],
+                            "model_features": [],
+                            "regex_features": [],
+                            "patterns": [],
                             "utterances": [
                                 {
                                     "text": "hey",
@@ -317,9 +327,12 @@ describe("JovoModelLuis.ts", () => {
                             "en-US.json"
                         ],
                         "content": {
-                            "luis_schema_version": "2.1.0",
+                            "luis_schema_version": "3.2.0",
                             "versionId": "0.1",
+                            "name": "Jovo App",
+                            "desc": "",
                             "culture": "en-us",
+                            "tokenizerVersion": "1.0.0",
                             "intents": [
                                 {
                                     "name": "HelloWorldIntent",
@@ -333,7 +346,14 @@ describe("JovoModelLuis.ts", () => {
                                     "name": "builtin.personName"
                                 },
                             ],
+                            "composites": [],
                             "closedLists": [],
+                            "patternAnyEntities": [],
+                            "regex_entities": [],
+                            "prebuiltEntities": [],
+                            "model_features": [],
+                            "regex_features": [],
+                            "patterns": [],
                             "utterances": [
                                 {
                                     "text": "hello",

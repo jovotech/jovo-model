@@ -31,9 +31,22 @@ export interface LuisModelClosedList {
     subLists?: LuisModelClosedSubList[];
 }
 
+export interface LuisModelComposite {
+    name: string;
+    children: string[];
+    roles: string[];
+}
+
 export interface LuisModelEntity {
     name: string;
     children?: string[];
+}
+
+export interface LuisModelModelFeatures {
+    name: string;
+    mode: boolean;
+    words: string;
+    activated: boolean;
 }
 
 export interface LuisModelUtteranceEntity {
@@ -48,14 +61,45 @@ export interface LuisModelUtterances {
     entities: LuisModelUtteranceEntity[];
 }
 
+export interface LuisModelPattern {
+    pattern: string;
+    intent: string;
+}
+
+export interface LuisModelPatternAnyEntity {
+    name: string;
+    explicitList: string[];
+    roles: string[];
+}
+
+export interface LuisModelPrebuiltEntity {
+    name: string;
+    roles: string[];
+}
+
+export interface LuisModelRegexEntity {
+    name: string;
+    regexPattern: string;
+    roles: string[];
+}
+
 export interface LuisModelFile {
     luis_schema_version: string;
     versionId: string;
-    name?: string;
-    desc?: string;
+    name: string;
+    desc: string;
     culture: string;
+    tokenizerVersion?: string;
     intents: LuisModelIntent[];
     entities: LuisModelEntity[];
+    composites: LuisModelComposite[];
     closedLists: LuisModelClosedList[];
+    patternAnyEntities?: LuisModelPatternAnyEntity[];
+    regex_entities: LuisModelRegexEntity[];
+    prebuiltEntities: LuisModelPrebuiltEntity[];
+    model_features: LuisModelModelFeatures[];
+    regex_features: []; // TODO: Add interface! Did not find an example yet
+    patterns?: LuisModelPattern[];
     utterances: LuisModelUtterances[];
+    settings?: [];
 }

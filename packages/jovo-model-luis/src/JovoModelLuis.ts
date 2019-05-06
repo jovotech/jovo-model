@@ -117,12 +117,22 @@ export class JovoModelLuis extends JovoModel {
         }
 
         const luisModel: LuisModelFile = {
-            luis_schema_version: '2.1.0',
+            luis_schema_version: '3.2.0',
             versionId: '0.1',
+            name: 'Jovo App',
+            desc: '',
             culture: locale.toLowerCase(),
+            tokenizerVersion: '1.0.0',
             intents: luisIntents,
             entities: luisEntities,
+            composites: [],
             closedLists: luisClosedLists,
+            patternAnyEntities: [],
+            regex_entities: [],
+            prebuiltEntities: [],
+            model_features: [],
+            regex_features: [],
+            patterns: [],
             utterances: luisUtterances,
         };
 
