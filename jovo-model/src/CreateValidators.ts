@@ -7,8 +7,18 @@ import { writeFile } from 'fs';
 import * as TJS from 'typescript-json-schema';
 import { RunValidator } from '.';
 
-import { promisify } from 'util';
-const writeFileAsync = promisify(writeFile);
+
+const writeFileAsync = (path: string, content: string) => {
+    return new Promise((resolve, reject) => {
+        writeFile(path, content, 'utf8', (error) => {
+            if (error) {
+                return reject(error);
+            }
+
+            resolve();
+        });
+    });
+};
 
 
 export async function createValidators(destinationDirectory: string, runValidators: RunValidator[]) {
