@@ -7,7 +7,8 @@ export interface InputType {
 
 export interface InputTypeValue {
     value: string;
-    id?: string;
+    id?: string | number;
+    key?: string;
     synonyms?: string[];
 }
 

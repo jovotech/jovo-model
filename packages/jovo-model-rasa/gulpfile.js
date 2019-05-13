@@ -1,4 +1,4 @@
-const jovoModelCore = require('jovo-model-core');
+const jovoModel = require('jovo-model');
 
 
 function build() {
@@ -6,12 +6,12 @@ function build() {
         {
             path: 'src/Interfaces',
             types: [
-                'JovoModelRasa'
+                'JovoModelRasaData'
             ]
         }
     ];
 
-    return jovoModelCore.createValidators('validators', validators);
+    return jovoModel.createValidators('validators', validators);
 }
 
 

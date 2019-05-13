@@ -17,7 +17,7 @@ import {
     NativeFileInformation,
 } from 'jovo-model';
 
-import * as JovoModelAlexaValidator from '../validators/JovoModelAlexa.json';
+import * as JovoModelAlexaValidator from '../validators/JovoModelAlexaData.json';
 
 import * as _ from 'lodash';
 
@@ -244,7 +244,7 @@ export class JovoModelAlexa extends JovoModel {
                                 // create alexaTypeValueObj
                                 for (const value of matchedInputType.values) {
                                     const alexaTypeValueObj: AlexaLMTypeValue = {
-                                        id: value.id ? value.id : null,
+                                        id: value.id ? value.id.toString() : null,
                                         name: {
                                             value: value.value,
                                         },
@@ -332,7 +332,7 @@ export class JovoModelAlexa extends JovoModel {
                 if (inputType.values) {
                     for (const value of inputType.values) {
                         const alexaTypeValue: AlexaLMTypeValue = {
-                            id: value.id || null,
+                            id: value.id ? value.id.toString() : null,
                             name: {
                                 value: value.value,
                             },

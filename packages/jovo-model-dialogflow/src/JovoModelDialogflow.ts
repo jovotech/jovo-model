@@ -10,12 +10,13 @@ import {
 
 import {
     InputType,
+    InputTypeValue,
     IntentInput,
     JovoModel,
     NativeFileInformation,
 } from 'jovo-model';
 
-import * as JovoModelDialogflowValidator from '../validators/JovoModelDialogflow.json';
+import * as JovoModelDialogflowValidator from '../validators/JovoModelDialogflowData.json';
 
 import * as _ from 'lodash';
 
@@ -196,8 +197,8 @@ export class JovoModelDialogflow extends JovoModel {
             if (file.indexOf('entries') > -1) {
                 continue;
             }
-
             const dialogFlowEntity = fileInformation.content;
+
             const jovoInput: InputType = {
                 name: dialogFlowEntity.name,
             };
@@ -205,7 +206,7 @@ export class JovoModelDialogflow extends JovoModel {
             JovoModelDialogflow.skipDefaultEntityProps(jovoInput, dialogFlowEntity);
 
             // iterate through usersays intent files and generate sample phrases
-            const userSaysFile = intentFiles.find((file) => {
+            const userSaysFile = entityFiles.find((file) => {
                 if (file.path[1] === dialogFlowEntity.name + '_entries_' + locale + '.json') {
                     return true;
                 }
@@ -218,17 +219,22 @@ export class JovoModelDialogflow extends JovoModel {
                 const entries = userSaysFile.content;
 
                 for (const entry of entries) {
-                    const value = {
+                    const value: InputTypeValue = {
                         value: entry.value,
-                        synonyms: [],
                     };
+
+                    const tempSynonyms = [];
                     for (const synonym of entry.synonyms) {
                         if (synonym === entry.value) {
                             continue;
                         }
-                        // @ts-ignore
-                        value.synonyms.push(synonym);
+                        tempSynonyms.push(synonym);
                     }
+
+                    if (tempSynonyms.length !== 0) {
+                        value.synonyms = tempSynonyms;
+                    }
+
                     values.push(value);
                 }
                 if (values.length > 0) {
@@ -561,34 +567,47 @@ export class JovoModelDialogflow extends JovoModel {
         if (_.difference(_.get(dialogFlowIntent, 'contexts'), _.get(DEFAULT_INTENT, 'contexts')).length > 0) {
             _.set(jovoIntent, 'dialogflow.contexts', _.get(dialogFlowIntent, 'contexts'));
         }
-        if (_.get(dialogFlowIntent, 'priority') !== _.get(DEFAULT_INTENT, 'priority')) {
-            _.set(jovoIntent, 'dialogflow.priority', _.get(dialogFlowIntent, 'priority'));
+
+        const priority = _.get(dialogFlowIntent, 'priority');
+        if (priority !== undefined && priority !== _.get(DEFAULT_INTENT, 'priority')) {
+            _.set(jovoIntent, 'dialogflow.priority', priority);
         }
-        if (_.get(dialogFlowIntent, 'webhookUsed') !== _.get(DEFAULT_INTENT, 'webhookUsed')) {
-            _.set(jovoIntent, 'dialogflow.webhookUsed', _.get(dialogFlowIntent, 'webhookUsed'));
+
+        const webhookUsed = _.get(dialogFlowIntent, 'webhookUsed');
+        if (webhookUsed !== undefined && webhookUsed !== _.get(DEFAULT_INTENT, 'webhookUsed')) {
+            _.set(jovoIntent, 'dialogflow.webhookUsed', webhookUsed);
         }
-        if (_.get(dialogFlowIntent, 'webhookForSlotFilling') !== _.get(DEFAULT_INTENT, 'webhookForSlotFilling')) {
-            _.set(jovoIntent, 'dialogflow.webhookForSlotFilling', _.get(dialogFlowIntent, 'webhookForSlotFilling'));
+
+        const webhookForSlotFilling = _.get(dialogFlowIntent, 'webhookForSlotFilling');
+        if (webhookForSlotFilling !== undefined && webhookForSlotFilling !== _.get(DEFAULT_INTENT, 'webhookForSlotFilling')) {
+            _.set(jovoIntent, 'dialogflow.webhookForSlotFilling', webhookForSlotFilling);
         }
-        if (_.get(dialogFlowIntent, 'fallbackIntent') !== _.get(DEFAULT_INTENT, 'fallbackIntent')) {
-            _.set(jovoIntent, 'dialogflow.fallbackIntent', _.get(dialogFlowIntent, 'fallbackIntent'));
+
+        const fallbackIntent = _.get(dialogFlowIntent, 'fallbackIntent');
+        if (fallbackIntent !== undefined && fallbackIntent !== _.get(DEFAULT_INTENT, 'fallbackIntent')) {
+            _.set(jovoIntent, 'dialogflow.fallbackIntent', fallbackIntent);
         }
         if (_.difference(_.get(dialogFlowIntent, 'events'), _.get(DEFAULT_INTENT, 'events')).length > 0) {
             _.set(jovoIntent, 'dialogflow.events', _.get(dialogFlowIntent, 'events'));
         }
 
         // skip parameters object in responses. it's handled somewhere else
-        if (!_.isEqual(_.get(dialogFlowIntent, 'responses'), _.get(DEFAULT_INTENT, 'responses'))) {
-            if (!_.isEqual(_.get(dialogFlowIntent, 'responses[0].resetContexts'), _.get(DEFAULT_INTENT, 'responses[0].resetContexts'))) {
-                _.set(jovoIntent, 'dialogflow.responses[0].resetContexts', _.get(dialogFlowIntent, 'responses[0].resetContexts'));
+        const responses = _.get(dialogFlowIntent, 'responses');
+
+        if (responses !== undefined && responses.length !== 0 && !_.isEqual(responses, _.get(DEFAULT_INTENT, 'responses'))) {
+            const resetContexts = _.get(dialogFlowIntent, 'responses[0].resetContexts');
+            if (resetContexts !== undefined && !_.isEqual(resetContexts, _.get(DEFAULT_INTENT, 'responses[0].resetContexts'))) {
+                _.set(jovoIntent, 'dialogflow.responses[0].resetContexts', resetContexts);
             }
 
-            if (!_.isEqual(_.get(dialogFlowIntent, 'responses[0].affectedContexts'), _.get(DEFAULT_INTENT, 'responses[0].affectedContexts'))) {
-                _.set(jovoIntent, 'dialogflow.responses[0].affectedContexts', _.get(dialogFlowIntent, 'responses[0].affectedContexts'));
+            const affectedContexts = _.get(dialogFlowIntent, 'responses[0].affectedContexts');
+            if (affectedContexts !== undefined && !_.isEqual(affectedContexts, _.get(DEFAULT_INTENT, 'responses[0].affectedContexts'))) {
+                _.set(jovoIntent, 'dialogflow.responses[0].affectedContexts', affectedContexts);
             }
 
-            if (!_.isEqual(_.get(dialogFlowIntent, 'responses[0].defaultResponsePlatforms'), _.get(DEFAULT_INTENT, 'responses[0].defaultResponsePlatforms'))) {
-                _.set(jovoIntent, 'dialogflow.responses[0].defaultResponsePlatforms', _.get(dialogFlowIntent, 'responses[0].defaultResponsePlatforms'));
+            const defaultResponsePlatforms = _.get(dialogFlowIntent, 'responses[0].defaultResponsePlatforms');
+            if (defaultResponsePlatforms !== undefined && !_.isEqual(defaultResponsePlatforms, _.get(DEFAULT_INTENT, 'responses[0].defaultResponsePlatforms'))) {
+                _.set(jovoIntent, 'dialogflow.responses[0].defaultResponsePlatforms', defaultResponsePlatforms);
             }
 
             if (!_.isEqual(_.get(dialogFlowIntent, 'responses[0].messages'), _.get(DEFAULT_INTENT, 'responses[0].messages'))) {
@@ -605,8 +624,10 @@ export class JovoModelDialogflow extends JovoModel {
                     }
                 }
             }
-            if (!_.isEqual(_.get(dialogFlowIntent, 'responses[0].speech'), _.get(DEFAULT_INTENT, 'responses[0].speech'))) {
-                _.set(jovoIntent, 'dialogflow.responses[0].speech', _.get(dialogFlowIntent, 'responses[0].speech'));
+
+            const responseSpeech = _.get(dialogFlowIntent, 'responses[0].speech');
+            if (responseSpeech !== undefined && !_.isEqual(responseSpeech, _.get(DEFAULT_INTENT, 'responses[0].speech'))) {
+                _.set(jovoIntent, 'dialogflow.responses[0].speech', responseSpeech);
             }
         }
         return jovoIntent;

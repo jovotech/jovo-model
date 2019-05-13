@@ -16,7 +16,7 @@ import {
     NativeFileInformation,
 } from 'jovo-model';
 
-import * as JovoModelRasaValidator from '../validators/JovoModelRasa.json';
+import * as JovoModelRasaValidator from '../validators/JovoModelRasaData.json';
 
 import * as _ from 'lodash';
 
@@ -370,7 +370,7 @@ export class JovoModelRasa extends JovoModel {
 
                 // As we are going in order of appearance in the text we can be sure
                 // that the start index does not change. The end index gets calculated
-                // via stringe the placeholder got replaced with.
+                // by adding the length of the value the placeholder got replaced with.
                 startIndex = returnData.text.indexOf(`{${inputName}}`);
 
                 // Make sure that different example values get used becaues if not

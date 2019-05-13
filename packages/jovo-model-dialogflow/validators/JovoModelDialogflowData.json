@@ -1,14 +1,14 @@
 {
 	"type": "object",
 	"properties": {
-		"dialogflow": {
-			"$ref": "#/definitions/DialogFlowModel"
-		},
 		"inputTypes": {
 			"type": "array",
 			"items": {
-				"$ref": "#/definitions/InputType"
+				"$ref": "#/definitions/DialogflowInputType"
 			}
+		},
+		"dialogflow": {
+			"$ref": "#/definitions/DialogflowModel"
 		},
 		"intents": {
 			"type": "array",
@@ -24,28 +24,77 @@
 		"invocation"
 	],
 	"definitions": {
-		"DialogFlowModel": {
+		"DialogflowInputType": {
+			"type": "object",
+			"properties": {
+				"dialogflow": {
+					"anyOf": [
+						{
+							"type": "object",
+							"properties": {},
+							"additionalProperties": true
+						},
+						{
+							"type": "string"
+						}
+					]
+				},
+				"name": {
+					"type": "string"
+				},
+				"values": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/InputTypeValue"
+					}
+				}
+			},
+			"required": [
+				"name"
+			]
+		},
+		"InputTypeValue": {
+			"type": "object",
+			"properties": {
+				"value": {
+					"type": "string"
+				},
+				"id": {
+					"type": "string"
+				},
+				"synonyms": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			},
+			"required": [
+				"value"
+			]
+		},
+		"DialogflowModel": {
 			"type": "object",
 			"properties": {
 				"intents": {
 					"type": "array",
 					"items": [
 						{
-							"$ref": "#/definitions/DialogFlowLMInputObject"
+							"$ref": "#/definitions/DialogflowLMInputObject"
 						}
 					],
 					"minItems": 1,
 					"additionalItems": {
 						"anyOf": [
 							{
-								"$ref": "#/definitions/DialogFlowLMInputObject"
+								"$ref": "#/definitions/DialogflowLMInputObject"
 							}
 						]
 					}
 				}
 			}
 		},
-		"DialogFlowLMInputObject": {
+		"DialogflowLMInputObject": {
 			"type": "object",
 			"properties": {
 				"name": {
@@ -63,7 +112,7 @@
 				"responses": {
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/DialogFlowResponse"
+						"$ref": "#/definitions/DialogflowResponse"
 					}
 				},
 				"events": {
@@ -105,13 +154,13 @@
 				"webhookUsed"
 			]
 		},
-		"DialogFlowResponse": {
+		"DialogflowResponse": {
 			"type": "object",
 			"properties": {
 				"parameters": {
 					"type": "array",
 					"items": {
-						"$ref": "#/definitions/DialogFlowLMInputParameterObject"
+						"$ref": "#/definitions/DialogflowLMInputParameterObject"
 					}
 				}
 			},
@@ -119,7 +168,7 @@
 				"parameters"
 			]
 		},
-		"DialogFlowLMInputParameterObject": {
+		"DialogflowLMInputParameterObject": {
 			"type": "object",
 			"properties": {
 				"name": {
@@ -139,43 +188,6 @@
 				"dataType",
 				"isList",
 				"name",
-				"value"
-			]
-		},
-		"InputType": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"values": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/InputTypeValue"
-					}
-				}
-			},
-			"required": [
-				"name"
-			]
-		},
-		"InputTypeValue": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "string"
-				},
-				"id": {
-					"type": "string"
-				},
-				"synonyms": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				}
-			},
-			"required": [
 				"value"
 			]
 		},

@@ -6,7 +6,7 @@ function build() {
         {
             path: 'src/Interfaces',
             types: [
-                'JovoModelAlexaData'
+                'JovoModelLuisData'
             ]
         }
     ];
