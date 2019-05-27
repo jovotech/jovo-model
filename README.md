@@ -2,6 +2,8 @@
 
 💬 A language model abstraction layer that works across NLU providers
 
+![Jovo Model for Alexa, Dialogflow, Rasa NLU, Microsoft LUIS](./img/jovo-model.png)
+
 > Learn more about the Jovo Model format here: [jovo.tech/docs/model](https://www.jovo.tech/docs/model)
 
 
