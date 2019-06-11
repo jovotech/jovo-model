@@ -1,6 +1,17 @@
 import {
-    NativeFileInformation,
+    InputType,
+    InputTypeIndex,
+    InputTypeValue,
+    Intent,
+    IntentIndex,
+    IntentInput,
     JovoModelData,
+    JovoModelHelper,
+    ModelInputType,
+    ModelInputTypeValue,
+    ModelIntent,
+    ModelIntentInput,
+    NativeFileInformation,
 } from '.';
 
 
@@ -56,7 +67,6 @@ export class JovoModel {
     }
 
 
-
     /**
      * Imports JovoModel
      *
@@ -69,6 +79,254 @@ export class JovoModel {
         this.locale = locale;
     }
 
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string to be added
+     */
+    addIntent(intent: ModelIntent): JovoModel {
+        if (this.data) {
+            JovoModelHelper.addIntent(this.data, intent);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string to get removed
+     */
+    removeIntent(intent: ModelIntent): JovoModel {
+        if (this.data) {
+            JovoModelHelper.removeIntent(this.data, intent);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string to get updated
+     * @param newIntent Intent-object
+     */
+    updateIntent(intent: ModelIntent, newIntent: Intent): JovoModel {
+        if (this.data) {
+            this.data = JovoModelHelper.updateIntent(this.data, intent, newIntent);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param name Intent-name to look for
+     */
+    getIntentByName(name: string): Intent | undefined {
+        return this.data ? JovoModelHelper.getIntentByName(this.data, name) : undefined;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param name Intent-name to look for
+     */
+    getIntentIndexByName(name: string): number {
+        return this.data ? JovoModelHelper.getIntentIndexByName(this.data, name) : -1;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string to get the phrases of
+     */
+    getPhrases(intent: ModelIntent): string[] {
+        return this.data ? JovoModelHelper.getPhrases(this.data, intent) : [];
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string
+     * @param phrase Phrase
+     */
+    addPhrase(intent: ModelIntent, phrase: string): JovoModel {
+        if (this.data) {
+            JovoModelHelper.addPhrase(this.data, intent, phrase);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string
+     * @param phrase Phrase
+     */
+    removePhrase(intent: ModelIntent, phrase: string): JovoModel {
+        if (this.data) {
+            JovoModelHelper.removePhrase(this.data, intent, phrase);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string to be
+     * @param oldPhrase Old phrase to be replaced
+     * @param newPhrase New phrase to replace
+     */
+    updatePhrase(intent: ModelIntent, oldPhrase: string, newPhrase: string): JovoModel {
+        if (this.data) {
+            JovoModelHelper.updatePhrase(this.data, intent, oldPhrase, newPhrase);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string to be
+     * @param phrase Phrase
+     */
+    getPhraseIndex(intent: ModelIntent, phrase: string): IntentIndex {
+        return this.data ? JovoModelHelper.getPhraseIndex(this.data, intent, phrase) : {index: -1, intentIndex: -1};
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param phrase Phrase
+     */
+    hasPhrase(phrase: string): boolean {
+        return this.data ? JovoModelHelper.hasPhrase(this.data, phrase) : false;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string
+     */
+    getInputs(intent: ModelIntent): IntentInput[] {
+        return this.data ? JovoModelHelper.getInputs(this.data, intent) : [];
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string
+     * @param input IntentInput-object or string
+     * @param checkForDuplicates
+     */
+    addInput(intent: ModelIntent, input: ModelIntentInput, checkForDuplicates = true): JovoModel {
+        if (this.data) {
+            JovoModelHelper.addInput(this.data, intent, input, checkForDuplicates);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string
+     * @param input IntentInput-object or string
+     */
+    removeInput(intent: ModelIntent, input: ModelIntentInput): JovoModel {
+        if (this.data) {
+            JovoModelHelper.removeInput(this.data, intent, input);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param intent Intent-object or string
+     * @param input IntentInput-object or string
+     */
+    getInputIndex(intent: ModelIntent, input: ModelIntentInput): IntentIndex {
+        return this.data ? JovoModelHelper.getInputIndex(this.data, intent, input) : {index: -1, intentIndex: -1};
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param inputType InputType-object or string
+     */
+    addInputType(inputType: ModelInputType): JovoModel {
+        if (this.data) {
+            JovoModelHelper.addInputType(this.data, inputType);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param inputType InputType-object or string
+     */
+    removeInputType(inputType: ModelInputType): JovoModel {
+        if (this.data) {
+            JovoModelHelper.removeInputType(this.data, inputType);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param inputType InputType-object or string to be replaced
+     * @param newInputType InputType-object or string to replace
+     */
+    updateInputType(inputType: ModelInputType, newInputType: InputType): JovoModel {
+        if (this.data) {
+            this.data = JovoModelHelper.updateInputType(this.data, inputType, newInputType);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param name InputType-object or string
+     */
+    getInputTypeByName(name: string): InputType | undefined {
+        return this.data ? JovoModelHelper.getInputTypeByName(this.data, name) : undefined;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param name InputType-object or string
+     */
+    getInputTypeIndexByName(name: string): number {
+        return this.data ? JovoModelHelper.getInputTypeIndexByName(this.data, name) : -1;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param inputType InputType-object or string
+     */
+    getInputTypeValues(inputType: ModelInputType): InputTypeValue[] {
+        return this.data ? JovoModelHelper.getInputTypeValues(this.data, inputType) : [];
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param inputType InputType-object or string
+     * @param value InputTypeValue-object or string
+     * @param checkForDuplicates
+     */
+    addInputTypeValue(inputType: ModelInputType, value: ModelInputTypeValue, checkForDuplicates = true): JovoModel {
+        if (this.data) {
+            JovoModelHelper.addInputTypeValue(this.data, inputType, value, checkForDuplicates);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param inputType InputType-object or string
+     * @param value InputTypeValue-object or string
+     */
+    removeInputTypeValue(inputType: ModelInputType, value: ModelInputTypeValue): JovoModel {
+        if (this.data) {
+            JovoModelHelper.removeInputTypeValue(this.data, inputType, value);
+        }
+        return this;
+    }
+
+    /**
+     * See [[JovoModelHelper]]
+     * @param inputType InputType-object or string
+     * @param value InputTypeValue-object or string
+     */
+    getInputTypeValueIndex(inputType: ModelInputType, value: ModelInputTypeValue): InputTypeIndex {
+        return this.data ? JovoModelHelper.getInputTypeValueIndex(this.data, inputType, value) : {
+            inputTypeIndex: -1,
+            index: -1,
+        };
+    }
 
     /**
      * Converts native model files to JovoModel
