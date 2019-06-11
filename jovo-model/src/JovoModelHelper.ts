@@ -23,6 +23,26 @@ export interface InputTypeIndex {
 export class JovoModelHelper {
 
     /**
+     * Creates a new data for JovoModel
+     *
+     * @static
+     * @param {string} [invocation='app']
+     * @param {Intent[]} [intents=[]]
+     * @param {InputType[]} [inputTypes=[]]
+     */
+    static new(
+        invocation = 'app',
+        intents: Intent[] = [],
+        inputTypes: InputType[] = [],
+    ): JovoModelData {
+        return {
+            invocation,
+            intents,
+            inputTypes,
+        };
+    }
+
+    /**
      * Adds an intent to the model, if at least one with the name does not exist.
      * @param model Model that is being mutated
      * @param intent Intent-object or string (intent-name)
