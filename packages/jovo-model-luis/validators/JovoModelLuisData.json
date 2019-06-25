@@ -47,6 +47,9 @@
 				"id": {
 					"type": "string"
 				},
+				"key": {
+					"type": "string"
+				},
 				"synonyms": {
 					"type": "array",
 					"items": {
