@@ -20,7 +20,6 @@
     "devDependencies": {
         "@types/jest": "^23.3.5",
         "@types/node": "^10.10.1",
-        "@types/tv4": "^1.2.29",
         "jest": "^23.6.0",
         "rimraf": "^2.6.2",
         "ts-jest": "^23.10.4",
@@ -28,6 +27,7 @@
         "typescript": "^3.0.3"
     },
     "dependencies": {
+        "@types/tv4": "^1.2.29",
         "typescript-json-schema": "^0.34.0"
     },
     "jest": {
