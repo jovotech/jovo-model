@@ -8,6 +8,15 @@ import * as TJS from 'typescript-json-schema';
 import { RunValidator } from '.';
 
 
+/**
+ * Simple wrapper to write files async with promises
+ * TODO: Once we do not have to support Node 6.9 anymore
+ *       remove and use built-in util.promisify instead
+ *
+ * @param {string} path The name of the file to write
+ * @param {string} content The content of the file
+ * @returns
+ */
 const writeFileAsync = (path: string, content: string) => {
     return new Promise((resolve, reject) => {
         writeFile(path, content, 'utf8', (error) => {
@@ -21,6 +30,14 @@ const writeFileAsync = (path: string, content: string) => {
 };
 
 
+
+/**
+ * Creates validation files according to TypeScript definitions
+ *
+ * @export
+ * @param {string} destinationDirectory The directory to write the validation files to
+ * @param {RunValidator[]} runValidators The validators to create
+ */
 export async function createValidators(destinationDirectory: string, runValidators: RunValidator[]) {
     const settings = {
         required: true
