@@ -193,8 +193,6 @@ export class JovoModelAlexa extends JovoModel {
                                 alexaInputObj.type = input.type.alexa;
                                 if (_.startsWith(input.type.alexa, BUILTIN_PREFIX)) {
                                     alexaInputObj.type = input.type.alexa;
-                                } else {
-                                    input.type = input.type.alexa;
                                 }
                             } else {
                                 throw new Error(errorPrefix + 'Please add an Alexa property for input "' + input.name + '"');
