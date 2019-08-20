@@ -1,6 +1,6 @@
 {
     "name": "jovo-model-rasa",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "description": "Jovo Model for Rasa",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -30,7 +30,7 @@
         "typescript-json-schema": "^0.34.0"
     },
     "dependencies": {
-        "jovo-model": "^0.1.7"
+        "jovo-model": "^0.1.8"
     },
     "jest": {
         "transform": {

@@ -1,6 +1,6 @@
 {
     "name": "jovo-model-luis",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "description": "Jovo Model for Microsoft Luis",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -30,7 +30,7 @@
         "typescript-json-schema": "^0.34.0"
     },
     "dependencies": {
-        "jovo-model": "^0.1.7"
+        "jovo-model": "^0.1.8"
     },
     "jest": {
         "transform": {

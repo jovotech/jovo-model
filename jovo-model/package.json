@@ -1,6 +1,6 @@
 {
     "name": "jovo-model",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "description": "Jovo Model",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
