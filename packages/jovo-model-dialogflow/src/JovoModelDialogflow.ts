@@ -525,7 +525,7 @@ export class JovoModelDialogflow extends JovoModel {
                 if (modelDialogflowEntity.entries) {
                     returnFiles.push(
                         {
-                            path: ['entities', modelDialogflowEntity.name + '_usersays_' + locale + '.json'],
+                            path: ['entities', modelDialogflowEntity.name + '_entries_' + locale + '.json'],
                             content: modelDialogflowEntity.entries,
                         }
                     );
