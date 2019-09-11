@@ -1,3 +1,4 @@
+import has = require('lodash.has');
 import {InputType, InputTypeValue, Intent, IntentInput, JovoModelData} from './Interfaces';
 
 export type ModelIntent = Intent | string;
@@ -16,20 +17,11 @@ export interface InputTypeIndex {
     inputTypeIndex: number;
 }
 
-
 /**
  * Helper class that provides methods to mutate the model.
+ * All methods directly mutate the model!
  */
 export class JovoModelHelper {
-
-    /**
-     * Creates a new data for JovoModel
-     *
-     * @static
-     * @param {string} [invocation='app']
-     * @param {Intent[]} [intents=[]]
-     * @param {InputType[]} [inputTypes=[]]
-     */
     static new(
         invocation = 'app',
         intents: Intent[] = [],
@@ -42,11 +34,45 @@ export class JovoModelHelper {
         };
     }
 
-    /**
-     * Adds an intent to the model, if at least one with the name does not exist.
-     * @param model Model that is being mutated
-     * @param intent Intent-object or string (intent-name)
-     */
+    static prepareModel(model: JovoModelData): JovoModelData {
+        // remove observers
+        if (model.inputTypes && model.inputTypes.length > 0) {
+            model.inputTypes.forEach((inputType: InputType) => {
+                if (inputType.values && inputType.values.length > 0) {
+                    inputType.values.forEach((value: InputTypeValue) => {
+                        if (!value.id) {
+                            value.id = '';
+                        }
+                        if (!value.synonyms) {
+                            value.synonyms = [];
+                        }
+                    });
+                } else {
+                    inputType.values = [];
+                }
+            });
+        } else {
+            model.inputTypes = [];
+        }
+
+        if (model.intents && model.intents.length > 0) {
+            model.intents.forEach((intent: Intent) => {
+                if (!intent.phrases) {
+                    intent.phrases = [];
+                }
+                if (!intent.samples) {
+                    intent.samples = [];
+                }
+                if (!intent.inputs) {
+                    intent.inputs = [];
+                }
+            });
+        } else {
+            model.intents = [];
+        }
+        return model;
+    }
+
     static addIntent(model: JovoModelData, intent: ModelIntent) {
         if (typeof intent === 'string') {
             intent = {
@@ -66,11 +92,6 @@ export class JovoModelHelper {
         }
     }
 
-    /**
-     * Removes an intent from the model, if at least one with the name does exist.
-     * @param model Model that is being mutated
-     * @param intent Intent-object or string (intent-name)
-     */
     static removeIntent(model: JovoModelData, intent: ModelIntent) {
         if (typeof intent !== 'string') {
             intent = intent.name;
@@ -82,29 +103,27 @@ export class JovoModelHelper {
         }
     }
 
-    /**
-     * Updates an intent in the model, if at least one with the name does exist.
-     * @param model Model that is being mutated
-     * @param intent Intent-object or string (intent-name) that will be replaced
-     * @param newIntent Intent-object that will replace the original
-     */
-    static updateIntent(model: JovoModelData, intent: ModelIntent, newIntent: Intent): JovoModelData {
+    static updateIntent(
+        model: JovoModelData,
+        intent: ModelIntent,
+        newIntent: Intent,
+    ): JovoModelData {
         if (typeof intent !== 'string') {
             intent = intent.name;
         }
         const index = this.getIntentIndexByName(model, intent);
         if (index >= 0 && model.intents) {
-            model.intents[index] = newIntent;
+            const intents = model.intents.slice();
+            intents[index] = newIntent;
+            model.intents = intents;
         }
         return model;
     }
 
-    /**
-     * Retrieves an intent from the model that has the given name.
-     * @param model Model
-     * @param name Intent-name to look for
-     */
-    static getIntentByName(model: JovoModelData, name: string): Intent | undefined {
+    static getIntentByName(
+        model: JovoModelData,
+        name: string,
+    ): Intent | undefined {
         if (!model.intents) {
             return;
         }
@@ -113,11 +132,6 @@ export class JovoModelHelper {
         });
     }
 
-    /**
-     * Retrieves the index of an intent from the model that has the given name.
-     * @param model Model
-     * @param name Intent-name to look for
-     */
     static getIntentIndexByName(model: JovoModelData, name: string): number {
         if (!model.intents) {
             return -1;
@@ -127,11 +141,6 @@ export class JovoModelHelper {
         });
     }
 
-    /**
-     * Retrieves the phrases of an intent, if the intent does exist.
-     * @param model Model
-     * @param intent Intent-object or string (intent-name)
-     */
     static getPhrases(model: JovoModelData, intent: ModelIntent): string[] {
         if (typeof intent !== 'string') {
             intent = intent.name;
@@ -141,12 +150,6 @@ export class JovoModelHelper {
         return foundIntent && foundIntent.phrases ? foundIntent.phrases : [];
     }
 
-    /**
-     * Adds a phrase to the given intent, if the intent does exist.
-     * @param model Model that is being mutated
-     * @param intent Intent-object or string (intent-name)
-     * @param phrase Phrase to add to the intent
-     */
     static addPhrase(model: JovoModelData, intent: ModelIntent, phrase: string) {
         if (typeof intent !== 'string') {
             intent = intent.name;
@@ -163,79 +166,59 @@ export class JovoModelHelper {
         }
     }
 
-    /**
-     * Removes a phrase from the given intent, if the intent & phrase exist.
-     * @param model Model that is being mutated
-     * @param intent Intent-object or string (intent-name)
-     * @param phrase Phrase to remove from the intent
-     */
-    static removePhrase(model: JovoModelData, intent: ModelIntent, phrase: string) {
+    static removePhrase(
+        model: JovoModelData,
+        intent: ModelIntent,
+        phrase: string,
+    ) {
         const indexes = this.getPhraseIndex(model, intent, phrase);
 
-        if (indexes.intentIndex >= 0
-            && indexes.index >= 0
-            && model.intents
-            && model.intents[indexes.intentIndex]
-            && model.intents[indexes.intentIndex].phrases) {
+        if (
+            has(model, `intents[${indexes.intentIndex}].phrases[${indexes.index}]`)
+        ) {
             model.intents![indexes.intentIndex].phrases!.splice(indexes.index, 1);
         }
     }
 
-    /**
-     * Updates a phrase's value of the given intent, if the intent & phrase exist.
-     * @param model Model that is being mutated
-     * @param intent Intent-object or string (intent-name)
-     * @param oldPhrase Old phrase to be replace
-     * @param newPhrase New phrase to replace
-     */
-    static updatePhrase(model: JovoModelData, intent: ModelIntent, oldPhrase: string, newPhrase: string) {
+    static updatePhrase(
+        model: JovoModelData,
+        intent: ModelIntent,
+        oldPhrase: string,
+        newPhrase: string,
+    ) {
         if (typeof intent !== 'string') {
             intent = intent.name;
         }
 
-        const intentIndex = this.getIntentIndexByName(model, intent);
-        if (intentIndex >= 0
-            && model.intents
-            && model.intents[intentIndex]
-            && model.intents[intentIndex].phrases) {
-            const phraseIndex = model.intents[intentIndex].phrases!.indexOf(oldPhrase);
-            if (phraseIndex >= 0) {
-                const phrases = model.intents[intentIndex].phrases!.slice();
-                phrases[phraseIndex] = newPhrase;
-                model.intents[intentIndex].phrases = phrases;
-            }
+        const indexes = this.getPhraseIndex(model, intent, oldPhrase);
+        if (
+            has(model, `intents[${indexes.intentIndex}].phrases[${indexes.index}]`)
+        ) {
+            const phrases = model.intents![indexes.intentIndex].phrases!.slice();
+            phrases[indexes.index] = newPhrase;
+            model.intents![indexes.intentIndex].phrases = phrases;
         }
     }
 
-    /**
-     * Retrieves a phrase's index of the given intent, if the intent & phrase exist.
-     * @param model Model
-     * @param intent Intent-object or string (intent-name)
-     * @param phrase Phrase to look for
-     */
-    static getPhraseIndex(model: JovoModelData, intent: ModelIntent, phrase: string): IntentIndex {
+    static getPhraseIndex(
+        model: JovoModelData,
+        intent: ModelIntent,
+        phrase: string,
+    ): IntentIndex {
         if (typeof intent !== 'string') {
             intent = intent.name;
         }
 
         const intentIndex = this.getIntentIndexByName(model, intent);
-        if (intentIndex >= 0
-            && model.intents
-            && model.intents[intentIndex]
-            && model.intents[intentIndex].phrases) {
+        if (has(model, `intents[${intentIndex}].phrases`)) {
             return {
                 intentIndex,
-                index: model.intents[intentIndex].phrases!.indexOf(phrase),
+                index: model.intents![intentIndex].phrases!.indexOf(phrase),
             };
         }
-        return {intentIndex, index: -1};
+        return { intentIndex, index: -1 };
     }
 
-    /**
-     * Checks if the phrase exists in any intent.
-     * @param model Model
-     * @param phrase Phrase to look for
-     */
     static hasPhrase(model: JovoModelData, phrase: string): boolean {
         if (!model.intents) {
             return false;
@@ -245,11 +228,6 @@ export class JovoModelHelper {
         });
     }
 
-    /**
-     * Retrieves the inputs of the given intent, if the intent does exist.
-     * @param model Model
-     * @param intent Intent-object or string (intent-name)
-     */
     static getInputs(model: JovoModelData, intent: ModelIntent): IntentInput[] {
         if (typeof intent !== 'string') {
             intent = intent.name;
@@ -259,14 +237,12 @@ export class JovoModelHelper {
         return foundIntent && foundIntent.inputs ? foundIntent.inputs : [];
     }
 
-    /**
-     * Adds an input to the given intent, if the intent does exist.
-     * @param model Model that is being mutated
-     * @param intent Intent-object or string (intent-name)
-     * @param input IntentInput-object or string (input-name)
-     * @param checkForDuplicates
-     */
-    static addInput(model: JovoModelData, intent: ModelIntent, input: ModelIntentInput, checkForDuplicates = true) {
+    static addInput(
+        model: JovoModelData,
+        intent: ModelIntent,
+        input: ModelIntentInput,
+        checkForDuplicates = true,
+    ) {
         if (typeof intent !== 'string') {
             intent = intent.name;
         }
@@ -286,9 +262,11 @@ export class JovoModelHelper {
 
             if (checkForDuplicates) {
                 // check if there is no input with the name of 'input'; if true => add
-                if (!foundIntent.inputs.some((intentInput: IntentInput) => {
-                    return intentInput.name === (input as IntentInput).name;
-                })) {
+                if (
+                    !foundIntent.inputs.some((intentInput: IntentInput) => {
+                        return intentInput.name === (input as IntentInput).name;
+                    })
+                ) {
                     foundIntent.inputs.push(input);
                 }
             } else {
@@ -297,57 +275,65 @@ export class JovoModelHelper {
         }
     }
 
-    /**
-     * Removes an input from the given intent if the intent & input exist.
-     * @param model Model that is being mutated
-     * @param intent Intent-object or string (intent-name)
-     * @param input IntentInput-object or string (input-name)
-     */
-    static removeInput(model: JovoModelData, intent: ModelIntent, input: ModelIntentInput) {
+    static removeInput(
+        model: JovoModelData,
+        intent: ModelIntent,
+        input: ModelIntentInput,
+    ) {
         const indexes = this.getInputIndex(model, intent, input);
 
-        if (indexes.intentIndex >= 0
-            && indexes.index >= 0
-            && model.intents
-            && model.intents[indexes.intentIndex]
-            && model.intents[indexes.intentIndex].inputs) {
+        if (
+            has(model, `intents[${indexes.intentIndex}].inputs[${indexes.index}]`)
+        ) {
             model.intents![indexes.intentIndex].inputs!.splice(indexes.index, 1);
         }
     }
 
-    /**
-     * Retrieves a inputs's index of the given intent, if the intent & input exist.
-     * @param model Model
-     * @param intent Intent-object or string (intent-name)
-     * @param input IntentInput-object or string (input-name)
-     */
-    static getInputIndex(model: JovoModelData, intent: ModelIntent, input: ModelIntentInput): IntentIndex {
+    static updateInput(
+        model: JovoModelData,
+        intent: ModelIntent,
+        oldInput: ModelIntentInput,
+        newInput: IntentInput,
+    ) {
+        const indexes = this.getInputIndex(model, intent, oldInput);
+
+        if (
+            has(model, `intents[${indexes.intentIndex}].inputs[${indexes.index}]`)
+        ) {
+            const inputs = model.intents![indexes.intentIndex].inputs!.slice();
+            inputs[indexes.index] = newInput;
+            model.intents![indexes.intentIndex].inputs = inputs;
+        }
+    }
+
+    static getInputIndex(
+        model: JovoModelData,
+        intent: ModelIntent,
+        input: ModelIntentInput,
+    ): IntentIndex {
         if (typeof intent !== 'string') {
             intent = intent.name;
         }
 
         const intentIndex = this.getIntentIndexByName(model, intent);
-        if (intentIndex >= 0 && model.intents && model.intents[intentIndex] && model.intents[intentIndex].inputs) {
+        if (has(model, `intents[${intentIndex}].inputs`)) {
             if (typeof input !== 'string') {
                 input = input.name;
             }
 
-            const index = model.intents[intentIndex].inputs!.findIndex((intentInput: IntentInput) => {
-                return intentInput.name === input;
-            });
+            const index = model.intents![intentIndex].inputs!.findIndex(
+                (intentInput: IntentInput) => {
+                    return intentInput.name === input;
+                },
+            );
             return {
                 intentIndex,
                 index,
             };
         }
-        return {intentIndex, index: -1};
+        return { intentIndex, index: -1 };
     }
 
-    /**
-     * Adds an input-type to the model, if at least one with the name does not exist.
-     * @param model Model that is being mutated
-     * @param inputType InputType-object or string (input-type-name)
-     */
     static addInputType(model: JovoModelData, inputType: ModelInputType) {
         if (typeof inputType === 'string') {
             inputType = {
@@ -365,11 +351,6 @@ export class JovoModelHelper {
         }
     }
 
-    /**
-     * Removes an input-type from the model, if at least one with the name does exist.
-     * @param model Model that is being mutated
-     * @param inputType InputType-object or string (input-type-name)
-     */
     static removeInputType(model: JovoModelData, inputType: ModelInputType) {
         if (typeof inputType !== 'string') {
             inputType = inputType.name;
@@ -381,30 +362,28 @@ export class JovoModelHelper {
         }
     }
 
-    /**
-     * Updates an input-type in the model, if at least one with the name does exist.
-     * @param model Model that is being mutated
-     * @param inputType InputType-object or string (input-type-name) to be replaced
-     * @param newInputType InputType-object to replace
-     */
-    static updateInputType(model: JovoModelData, inputType: ModelInputType, newInputType: InputType): JovoModelData {
+    static updateInputType(
+        model: JovoModelData,
+        inputType: ModelInputType,
+        newInputType: InputType,
+    ): JovoModelData {
         if (typeof inputType !== 'string') {
             inputType = inputType.name;
         }
 
         const index = this.getInputTypeIndexByName(model, inputType);
         if (index >= 0 && model.inputTypes) {
-            model.inputTypes[index] = newInputType;
+            const inputTypes = model.inputTypes.slice();
+            inputTypes[index] = newInputType;
+            model.inputTypes = inputTypes;
         }
         return model;
     }
 
-    /**
-     * Retrieves an input-type from the model that has the given name.
-     * @param model Model
-     * @param name InputType-name to look for
-     */
-    static getInputTypeByName(model: JovoModelData, name: string): InputType | undefined {
+    static getInputTypeByName(
+        model: JovoModelData,
+        name: string,
+    ): InputType | undefined {
         if (!model.inputTypes) {
             return;
         }
@@ -413,11 +392,6 @@ export class JovoModelHelper {
         });
     }
 
-    /**
-     * Retrieves the index of an input-type from the model that has the given name.
-     * @param model Model
-     * @param name InputType-name to look for
-     */
     static getInputTypeIndexByName(model: JovoModelData, name: string): number {
         if (!model.inputTypes) {
             return -1;
@@ -427,12 +401,10 @@ export class JovoModelHelper {
         });
     }
 
-    /**
-     * Retrieves the values of an input-type, if the input-type does exist.
-     * @param model Model
-     * @param inputType InputType-object or string (input-type-name)
-     */
-    static getInputTypeValues(model: JovoModelData, inputType: ModelInputType): InputTypeValue[] {
+    static getInputTypeValues(
+        model: JovoModelData,
+        inputType: ModelInputType,
+    ): InputTypeValue[] {
         if (typeof inputType !== 'string') {
             inputType = inputType.name;
         }
@@ -441,14 +413,12 @@ export class JovoModelHelper {
         return foundInputType && foundInputType.values ? foundInputType.values : [];
     }
 
-    /**
-     * Adds a value to the given input-type, if one with the name does exist.
-     * @param model Model that is being mutated
-     * @param inputType InputType-object or string (input-type-name)
-     * @param value InputTypeValue-object or string (input-type-value-value)
-     * @param checkForDuplicates
-     */
-    static addInputTypeValue(model: JovoModelData, inputType: ModelInputType, value: ModelInputTypeValue, checkForDuplicates = true) {
+    static addInputTypeValue(
+        model: JovoModelData,
+        inputType: ModelInputType,
+        value: ModelInputTypeValue,
+        checkForDuplicates = true,
+    ) {
         if (typeof inputType !== 'string') {
             inputType = inputType.name;
         }
@@ -469,9 +439,11 @@ export class JovoModelHelper {
 
             if (checkForDuplicates) {
                 // check if there is no input with the name of 'input'; if true => add
-                if (!foundInputType.values.some((inputTypeValue: InputTypeValue) => {
-                    return inputTypeValue.value === (value as InputTypeValue).value;
-                })) {
+                if (
+                    !foundInputType.values.some((inputTypeValue: InputTypeValue) => {
+                        return inputTypeValue.value === (value as InputTypeValue).value;
+                    })
+                ) {
                     foundInputType.values.push(value);
                 }
             } else {
@@ -480,49 +452,180 @@ export class JovoModelHelper {
         }
     }
 
-    /**
-     * Removes the value of the given input-type, if the input-type & value exist.
-     * @param model Model that is being mutated
-     * @param inputType InputType-object or string (input-type-name)
-     * @param value InputTypeValue-object or string (input-type-value-value)
-     */
-    static removeInputTypeValue(model: JovoModelData, inputType: ModelInputType, value: ModelInputTypeValue) {
+    static removeInputTypeValue(
+        model: JovoModelData,
+        inputType: ModelInputType,
+        value: ModelInputTypeValue,
+    ) {
         const indexes = this.getInputTypeValueIndex(model, inputType, value);
 
-        if (indexes.inputTypeIndex >= 0
-            && indexes.index >= 0
-            && model.inputTypes
-            && model.inputTypes[indexes.inputTypeIndex]
-            && model.inputTypes[indexes.inputTypeIndex].values) {
-            model.inputTypes[indexes.inputTypeIndex].values!.splice(indexes.index, 1);
+        if (
+            has(
+                model,
+                `inputTypes[${indexes.inputTypeIndex}].values[${indexes.index}]`,
+            )
+        ) {
+            model.inputTypes![indexes.inputTypeIndex].values!.splice(
+                indexes.index,
+                1,
+            );
         }
     }
 
-    /**
-     * Retrieves the index of an input-type-value from the given input-type that has the given value.
-     * @param model Model
-     * @param inputType InputType-object or string (input-type-name)
-     * @param value InputTypeValue-object or string (input-type-value-value)
-     */
-    static getInputTypeValueIndex(model: JovoModelData, inputType: ModelInputType, value: ModelInputTypeValue): InputTypeIndex {
+    static updateInputTypeValue(
+        model: JovoModelData,
+        inputType: ModelInputType,
+        value: ModelInputTypeValue,
+        newValue: InputTypeValue,
+    ) {
+        const indexes = this.getInputTypeValueIndex(model, inputType, value);
+
+        if (
+            has(
+                model,
+                `inputTypes[${indexes.inputTypeIndex}].values[${indexes.index}]`,
+            )
+        ) {
+            const values = model.inputTypes![indexes.inputTypeIndex].values!.slice();
+            values[indexes.index] = newValue;
+            model.inputTypes![indexes.inputTypeIndex].values = values;
+        }
+    }
+
+    static getInputTypeValueIndex(
+        model: JovoModelData,
+        inputType: ModelInputType,
+        value: ModelInputTypeValue,
+    ): InputTypeIndex {
         if (typeof inputType !== 'string') {
             inputType = inputType.name;
         }
 
         const inputTypeIndex = this.getInputTypeIndexByName(model, inputType);
-        if (inputTypeIndex >= 0 && model.inputTypes && model.inputTypes[inputTypeIndex] && model.inputTypes[inputTypeIndex].values) {
+        if (has(model, `inputTypes[${inputTypeIndex}].values`)) {
             if (typeof value !== 'string') {
                 value = value.value;
             }
-            const index = model.inputTypes[inputTypeIndex].values!.findIndex((inputTypeValue: InputTypeValue) => {
-                return inputTypeValue.value === value;
-            });
+            const index = model.inputTypes![inputTypeIndex].values!.findIndex(
+                (inputTypeValue: InputTypeValue) => {
+                    return inputTypeValue.value === value;
+                },
+            );
             return {
                 inputTypeIndex,
                 index,
             };
         }
-        return {inputTypeIndex, index: -1};
+        return { inputTypeIndex, index: -1 };
     }
 
+    static addInputTypeValueSynonym(
+        model: JovoModelData,
+        inputType: ModelInputType,
+        value: ModelInputTypeValue,
+        synonym: string,
+        checkForDuplicates = true,
+    ) {
+        if (typeof inputType !== 'string') {
+            inputType = inputType.name;
+        }
+
+        const indexes = this.getInputTypeValueIndex(model, inputType, value);
+        if (
+            has(
+                model,
+                `inputTypes[${indexes.inputTypeIndex}].values[${indexes.index}]`,
+            )
+        ) {
+            if (
+                !model.inputTypes![indexes.inputTypeIndex].values![indexes.index]
+                    .synonyms
+            ) {
+                model.inputTypes![indexes.inputTypeIndex].values![
+                    indexes.index
+                    ].synonyms = [];
+            }
+
+            if (checkForDuplicates) {
+                if (
+                    !model.inputTypes![indexes.inputTypeIndex].values![
+                        indexes.index
+                        ].synonyms!.includes(synonym)
+                ) {
+                    model.inputTypes![indexes.inputTypeIndex].values![
+                        indexes.index
+                        ].synonyms!.push(synonym);
+                }
+            } else {
+                model.inputTypes![indexes.inputTypeIndex].values![
+                    indexes.index
+                    ].synonyms!.push(synonym);
+            }
+        }
+    }
+
+    static removeInputTypeValueSynonym(
+        model: JovoModelData,
+        inputType: ModelInputType,
+        value: ModelInputTypeValue,
+        synonym: string,
+    ) {
+        if (typeof inputType !== 'string') {
+            inputType = inputType.name;
+        }
+
+        const indexes = this.getInputTypeValueIndex(model, inputType, value);
+        if (
+            has(
+                model,
+                `inputTypes[${indexes.inputTypeIndex}].values[${
+                    indexes.index
+                }].synonyms`,
+            )
+        ) {
+            const synonymIndex = model.inputTypes![indexes.inputTypeIndex].values![
+                indexes.index
+                ].synonyms!.indexOf(synonym);
+            if (synonymIndex >= 0) {
+                model.inputTypes![indexes.inputTypeIndex].values![
+                    indexes.index
+                    ].synonyms!.splice(synonymIndex, 1);
+            }
+        }
+    }
+
+    static updateInputTypeValueSynonym(
+        model: JovoModelData,
+        inputType: ModelInputType,
+        value: ModelInputTypeValue,
+        synonym: string,
+        newSynonym: string,
+    ) {
+        if (typeof inputType !== 'string') {
+            inputType = inputType.name;
+        }
+
+        const indexes = this.getInputTypeValueIndex(model, inputType, value);
+        if (
+            has(
+                model,
+                `inputTypes[${indexes.inputTypeIndex}].values[${
+                    indexes.index
+                }].synonyms`,
+            )
+        ) {
+            const synonymIndex = model.inputTypes![indexes.inputTypeIndex].values![
+                indexes.index
+                ].synonyms!.indexOf(synonym);
+            if (synonymIndex >= 0) {
+                const synonyms = model.inputTypes![indexes.inputTypeIndex].values![
+                    indexes.index
+                    ].synonyms!.slice();
+                synonyms[synonymIndex] = newSynonym;
+                model.inputTypes![indexes.inputTypeIndex].values![
+                    indexes.index
+                    ].synonyms = synonyms;
+            }
+        }
+    }
 }
