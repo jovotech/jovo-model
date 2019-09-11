@@ -24,11 +24,11 @@ export interface Intent {
 export interface IntentInput {
     name: string;
     text?: string;
-    type?: string | {
-        [key: string]: string;
-    };
+    type?: IntentInputType;
 }
 
+export type IntentInputType = string | IntentInputTypeObject;
+export type IntentInputTypeObject = Record<string, string>;
 
 export interface JovoModelData {
     inputTypes?: InputType[];
