@@ -1,6 +1,6 @@
 {
     "name": "jovo-model-alexa",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "Jovo Model for Alexa",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -30,7 +30,7 @@
         "typescript-json-schema": "^0.34.0"
     },
     "dependencies": {
-        "jovo-model": "^0.1.8"
+        "jovo-model": "^0.1.9"
     },
     "jest": {
         "transform": {
