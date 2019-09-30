@@ -5,9 +5,9 @@ import {JovoModelHelper, ModelInputType, ModelInputTypeValue, ModelIntent, Model
 type JovoModelHelperKeys = keyof typeof JovoModelHelper;
 type Keys = Exclude<JovoModelHelperKeys, 'prototype' | 'new'>;
 
-type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0
-  ? []
-  : (((...b: T) => any) extends (a: T[0], ...b: infer I) => any ? I : []);
+type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0 // tslint:disable-line:no-any
+    ? []
+  : (((...b: T) => any) extends (a: T[0], ...b: infer I) => any ? I : []); // tslint:disable-line:no-any
 
 export type JovoModelBuilderType = {
   [key in Keys]: (
@@ -171,16 +171,16 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
       JovoModelHelper,
     ).filter((prop: string) => {
       return (
-        typeof (JovoModelHelper as any)[prop] === 'function' &&
-        !EXCLUDED_PROPERTIES.includes(prop as any)
+        typeof (JovoModelHelper as any)[prop] === 'function' && // tslint:disable-line:no-any
+        !EXCLUDED_PROPERTIES.includes(prop as any) // tslint:disable-line:no-any
       );
     });
 
     staticHelperMethodNames.forEach((methodName: string) => {
-      const method: (...args: any[]) => any = (JovoModelHelper as any)[
+      const method: (...args: any[]) => any = (JovoModelHelper as any)[ // tslint:disable-line:no-any
         methodName
       ];
-      (JovoModelBuilder.prototype as any)[methodName] = (...args: any[]) => {
+      (JovoModelBuilder.prototype as any)[methodName] = (...args: any[]) => { // tslint:disable-line:no-any
         method.call(JovoModelHelper, this.$model, ...args);
         return this;
       };
