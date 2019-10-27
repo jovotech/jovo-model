@@ -107,7 +107,7 @@ export class JovoModelHelper {
         model: JovoModelData,
         intent: ModelIntent,
         newIntent: Intent,
-    ): JovoModelData {
+    ) {
         if (typeof intent !== 'string') {
             intent = intent.name;
         }
@@ -117,7 +117,6 @@ export class JovoModelHelper {
             intents[index] = newIntent;
             model.intents = intents;
         }
-        return model;
     }
 
     static getIntentByName(
@@ -366,7 +365,7 @@ export class JovoModelHelper {
         model: JovoModelData,
         inputType: ModelInputType,
         newInputType: InputType,
-    ): JovoModelData {
+    ) {
         if (typeof inputType !== 'string') {
             inputType = inputType.name;
         }
@@ -377,7 +376,6 @@ export class JovoModelHelper {
             inputTypes[index] = newInputType;
             model.inputTypes = inputTypes;
         }
-        return model;
     }
 
     static getInputTypeByName(

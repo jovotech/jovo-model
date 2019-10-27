@@ -1,6 +1,13 @@
-import {InputType, InputTypeValue, Intent, IntentInput, JovoModelData} from './Interfaces';
-import {JovoModelHelper, ModelInputType, ModelInputTypeValue, ModelIntent, ModelIntentInput} from './JovoModelHelper';
-
+import { InputType, InputTypeValue, Intent, IntentInput, JovoModelData } from './Interfaces';
+import {
+  InputTypeIndex,
+  IntentIndex,
+  JovoModelHelper,
+  ModelInputType,
+  ModelInputTypeValue,
+  ModelIntent,
+  ModelIntentInput,
+} from './JovoModelHelper';
 
 type JovoModelHelperKeys = keyof typeof JovoModelHelper;
 type Keys = Exclude<JovoModelHelperKeys, 'prototype' | 'new'>;
@@ -12,7 +19,9 @@ type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0
 export type JovoModelBuilderType = {
   [key in Keys]: (
     ...args: RemoveFirstFromTuple<Parameters<typeof JovoModelHelper[key]>>
-  ) => JovoModelBuilderInterface
+  ) => ReturnType<typeof JovoModelHelper[key]> extends undefined | JovoModelData
+    ? JovoModelBuilderInterface
+    : ReturnType<typeof JovoModelHelper[key]>;
 };
 
 export interface JovoModelBuilderInterface extends JovoModelBuilderType {
@@ -40,48 +49,36 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   addIntent!: (intent: ModelIntent) => JovoModelBuilderInterface;
 
-  addPhrase!: (
-    intent: ModelIntent,
-    phrase: string,
-  ) => JovoModelBuilderInterface;
+  addPhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilderInterface;
 
-  getInputIndex!: (
-    intent: ModelIntent,
-    input: ModelIntentInput,
-  ) => JovoModelBuilderInterface;
+  getInputIndex!: (intent: ModelIntent, input: ModelIntentInput) => IntentIndex;
 
-  getInputTypeByName!: (name: string) => JovoModelBuilderInterface;
+  getInputTypeByName!: (name: string) => InputType | undefined;
 
-  getInputTypeIndexByName!: (name: string) => JovoModelBuilderInterface;
+  getInputTypeIndexByName!: (name: string) => number;
 
   getInputTypeValueIndex!: (
     inputType: ModelInputType,
     value: ModelInputTypeValue,
-  ) => JovoModelBuilderInterface;
+  ) => InputTypeIndex;
 
-  getInputTypeValues!: (inputType: ModelInputType) => JovoModelBuilderInterface;
+  getInputTypeValues!: (inputType: ModelInputType) => InputTypeValue[];
 
-  getInputs!: (intent: ModelIntent) => JovoModelBuilderInterface;
+  getInputs!: (intent: ModelIntent) => IntentInput[];
 
-  getIntentByName!: (name: string) => JovoModelBuilderInterface;
+  getIntentByName!: (name: string) => Intent | undefined;
 
-  getIntentIndexByName!: (name: string) => JovoModelBuilderInterface;
+  getIntentIndexByName!: (name: string) => number;
 
-  getPhraseIndex!: (
-    intent: ModelIntent,
-    phrase: string,
-  ) => JovoModelBuilderInterface;
+  getPhraseIndex!: (intent: ModelIntent, phrase: string) => IntentIndex;
 
-  getPhrases!: (intent: ModelIntent) => JovoModelBuilderInterface;
+  getPhrases!: (intent: ModelIntent) => string[];
 
-  hasPhrase!: (phrase: string) => JovoModelBuilderInterface;
+  hasPhrase!: (phrase: string) => boolean;
 
   prepareModel!: () => JovoModelBuilderInterface;
 
-  removeInput!: (
-    intent: ModelIntent,
-    input: ModelIntentInput,
-  ) => JovoModelBuilderInterface;
+  removeInput!: (intent: ModelIntent, input: ModelIntentInput) => JovoModelBuilderInterface;
 
   removeInputType!: (inputType: ModelInputType) => JovoModelBuilderInterface;
 
@@ -92,20 +89,14 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   removeIntent!: (intent: ModelIntent) => JovoModelBuilderInterface;
 
-  removePhrase!: (
-    intent: ModelIntent,
-    phrase: string,
-  ) => JovoModelBuilderInterface;
+  removePhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilderInterface;
 
   updateInputType!: (
     inputType: ModelInputType,
     newInputType: InputType,
   ) => JovoModelBuilderInterface;
 
-  updateIntent!: (
-    intent: ModelIntent,
-    newIntent: Intent,
-  ) => JovoModelBuilderInterface;
+  updateIntent!: (intent: ModelIntent, newIntent: Intent) => JovoModelBuilderInterface;
 
   updateInput!: (
     intent: ModelIntent,
@@ -145,12 +136,9 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
     newSynonym: string,
   ) => JovoModelBuilderInterface;
 
-  private $model: JovoModelData;
+  private readonly $model: JovoModelData;
 
-  constructor(
-    model?: JovoModelData,
-    private $timestamp = new Date().getTime(),
-  ) {
+  constructor(model?: JovoModelData, private $timestamp = new Date().getTime()) {
     this.prepareBuilder();
 
     this.$model = model
@@ -167,23 +155,26 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
   }
 
   private loadFunctions() {
-    const staticHelperMethodNames = Object.getOwnPropertyNames(
-      JovoModelHelper,
-    ).filter((prop: string) => {
-      return (
-        typeof (JovoModelHelper as any)[prop] === 'function' &&
-        !EXCLUDED_PROPERTIES.includes(prop as any)
-      );
-    });
+    const staticHelperMethodNames = Object.getOwnPropertyNames(JovoModelHelper).filter(
+      (prop: string) => {
+        return (
+          typeof (JovoModelHelper as any)[prop] === 'function' &&
+          !EXCLUDED_PROPERTIES.includes(prop as any)
+        );
+      },
+    ) as Array<keyof typeof JovoModelHelper>;
 
-    staticHelperMethodNames.forEach((methodName: string) => {
-      const method: (...args: any[]) => any = (JovoModelHelper as any)[
-        methodName
-      ];
+    for (const methodName of staticHelperMethodNames) {
+      const method = JovoModelHelper[methodName] as Function;
       (JovoModelBuilder.prototype as any)[methodName] = (...args: any[]) => {
-        method.call(JovoModelHelper, this.$model, ...args);
+        const result = method.call(JovoModelHelper, this.$model, ...args);
+
+        if (result || methodName === 'getIntentByName' || methodName === 'getInputTypeByName') {
+          return result;
+        }
+
         return this;
       };
-    });
+    }
   }
 }
