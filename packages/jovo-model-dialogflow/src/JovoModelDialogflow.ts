@@ -315,10 +315,6 @@ export class JovoModelDialogflow extends JovoModel {
 
                         parameterObj.dataType = '@' + parameterObj.dataType;
 
-                        if (matchedInputTypes.length === 0) {
-                            throw new Error('Input type "' + parameterObj.dataType + '" must be defined in inputTypes');
-                        }
-
                         // create alexaTypeObj from matched input types
                         for (const matchedInputType of matchedInputTypes) {
                             let dfEntityObj = {
