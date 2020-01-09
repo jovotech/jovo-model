@@ -1,53 +1,52 @@
 {
-    "name": "jovo-model",
-    "version": "0.1.10",
-    "description": "Jovo Model",
-    "main": "dist/src/index",
-    "types": "dist/src/index.d.ts",
-    "scripts": {
-        "build": "tsc",
-        "tslint": "tslint -p tsconfig.json -c tslint.json",
-        "tsc": "tsc",
-        "tscw": "tsc --watch",
-        "test": "jest",
-        "rimraf": "rimraf ./dist"
+  "name": "jovo-model",
+  "version": "0.1.10",
+  "description": "Jovo Model",
+  "main": "dist/src/index",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "tslint": "tslint -p tsconfig.json -c tslint.json",
+    "tsc": "tsc",
+    "tscw": "tsc --watch",
+    "test": "jest",
+    "rimraf": "rimraf ./dist"
+  },
+  "files": [
+    "dist"
+  ],
+  "author": "jovotech",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@types/lodash.has": "^4.5.6",
+    "@types/node": "^13.1.5",
+    "@types/tv4": "^1.2.29",
+    "jest": "^24.9.0",
+    "rimraf": "^3.0.0",
+    "ts-jest": "^24.3.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "lodash.has": "^4.5.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
     },
-    "files": [
-        "dist"
+    "testURL": "http://localhost/",
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testPathIgnorePatterns": [
+      "/dist/",
+      "/node_modules/"
     ],
-    "author": "jovotech",
-    "license": "Apache-2.0",
-    "devDependencies": {
-        "@types/jest": "^23.3.5",
-        "@types/lodash.has": "^4.5.6",
-        "@types/node": "^10.10.1",
-        "@types/tv4": "^1.2.29",
-        "jest": "^23.6.0",
-        "rimraf": "^2.6.2",
-        "ts-jest": "^23.10.4",
-        "tslint": "^5.11.0",
-        "typescript": "^3.0.3"
-    },
-    "dependencies": {
-        "lodash.has": "^4.5.2",
-        "typescript-json-schema": "^0.34.0"
-    },
-    "jest": {
-        "transform": {
-            "^.+\\.tsx?$": "ts-jest"
-        },
-        "testURL": "http://localhost/",
-        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-        "testPathIgnorePatterns": [
-            "/dist/",
-            "/node_modules/"
-        ],
-        "moduleFileExtensions": [
-            "ts",
-            "tsx",
-            "js",
-            "json"
-        ]
-    },
-    "gitHead": "f0e129be4a51123dcf3f47fc79db1f2a94794a99"
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  },
+  "gitHead": "f0e129be4a51123dcf3f47fc79db1f2a94794a99"
 }

@@ -1,6 +1,7 @@
 {
     "packages": [
         "jovo-model/",
+        "jovo-model-util/",
         "packages/*"
     ],
     "version": "independent"
