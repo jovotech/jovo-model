@@ -1,6 +1,6 @@
 {
   "name": "jovo-model-alexa",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Jovo Model for Alexa",
   "main": "dist/src/index",
   "types": "dist/src/index.d.ts",
@@ -23,14 +23,14 @@
     "@types/tv4": "^1.2.29",
     "gulp": "^4.0.2",
     "jest": "^24.9.0",
-    "jovo-model-util": "^0.1.9",
+    "jovo-model-util": "^0.1.10",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.3.0",
     "tslint": "^5.20.1",
     "typescript": "^3.7.4"
   },
   "dependencies": {
-    "jovo-model": "^0.1.11"
+    "jovo-model": "^0.1.12"
   },
   "jest": {
     "transform": {
