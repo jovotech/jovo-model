@@ -5,6 +5,7 @@
         "lerna": "lerna",
         "init": "lerna bootstrap",
         "tsc": "lerna exec npm run tsc",
+        "build": "lerna exec npm run build",
         "tslint": "lerna exec npm run tslint",
         "test": "lerna exec npm test",
         "clean": "lerna clean",
@@ -15,14 +16,14 @@
         "publish": "lerna publish --registry http://localhost:4873 --no-push"
     },
     "devDependencies": {
-        "@types/jest": "^23.3.5",
-        "@types/lodash": "^4.14.118",
-        "@types/node": "^10.10.1",
-        "jest": "^23.6.0",
-        "lerna": "^3.4.0",
-        "ts-jest": "^23.10.4",
-        "tslint": "^5.11.0",
-        "typescript": "^3.0.3"
-    },
-    "dependencies": {}
+        "@types/jest": "^24.0.25",
+        "@types/lodash": "^4.14.149",
+        "@types/node": "^13.1.5",
+        "jest": "^24.9.0",
+        "lerna": "^3.20.2",
+        "prettier": "^1.19.1",
+        "ts-jest": "^24.3.0",
+        "tslint": "^5.20.1",
+        "typescript": "^3.7.4"
+    }
 }

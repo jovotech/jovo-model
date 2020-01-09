@@ -1,9 +1,9 @@
 {
-  "name": "jovo-model",
+  "name": "jovo-model-util",
   "version": "0.1.8",
-  "description": "Jovo Model",
-  "main": "dist/src/index",
-  "types": "dist/src/index.d.ts",
+  "description": "Jovo Model Util",
+  "main": "dist/index",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "tslint": "tslint -p tsconfig.json -c tslint.json",
@@ -19,17 +19,17 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "^24.0.25",
-    "@types/lodash.has": "^4.5.6",
     "@types/node": "^13.1.5",
     "@types/tv4": "^1.2.29",
     "jest": "^24.9.0",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.3.0",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.4",
+    "typescript-json-schema": "^0.42.0"
   },
   "dependencies": {
-    "lodash.has": "^4.5.2"
+    "jovo-model": "^0.1.10"
   },
   "jest": {
     "transform": {

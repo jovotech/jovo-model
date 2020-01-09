@@ -1,4 +1,4 @@
-const jovoModel = require('jovo-model');
+const jovoModel = require('jovo-model-util');
 
 
 function build() {

@@ -37,14 +37,6 @@ export interface IntentInformation {
 export class JovoModelLuis extends JovoModel {
     static MODEL_KEY = 'luis';
 
-
-    /**
-     * Converts Luis files to JovoModel
-     *
-     * @param {NativeFileInformation[]} inputData The luis files
-     * @param {string} locale The locale of the files
-     * @memberof JovoModelLuis
-     */
     static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
         const inputData: LuisModelFile = inputFiles[0].content;
 
@@ -149,15 +141,6 @@ export class JovoModelLuis extends JovoModel {
         return jovoModel;
     }
 
-
-    /**
-     * Converts JovoModel to Luis files
-     *
-     * @param {JovoModelLuisData} model The JovoModel to convert
-     * @param {string} locale The locale of the JovoModel
-     * @returns {NativeFileInformation[]}
-     * @memberof JovoModelLuis
-     */
     static fromJovoModel(model: JovoModelLuisData, locale: string): NativeFileInformation[] {
         const inputTypeNameUsedCounter: InputTypeNameUsedCounter = {};
 
@@ -258,18 +241,6 @@ export class JovoModelLuis extends JovoModel {
         ];
     }
 
-
-    /**
-     * Returns Luis untterances and unique entityNames for each
-     * Jovo intent
-     *
-     * @static
-     * @param {Intent} intent The intent to return the data for
-     * @param {(InputType[] | undefined)} inputTypes All the inputTypes of the model
-     * @param {InputTypeNameUsedCounter} inputTypeNameUsedCounter Counts which values of the input types got used
-     * @returns {IntentInformation}
-     * @memberof JovoModelLuis
-     */
     static getIntentInformation(intent: Intent, inputTypes: InputType[] | undefined, inputTypeNameUsedCounter: InputTypeNameUsedCounter): IntentInformation {
         const returnData: IntentInformation = {
             entityNames: [],

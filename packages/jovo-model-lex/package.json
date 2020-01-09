@@ -18,19 +18,19 @@
     "author": "jovotech",
     "license": "Apache-2.0",
     "devDependencies": {
-        "@types/jest": "^23.3.5",
-        "@types/node": "^10.10.1",
+        "@types/jest": "^24.0.25",
+        "@types/node": "^13.1.5",
         "@types/tv4": "^1.2.29",
-        "gulp": "^4.0.0",
-        "jest": "^23.6.0",
-        "rimraf": "^2.6.2",
-        "ts-jest": "^23.10.4",
-        "tslint": "^5.11.0",
-        "typescript": "^3.0.3",
-        "typescript-json-schema": "^0.34.0"
+        "jovo-model-util": "^0.1.8",
+        "gulp": "^4.0.2",
+        "jest": "^24.9.0",
+        "rimraf": "^3.0.0",
+        "ts-jest": "^24.3.0",
+        "tslint": "^5.20.1",
+        "typescript": "^3.7.4"
     },
     "dependencies": {
-        "jovo-model": "^0.1.8"
+        "jovo-model": "^0.1.10"
     },
     "jest": {
         "transform": {

@@ -24,14 +24,6 @@ import * as JovoModelLexValidator from '../validators/JovoModelLexData.json';
 export class JovoModelLex extends JovoModel {
     static MODEL_KEY = 'lex';
 
-
-    /**
-     * Converts Lex files to JovoModel
-     *
-     * @param {NativeFileInformation[]} inputData The Lex files
-     * @param {string} locale The locale of the files
-     * @memberof JovoModelLex
-     */
     static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
         const inputData: LexModelFile = inputFiles[0].content;
 
@@ -110,15 +102,6 @@ export class JovoModelLex extends JovoModel {
         return jovoModel;
     }
 
-
-    /**
-     * Converts JovoModel to Lex files
-     *
-     * @param {JovoModelLexData} model The JovoModel to convert
-     * @param {string} locale The locale of the JovoModel
-     * @returns {NativeFileInformation[]}
-     * @memberof JovoModelLex
-     */
     static fromJovoModel(model: JovoModelLexData, locale: string): NativeFileInformation[] {
 
         const lexModel: LexModelFileResource = {
