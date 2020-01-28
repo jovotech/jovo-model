@@ -39,19 +39,19 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
     intent: ModelIntent,
     input: ModelIntentInput,
     checkForDuplicates?: boolean,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
-  addInputType!: (inputType: ModelInputType) => JovoModelBuilderInterface;
+  addInputType!: (inputType: ModelInputType) => JovoModelBuilder;
 
   addInputTypeValue!: (
     inputType: ModelInputType,
     value: ModelInputTypeValue,
     checkForDuplicates?: boolean,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
-  addIntent!: (intent: ModelIntent) => JovoModelBuilderInterface;
+  addIntent!: (intent: ModelIntent) => JovoModelBuilder;
 
-  addPhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilderInterface;
+  addPhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilder;
 
   getInputIndex!: (intent: ModelIntent, input: ModelIntentInput) => IntentIndex;
 
@@ -78,65 +78,65 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   hasPhrase!: (phrase: string) => boolean;
 
-  prepareModel!: () => JovoModelBuilderInterface;
+  prepareModel!: () => JovoModelBuilder;
 
-  removeInput!: (intent: ModelIntent, input: ModelIntentInput) => JovoModelBuilderInterface;
+  removeInput!: (intent: ModelIntent, input: ModelIntentInput) => JovoModelBuilder;
 
-  removeInputType!: (inputType: ModelInputType) => JovoModelBuilderInterface;
+  removeInputType!: (inputType: ModelInputType) => JovoModelBuilder;
 
   removeInputTypeValue!: (
     inputType: ModelInputType,
     value: ModelInputTypeValue,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
-  removeIntent!: (intent: ModelIntent) => JovoModelBuilderInterface;
+  removeIntent!: (intent: ModelIntent) => JovoModelBuilder;
 
-  removePhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilderInterface;
+  removePhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilder;
 
   updateInputType!: (
     inputType: ModelInputType,
     newInputType: InputType,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
-  updateIntent!: (intent: ModelIntent, newIntent: Intent) => JovoModelBuilderInterface;
+  updateIntent!: (intent: ModelIntent, newIntent: Intent) => JovoModelBuilder;
 
   updateInput!: (
     intent: ModelIntent,
     oldInput: ModelIntentInput,
     newInput: IntentInput,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
   updateInputTypeValue!: (
     inputType: ModelInputType,
     value: ModelInputTypeValue,
     newValue: InputTypeValue,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
   updatePhrase!: (
     intent: ModelIntent,
     oldPhrase: string,
     newPhrase: string,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
   addInputTypeValueSynonym!: (
     inputType: ModelInputType,
     value: ModelInputTypeValue,
     synonym: string,
     checkForDuplicates?: boolean,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
   removeInputTypeValueSynonym!: (
     inputType: ModelInputType,
     value: ModelInputTypeValue,
     synonym: string,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
   updateInputTypeValueSynonym!: (
     inputType: ModelInputType,
     value: ModelInputTypeValue,
     synonym: string,
     newSynonym: string,
-  ) => JovoModelBuilderInterface;
+  ) => JovoModelBuilder;
 
   private readonly $model: JovoModelData;
 
