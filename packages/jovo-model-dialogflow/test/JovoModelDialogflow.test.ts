@@ -755,7 +755,15 @@ describe("JovoModelDialogflow.ts", () => {
         for (const testData of testsData) {
             const jovoModel = new JovoModelDialogflow(testData.input.data as JovoModelData, testData.input.locale);
             test(testData.description, () => {
-                expect(jovoModel.exportNative()).toEqual(testData.result);
+
+                const result = jovoModel.exportNative();
+
+                // delete variable ids
+                delete result![2].content.id;
+                delete result![4].content.id;
+                delete result![6].content.id;
+
+                expect(result).toEqual(testData.result);
             });
         }
 
