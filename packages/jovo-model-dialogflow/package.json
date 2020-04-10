@@ -30,7 +30,8 @@
         "typescript": "^3.7.4"
     },
     "dependencies": {
-        "jovo-model": "^0.1.14"
+        "jovo-model": "^0.1.14",
+        "uuidv4": "^6.0.7"
     },
     "jest": {
         "transform": {
