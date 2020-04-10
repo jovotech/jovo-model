@@ -1,6 +1,6 @@
 {
     "name": "jovo-model-dialogflow",
-    "version": "0.1.14",
+    "version": "0.1.15",
     "description": "Jovo Model for Dialogflow",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
