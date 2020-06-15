@@ -767,7 +767,7 @@ export class JovoModelDialogflow extends JovoModel {
                             []
                         );
 
-                        if (message.speech.length > 0) {
+                        if (_.get(message, 'speech', '').length > 0) {
                             jovoIntentDialogflowMessages.push(message);
                             _.set(
                                 jovoIntent,
