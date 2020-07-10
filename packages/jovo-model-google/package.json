@@ -1,0 +1,37 @@
+{
+    "name": "jovo-model-google",
+    "version": "0.0.1",
+    "description": "Jovo Model for Google Conversational Actions.",
+    "main": "dist/src/index",
+    "types": "dist/src/index.d.ts",
+    "scripts": {
+        "build": "gulp && tsc",
+        "tslint": "tslint -p tsconfig.json -c tslint.json",
+        "tsc": "tsc",
+        "tscw": "tsc --watch",
+        "test": "jest",
+        "rimraf": "rimraf ./dist"
+    },
+    "author": "jovotech",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "jovo-model": "^0.1.14"
+    },
+    "jest": {
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "testURL": "http://localhost/",
+        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+        "testPathIgnorePatterns": [
+            "/dist/",
+            "/node_modules/"
+        ],
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "json"
+        ]
+    }
+}
