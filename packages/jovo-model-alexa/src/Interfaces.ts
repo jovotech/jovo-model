@@ -1,58 +1,50 @@
-import {
-    IntentInput,
-    JovoModelData,
-} from 'jovo-model';
-
+import { IntentInput, JovoModelData } from 'jovo-model';
 
 export interface AlexaLMTypeObject {
-    name: string;
-    values: AlexaLMTypeValue[];
+  name: string;
+  values: AlexaLMTypeValue[];
 }
-
 
 export interface AlexaLMTypeValue {
-    id: string | null;
-    name: {
-        value: string;
-        synonyms?: string[]
-    };
+  id: string | null;
+  name: {
+    value: string;
+    synonyms?: string[];
+  };
 }
-
 
 export interface AlexaLMInputObject {
-    name: string;
-    type: string | {
+  name: string;
+  type:
+    | string
+    | {
         [key: string]: string;
-    };
-    alexaInputObjtype?: string;
+      };
+  alexaInputObjtype?: string;
 }
-
 
 export interface AlexaLMIntent {
-    name: string;
-    slots?: AlexaLMInputObject[];
-    samples?: string[];
+  name: string;
+  slots?: AlexaLMInputObject[];
+  samples?: string[];
 }
-
 
 export interface AlexaModel {
-    interactionModel: {
-        languageModel: {
-            invocationName?: string;
-            intents?: AlexaLMIntent[];
-            types?: AlexaLMTypeObject[]
-        }
+  interactionModel: {
+    languageModel: {
+      invocationName?: string;
+      intents?: AlexaLMIntent[];
+      types?: AlexaLMTypeObject[];
     };
+  };
 }
-
 
 export interface IntentInputAlexa extends IntentInput {
-    alexa?: {
-        samples: string[];
-    };
+  alexa?: {
+    samples: string[];
+  };
 }
 
-
 export interface JovoModelAlexaData extends JovoModelData {
-    alexa?: AlexaModel;
+  alexa?: AlexaModel;
 }

@@ -343,7 +343,9 @@ export class JovoModel {
   static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
     // @ts-ignore
     throw new Error(
-      `Method "toJovoModel" is not implemented for model "${(this.constructor as typeof JovoModel).MODEL_KEY}"!`,
+      `Method "toJovoModel" is not implemented for model "${
+        (this.constructor as typeof JovoModel).MODEL_KEY
+      }"!`,
     );
   }
 
@@ -358,7 +360,9 @@ export class JovoModel {
   static fromJovoModel(model: JovoModelData, locale: string): NativeFileInformation[] {
     // @ts-ignore
     throw new Error(
-      `Method "fromJovoModel" is not implemented for model "${(this.constructor as typeof JovoModel).MODEL_KEY}"!`,
+      `Method "fromJovoModel" is not implemented for model "${
+        (this.constructor as typeof JovoModel).MODEL_KEY
+      }"!`,
     );
   }
 
@@ -371,7 +375,9 @@ export class JovoModel {
   static getValidator(): tv4.JsonSchema {
     // @ts-ignore
     throw new Error(
-      `Method "getValidator" is not implemented for model "${(this.constructor as typeof JovoModel).MODEL_KEY}"!`,
+      `Method "getValidator" is not implemented for model "${
+        (this.constructor as typeof JovoModel).MODEL_KEY
+      }"!`,
     );
   }
 }

@@ -7,20 +7,20 @@
  * @extends {Error}
  */
 export class ModelValidationError extends Error {
-    locale: string;
-    path: string | undefined;
+  locale: string;
+  path: string | undefined;
 
-    constructor(message: string, locale: string, path: string | undefined) {
-        super(message);
-        this.path = path;
-        this.locale = locale;
-    }
+  constructor(message: string, locale: string, path: string | undefined) {
+    super(message);
+    this.path = path;
+    this.locale = locale;
+  }
 
-    show() {
-        console.error(`\n\nModel file for locale "${this.locale}" is not valid!`);
-        console.error(`***********************************************`);
-        console.error(`Error: "${this.message}"`);
-        console.error(`at location: "${this.path}"`);
-        console.error('');
-    }
+  show() {
+    console.error(`\n\nModel file for locale "${this.locale}" is not valid!`);
+    console.error(`***********************************************`);
+    console.error(`Error: "${this.message}"`);
+    console.error(`at location: "${this.path}"`);
+    console.error('');
+  }
 }

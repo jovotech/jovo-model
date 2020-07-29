@@ -14,9 +14,10 @@ type Keys = Exclude<JovoModelHelperKeys, 'prototype' | 'new'>;
 
 // tslint:disable-next-line:no-any
 type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0
-  ? []
-    // tslint:disable-next-line:no-any
-    : (((...b: T) => any) extends (a: T[0], ...b: infer I) => any ? I : []);
+  ? [] // tslint:disable-next-line:no-any
+  : ((...b: T) => any) extends (a: T[0], ...b: infer I) => any
+  ? I
+  : [];
 
 export type JovoModelBuilderType = {
   [key in Keys]: (
@@ -93,10 +94,7 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   removePhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilder;
 
-  updateInputType!: (
-    inputType: ModelInputType,
-    newInputType: InputType,
-  ) => JovoModelBuilder;
+  updateInputType!: (inputType: ModelInputType, newInputType: InputType) => JovoModelBuilder;
 
   updateIntent!: (intent: ModelIntent, newIntent: Intent) => JovoModelBuilder;
 
@@ -112,11 +110,7 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
     newValue: InputTypeValue,
   ) => JovoModelBuilder;
 
-  updatePhrase!: (
-    intent: ModelIntent,
-    oldPhrase: string,
-    newPhrase: string,
-  ) => JovoModelBuilder;
+  updatePhrase!: (intent: ModelIntent, oldPhrase: string, newPhrase: string) => JovoModelBuilder;
 
   addInputTypeValueSynonym!: (
     inputType: ModelInputType,
@@ -170,8 +164,8 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
     for (const methodName of staticHelperMethodNames) {
       const method = JovoModelHelper[methodName] as Function;
-        // tslint:disable-next-line:no-any
-        (JovoModelBuilder.prototype as any)[methodName] = (...args: any[]) => {
+      // tslint:disable-next-line:no-any
+      (JovoModelBuilder.prototype as any)[methodName] = (...args: any[]) => {
         const result = method.call(JovoModelHelper, this.$model, ...args);
 
         if (result || methodName === 'getIntentByName' || methodName === 'getInputTypeByName') {
