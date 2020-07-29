@@ -1,1 +1,1 @@
-export * from "./JovoModelGoogle";
+export * from './JovoModelGoogle';

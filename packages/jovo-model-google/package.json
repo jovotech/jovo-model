@@ -15,7 +15,8 @@
     "author": "jovotech",
     "license": "Apache-2.0",
     "dependencies": {
-        "jovo-model": "^0.1.14"
+        "jovo-model": "^0.1.14",
+        "yaml": "^1.10.0"
     },
     "jest": {
         "transform": {
