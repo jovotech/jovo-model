@@ -172,8 +172,7 @@ export class JovoModelGoogle extends JovoModel {
               break;
             }
 
-            const matched: string = match[0];
-            const inputName: string = match[1];
+            const [matched, inputName] = match;
 
             phrase = phrase.replace(matched, `{${inputName}}`);
 
@@ -188,8 +187,7 @@ export class JovoModelGoogle extends JovoModel {
               const defaultModel: GAIntent = yaml.parse(file);
 
               if (!defaultModel.parameters) {
-                // ToDo: Should never happen!
-                throw new Error('Could not find input type.');
+                throw new Error(`Could not find parameters for type ${modelName}.`);
               }
 
               model = defaultModel;
@@ -202,7 +200,7 @@ export class JovoModelGoogle extends JovoModel {
             if (!hasInput) {
               inputs.push({
                 name: inputParameter.name,
-                type: inputParameter.type,
+                type: inputParameter.type.name,
               });
             }
           }

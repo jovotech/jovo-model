@@ -46,5 +46,6 @@ export interface IntentInputAlexa extends IntentInput {
 }
 
 export interface JovoModelAlexaData extends JovoModelData {
+  invocation: string | { alexaSkill: string };
   alexa?: AlexaModel;
 }

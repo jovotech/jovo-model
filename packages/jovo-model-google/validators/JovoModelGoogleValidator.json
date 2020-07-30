@@ -14,7 +14,16 @@
 			}
 		},
 		"invocation": {
-			"type": "string"
+			"anyOf": [
+				{
+					"type": "object",
+					"properties": {},
+					"additionalProperties": true
+				},
+				{
+					"type": "string"
+				}
+			]
 		}
 	},
 	"required": [
