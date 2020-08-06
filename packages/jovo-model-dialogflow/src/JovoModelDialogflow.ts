@@ -220,7 +220,7 @@ export class JovoModelDialogflow extends JovoModel {
 
                 return false;
             });
-            
+
             if (userSaysFile !== undefined) {
                 const values = [];
                 const entries = userSaysFile.content;
@@ -386,20 +386,19 @@ export class JovoModelDialogflow extends JovoModel {
                                 const entityValues = [];
                                 // create dfEntityValueObj
                                 for (const value of matchedInputType.values) {
-                                    let dfEntityValueObj = {
+                                    const dfEntityValueObj = {
                                         value: value.value,
                                     } as {
                                         value: string,
                                         synonyms?: string[]
                                     };
-                                    
+
                                     // save synonyms, if defined
                                     if (!dfEntityObj.isEnum && !dfEntityObj.isRegexp) {
-                                        dfEntityValueObj.synonyms = [];
-                                        dfEntityValueObj.synonyms[0] = value.value.replace(
+                                        dfEntityValueObj.synonyms = [value.value.replace(
                                             /[^0-9A-Za-zÀ-ÿ-_' ]/gi,
                                             ""
-                                        )
+                                        )];
                                         if (value.synonyms) {
                                             for (
                                                 let i = 0;
