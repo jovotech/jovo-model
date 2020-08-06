@@ -20,7 +20,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm run bootstrap
-      - run: npm run prettier
       - run: npm run tslint
       - run: npm run tsc
       - run: npm run test
