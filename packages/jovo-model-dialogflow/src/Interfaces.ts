@@ -65,8 +65,8 @@ export interface DialogflowLMEntity {
     isOverridable?: boolean;
     isEnum?: boolean;
     automatedExpansion?: boolean;
-    isRegexp?: boolean,
-    allowFuzzyExtraction?: boolean
+    isRegexp?: boolean;
+    allowFuzzyExtraction?: boolean;
 }
 
 
