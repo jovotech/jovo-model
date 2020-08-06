@@ -45,6 +45,8 @@ const DEFAULT_ENTITY = {
     isOverridable: true,
     isEnum: false,
     automatedExpansion: false,
+    isRegexp: false,
+    allowFuzzyExtraction: false
 };
 
 export class JovoModelDialogflow extends JovoModel {
@@ -198,7 +200,6 @@ export class JovoModelDialogflow extends JovoModel {
                 continue;
             }
             const dialogFlowEntity = fileInformation.content;
-
             const jovoInput: InputType = {
                 name: dialogFlowEntity.name
             };
@@ -219,7 +220,7 @@ export class JovoModelDialogflow extends JovoModel {
 
                 return false;
             });
-
+            
             if (userSaysFile !== undefined) {
                 const values = [];
                 const entries = userSaysFile.content;
@@ -228,19 +229,19 @@ export class JovoModelDialogflow extends JovoModel {
                     const value: InputTypeValue = {
                         value: entry.value
                     };
-
-                    const tempSynonyms = [];
-                    for (const synonym of entry.synonyms) {
-                        if (synonym === entry.value) {
-                            continue;
+                    if(!dialogFlowEntity.isEnum && !dialogFlowEntity.isRegexp){
+                        const tempSynonyms = [];
+                        for (const synonym of entry.synonyms) {
+                            if (synonym === entry.value) {
+                                continue;
+                            }
+                            tempSynonyms.push(synonym);
                         }
-                        tempSynonyms.push(synonym);
-                    }
 
-                    if (tempSynonyms.length !== 0) {
-                        value.synonyms = tempSynonyms;
+                        if (tempSynonyms.length !== 0) {
+                            value.synonyms = tempSynonyms;
+                        }
                     }
-
                     values.push(value);
                 }
                 if (values.length > 0) {
@@ -349,7 +350,9 @@ export class JovoModelDialogflow extends JovoModel {
                                 name: matchedInputType.name,
                                 isOverridable: true,
                                 isEnum: false,
-                                automatedExpansion: false
+                                automatedExpansion: false,
+                                isRegexp: false,
+                                allowFuzzyExtraction: false
                             };
 
                             if (matchedInputType.dialogflow) {
@@ -383,34 +386,38 @@ export class JovoModelDialogflow extends JovoModel {
                                 const entityValues = [];
                                 // create dfEntityValueObj
                                 for (const value of matchedInputType.values) {
-                                    const dfEntityValueObj = {
+                                    let dfEntityValueObj = {
                                         value: value.value,
-                                        synonyms: [
-                                            value.value.replace(
-                                                /[^0-9A-Za-zÀ-ÿ-_' ]/gi,
-                                                ""
-                                            )
-                                        ]
+                                    } as {
+                                        value: string,
+                                        synonyms?: string[]
                                     };
-
+                                    
                                     // save synonyms, if defined
-                                    if (value.synonyms) {
-                                        for (
-                                            let i = 0;
-                                            i < value.synonyms.length;
-                                            i++
-                                        ) {
-                                            value.synonyms[i] = value.synonyms[
-                                                i
-                                            ].replace(
-                                                /[^0-9A-Za-zÀ-ÿ-_' ]/gi,
-                                                ""
+                                    if (!dfEntityObj.isEnum && !dfEntityObj.isRegexp) {
+                                        dfEntityValueObj.synonyms = [];
+                                        dfEntityValueObj.synonyms[0] = value.value.replace(
+                                            /[^0-9A-Za-zÀ-ÿ-_' ]/gi,
+                                            ""
+                                        )
+                                        if (value.synonyms) {
+                                            for (
+                                                let i = 0;
+                                                i < value.synonyms.length;
+                                                i++
+                                            ) {
+                                                value.synonyms[i] = value.synonyms[
+                                                    i
+                                                ].replace(
+                                                    /[^0-9A-Za-zÀ-ÿ-_' ]/gi,
+                                                    ""
+                                                );
+                                            }
+
+                                            dfEntityValueObj.synonyms = dfEntityValueObj.synonyms.concat(
+                                                value.synonyms
                                             );
                                         }
-
-                                        dfEntityValueObj.synonyms = dfEntityValueObj.synonyms.concat(
-                                            value.synonyms
-                                        );
                                     }
                                     entityValues.push(dfEntityValueObj);
                                 }
@@ -804,6 +811,7 @@ export class JovoModelDialogflow extends JovoModel {
         jovoInput: InputType,
         dialogflowEntity: DialogflowLMEntity
     ) {
+        //isOverridable
         if (
             _.get(dialogflowEntity, "isOverridable") !==
             _.get(DEFAULT_ENTITY, "isOverridable")
@@ -814,6 +822,7 @@ export class JovoModelDialogflow extends JovoModel {
                 _.get(dialogflowEntity, "isOverridable")
             );
         }
+        //isEnum
         if (
             _.get(dialogflowEntity, "isEnum") !==
             _.get(DEFAULT_ENTITY, "isEnum")
@@ -824,6 +833,7 @@ export class JovoModelDialogflow extends JovoModel {
                 _.get(dialogflowEntity, "isEnum")
             );
         }
+        //automatedExpansion
         if (
             _.get(dialogflowEntity, "automatedExpansion") !==
             _.get(DEFAULT_ENTITY, "automatedExpansion")
@@ -832,6 +842,26 @@ export class JovoModelDialogflow extends JovoModel {
                 jovoInput,
                 "dialogflow.automatedExpansion",
                 _.get(dialogflowEntity, "automatedExpansion")
+            );
+        }
+        //isRegexp
+        if (_.get(dialogflowEntity, "isRegexp") !==
+            _.get(DEFAULT_ENTITY, "isRegexp")
+        ) {
+            _.set(
+                jovoInput,
+                "dialogflow.isRegexp",
+                _.get(dialogflowEntity, "isRegexp")
+            );
+        }
+        //allowFuzzyExtraction
+        if (_.get(dialogflowEntity, "allowFuzzyExtraction") !==
+            _.get(DEFAULT_ENTITY, "allowFuzzyExtraction")
+        ) {
+            _.set(
+                jovoInput,
+                "dialogflow.allowFuzzyExtraction",
+                _.get(dialogflowEntity, "allowFuzzyExtraction")
             );
         }
         return jovoInput;
