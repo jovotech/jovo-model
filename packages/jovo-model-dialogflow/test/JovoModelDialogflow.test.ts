@@ -50,6 +50,8 @@ describe('JovoModelDialogflow.ts', () => {
                 isOverridable: true,
                 isEnum: false,
                 automatedExpansion: false,
+                isRegexp: false,
+                allowFuzzyExtraction: false,
               },
             },
             {
@@ -72,6 +74,8 @@ describe('JovoModelDialogflow.ts', () => {
                 isOverridable: true,
                 isEnum: false,
                 automatedExpansion: false,
+                isRegexp: false,
+                allowFuzzyExtraction: false,
               },
             },
             {
@@ -90,6 +94,8 @@ describe('JovoModelDialogflow.ts', () => {
                 isOverridable: true,
                 isEnum: false,
                 automatedExpansion: false,
+                isRegexp: false,
+                allowFuzzyExtraction: false,
               },
             },
             {
@@ -222,6 +228,24 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
+            {
+              path: ['entities', 'OrderCode.json'],
+              content: {
+                name: 'OrderCode',
+                isOverridable: true,
+                automatedExpansion: false,
+                isRegexp: true,
+                allowFuzzyExtraction: false,
+              },
+            },
+            {
+              path: ['entities', 'OrderCode_entries_en.json'],
+              content: [
+                {
+                  value: 'w{4}',
+                },
+              ],
+            },
           ],
         },
         result: {
@@ -301,6 +325,17 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
+            {
+              name: 'OrderCode',
+              dialogflow: {
+                isRegexp: true,
+              },
+              values: [
+                {
+                  value: 'w{4}',
+                },
+              ],
+            },
           ],
         },
       },
@@ -352,6 +387,10 @@ describe('JovoModelDialogflow.ts', () => {
                     name: 'plates',
                     type: 'Plates',
                   },
+                  {
+                    name: 'ordercode',
+                    type: 'OrderCode',
+                  },
                 ],
               },
             ],
@@ -399,6 +438,17 @@ describe('JovoModelDialogflow.ts', () => {
                   },
                 ],
               },
+              {
+                name: 'OrderCode',
+                dialogflow: {
+                  isRegexp: true,
+                },
+                values: [
+                  {
+                    value: 'w{4}',
+                  },
+                ],
+              },
             ],
           },
         },
@@ -443,6 +493,8 @@ describe('JovoModelDialogflow.ts', () => {
               isOverridable: true,
               isEnum: false,
               automatedExpansion: false,
+              allowFuzzyExtraction: false,
+              isRegexp: false,
             },
           },
           {
@@ -465,6 +517,8 @@ describe('JovoModelDialogflow.ts', () => {
               isOverridable: true,
               isEnum: false,
               automatedExpansion: false,
+              allowFuzzyExtraction: false,
+              isRegexp: false,
             },
           },
           {
@@ -483,6 +537,8 @@ describe('JovoModelDialogflow.ts', () => {
               isOverridable: true,
               isEnum: false,
               automatedExpansion: false,
+              allowFuzzyExtraction: false,
+              isRegexp: false,
             },
           },
           {
@@ -503,6 +559,25 @@ describe('JovoModelDialogflow.ts', () => {
               {
                 value: 'tacos',
                 synonyms: ['tacos'],
+              },
+            ],
+          },
+          {
+            path: ['entities', 'OrderCode.json'],
+            content: {
+              name: 'OrderCode',
+              isOverridable: true,
+              automatedExpansion: false,
+              isEnum: false,
+              isRegexp: true,
+              allowFuzzyExtraction: false,
+            },
+          },
+          {
+            path: ['entities', 'OrderCode_entries_en.json'],
+            content: [
+              {
+                value: 'w{4}',
               },
             ],
           },
@@ -532,6 +607,12 @@ describe('JovoModelDialogflow.ts', () => {
                       name: 'plates',
                       value: '$plates',
                       dataType: '@Plates',
+                    },
+                    {
+                      isList: false,
+                      name: 'ordercode',
+                      value: '$ordercode',
+                      dataType: '@OrderCode',
                     },
                   ],
                 },
@@ -631,6 +712,7 @@ describe('JovoModelDialogflow.ts', () => {
         delete result![2].content.id;
         delete result![4].content.id;
         delete result![6].content.id;
+        delete result![8].content.id;
 
         expect(result).toEqual(testData.result);
       });

@@ -21,6 +21,7 @@ The Jovo Model supports the following NLU providers (see the [`packages` folder]
 * Dialogflow
 * Microsoft LUIS
 * Rasa NLU
+* NLP.js
 
 Each platform implements the following methods of the `jovo-model` core package:
 
