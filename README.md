@@ -16,12 +16,13 @@ $ npm install jovo-model
 ## Platforms
 
 The Jovo Model supports the following NLU providers (see the [`packages` folder](https://github.com/jovotech/jovo-model/tree/master/packages))
-* Amazon Alexa (built-in NLU)
+* Amazon Alexa
 * Amazon Lex
-* Dialogflow
+* Google Dialogflow
+* Google Conversational Actions (alpha)
 * Microsoft LUIS
-* Rasa NLU
-* NLP.js
+* Rasa NLU (alpha)
+* NLP.js (alpha)
 
 Each platform implements the following methods of the `jovo-model` core package:
 
