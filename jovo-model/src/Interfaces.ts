@@ -26,10 +26,14 @@ export interface IntentInput {
 export type IntentInputType = string | IntentInputTypeObject;
 export type IntentInputTypeObject = Record<string, string>;
 
+export interface InvocationObject {
+  [key: string]: string;
+}
+
 export interface JovoModelData {
   inputTypes?: InputType[];
   intents?: Intent[];
-  invocation: string | { [key: string]: string };
+  invocation: string | InvocationObject;
 }
 
 export interface RunValidator {
