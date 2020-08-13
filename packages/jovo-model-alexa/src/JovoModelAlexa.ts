@@ -118,7 +118,7 @@ export class JovoModelAlexa extends JovoModel {
 
     _.set(jovoModel, 'alexa.interactionModel.languageModel.intents', alexaIntents);
 
-    return jovoModel;
+    return jovoModel as JovoModelAlexaData;
   }
 
   static fromJovoModel(model: JovoModelAlexaData, locale: string): NativeFileInformation[] {
@@ -131,7 +131,18 @@ export class JovoModelAlexa extends JovoModel {
         },
       },
     };
-    _.set(alexaModel, 'interactionModel.languageModel.invocationName', model.invocation);
+
+    let invocationName: string = model.invocation as string;
+
+    if (typeof model.invocation === 'object') {
+      if (!model.invocation.alexaSkill) {
+        throw new Error(`Can\'t find invocation name for locale ${locale}.`);
+      }
+
+      invocationName = model.invocation.alexaSkill;
+    }
+
+    _.set(alexaModel, 'interactionModel.languageModel.invocationName', invocationName);
 
     // handle invocation name requirements
     if (alexaModel.interactionModel.languageModel.invocationName) {

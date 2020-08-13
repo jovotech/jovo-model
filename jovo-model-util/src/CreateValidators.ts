@@ -15,23 +15,23 @@ const writeFileAsync = promisify(writeFile);
  * @param {RunValidator[]} runValidators The validators to create
  */
 export async function createValidators(
-    destinationDirectory: string,
-    runValidators: RunValidator[],
+  destinationDirectory: string,
+  runValidators: RunValidator[],
 ) {
-    const settings = {
-        required: true,
-    };
+  const settings = {
+    required: true,
+  };
 
-    const compilerOptions = {
-        strictNullChecks: true,
-    };
+  const compilerOptions = {
+    strictNullChecks: true,
+  };
 
-    for (const validatorData of runValidators) {
-        const program = TJS.getProgramFromFiles([pathResolve(validatorData.path)], compilerOptions);
-        for (const typeName of validatorData.types) {
-            const schema = TJS.generateSchema(program, typeName, settings);
-            const path = pathJoin(destinationDirectory, typeName + '.json');
-            await writeFileAsync(path, JSON.stringify(schema, null, '\t'));
-        }
+  for (const validatorData of runValidators) {
+    const program = TJS.getProgramFromFiles([pathResolve(validatorData.path)], compilerOptions);
+    for (const typeName of validatorData.types) {
+      const schema = TJS.generateSchema(program, typeName, settings);
+      const path = pathJoin(destinationDirectory, typeName + '.json');
+      await writeFileAsync(path, JSON.stringify(schema, null, '\t'));
     }
+  }
 }

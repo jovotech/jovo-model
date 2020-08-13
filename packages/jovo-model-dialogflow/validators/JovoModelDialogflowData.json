@@ -1,255 +1,239 @@
 {
-	"type": "object",
-	"properties": {
-		"inputTypes": {
-			"type": "array",
-			"items": {
-				"$ref": "#/definitions/DialogflowInputType"
-			}
-		},
-		"dialogflow": {
-			"$ref": "#/definitions/DialogflowModel"
-		},
-		"intents": {
-			"type": "array",
-			"items": {
-				"$ref": "#/definitions/Intent"
-			}
-		},
-		"invocation": {
-			"type": "string"
-		}
-	},
-	"required": [
-		"invocation"
-	],
-	"definitions": {
-		"DialogflowInputType": {
-			"type": "object",
-			"properties": {
-				"dialogflow": {
-					"anyOf": [
-						{
-							"type": "object",
-							"properties": {},
-							"additionalProperties": true
-						},
-						{
-							"type": "string"
-						}
-					]
-				},
-				"name": {
-					"type": "string"
-				},
-				"values": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/InputTypeValue"
-					}
-				}
-			},
-			"required": [
-				"name"
-			]
-		},
-		"InputTypeValue": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "string"
-				},
-				"id": {
-					"type": "string"
-				},
-				"key": {
-					"type": "string"
-				},
-				"synonyms": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				}
-			},
-			"required": [
-				"value"
-			]
-		},
-		"DialogflowModel": {
-			"type": "object",
-			"properties": {
-				"intents": {
-					"type": "array",
-					"items": [
-						{
-							"$ref": "#/definitions/DialogflowLMInputObject"
-						}
-					],
-					"minItems": 1,
-					"additionalItems": {
-						"anyOf": [
-							{
-								"$ref": "#/definitions/DialogflowLMInputObject"
-							}
-						]
-					}
-				}
-			}
-		},
-		"DialogflowLMInputObject": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"auto": {
-					"type": "boolean"
-				},
-				"webhookUsed": {
-					"type": "boolean"
-				},
-				"fallbackIntent": {
-					"type": "boolean"
-				},
-				"responses": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/DialogflowResponse"
-					}
-				},
-				"events": {
-					"type": "array",
-					"items": [
-						{
-							"type": "object",
-							"properties": {
-								"name": {
-									"type": "string"
-								}
-							},
-							"required": [
-								"name"
-							]
-						}
-					],
-					"minItems": 1,
-					"additionalItems": {
-						"anyOf": [
-							{
-								"type": "object",
-								"properties": {
-									"name": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"name"
-								]
-							}
-						]
-					}
-				}
-			},
-			"required": [
-				"auto",
-				"name",
-				"webhookUsed"
-			]
-		},
-		"DialogflowResponse": {
-			"type": "object",
-			"properties": {
-				"parameters": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/DialogflowLMInputParameterObject"
-					}
-				}
-			},
-			"required": [
-				"parameters"
-			]
-		},
-		"DialogflowLMInputParameterObject": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"isList": {
-					"type": "boolean"
-				},
-				"value": {
-					"type": "string"
-				},
-				"dataType": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"dataType",
-				"isList",
-				"name",
-				"value"
-			]
-		},
-		"Intent": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"phrases": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"samples": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"inputs": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/IntentInput"
-					}
-				}
-			},
-			"required": [
-				"name"
-			]
-		},
-		"IntentInput": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"text": {
-					"type": "string"
-				},
-				"type": {
-					"anyOf": [
-						{
-							"$ref": "#/definitions/Record<string,string>"
-						},
-						{
-							"type": "string"
-						}
-					]
-				}
-			},
-			"required": [
-				"name"
-			]
-		},
-		"Record<string,string>": {
-			"type": "object"
-		}
-	},
-	"$schema": "http://json-schema.org/draft-07/schema#"
+  "type": "object",
+  "properties": {
+    "inputTypes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/DialogflowInputType"
+      }
+    },
+    "dialogflow": {
+      "$ref": "#/definitions/DialogflowModel"
+    },
+    "intents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Intent"
+      }
+    },
+    "invocation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "required": ["invocation"],
+  "definitions": {
+    "DialogflowInputType": {
+      "type": "object",
+      "properties": {
+        "dialogflow": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InputTypeValue"
+          }
+        }
+      },
+      "required": ["name"]
+    },
+    "InputTypeValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["value"]
+    },
+    "DialogflowModel": {
+      "type": "object",
+      "properties": {
+        "intents": {
+          "type": "array",
+          "items": [
+            {
+              "$ref": "#/definitions/DialogflowLMInputObject"
+            }
+          ],
+          "minItems": 1,
+          "additionalItems": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/DialogflowLMInputObject"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "DialogflowLMInputObject": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "auto": {
+          "type": "boolean"
+        },
+        "webhookUsed": {
+          "type": "boolean"
+        },
+        "fallbackIntent": {
+          "type": "boolean"
+        },
+        "responses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DialogflowResponse"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": ["name"]
+            }
+          ],
+          "minItems": 1,
+          "additionalItems": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": ["name"]
+              }
+            ]
+          }
+        }
+      },
+      "required": ["auto", "name", "webhookUsed"]
+    },
+    "DialogflowResponse": {
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DialogflowLMInputParameterObject"
+          }
+        }
+      },
+      "required": ["parameters"]
+    },
+    "DialogflowLMInputParameterObject": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "isList": {
+          "type": "boolean"
+        },
+        "value": {
+          "type": "string"
+        },
+        "dataType": {
+          "type": "string"
+        }
+      },
+      "required": ["dataType", "isList", "name", "value"]
+    },
+    "Intent": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phrases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IntentInput"
+          }
+        }
+      },
+      "required": ["name"]
+    },
+    "IntentInput": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Record<string,string>"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": ["name"]
+    },
+    "Record<string,string>": {
+      "type": "object"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
 }

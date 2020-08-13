@@ -1,6 +1,3 @@
-
-describe("JovoModelNlpjs.ts", () => {
-    test('dummy test', () => {
-
-    });
+describe('JovoModelNlpjs.ts', () => {
+  test('dummy test', () => {});
 });
