@@ -1,6 +1,6 @@
 {
     "name": "jovo-model-dialogflow",
-    "version": "2.9.0",
+    "version": "3.0.0",
     "description": "Jovo Model for Dialogflow",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -23,14 +23,14 @@
         "@types/tv4": "^1.2.29",
         "gulp": "^4.0.2",
         "jest": "^24.9.0",
-        "jovo-model-util": "^2.9.0",
+        "jovo-model-util": "^3.0.0",
         "rimraf": "^3.0.0",
         "ts-jest": "^24.3.0",
         "tslint": "^5.20.1",
         "typescript": "^3.7.4"
     },
     "dependencies": {
-        "jovo-model": "^2.9.0",
+        "jovo-model": "^3.0.0",
         "uuidv4": "^6.0.7"
     },
     "jest": {
