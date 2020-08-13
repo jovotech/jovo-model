@@ -1,29 +1,30 @@
 {
-    "name": "root",
-    "private": true,
-    "scripts": {
-        "lerna": "lerna",
-        "init": "lerna bootstrap",
-        "tsc": "lerna exec npm run tsc",
-        "build": "lerna exec npm run build",
-        "tslint": "lerna exec npm run tslint",
-        "test": "lerna exec npm test",
-        "clean": "lerna clean",
-        "bootstrap": "lerna bootstrap --hoist --no-ci",
-        "rimraf": "lerna exec npm run rimraf",
-        "typedoc": "npm run lerna exec npm run typedoc",
-        "preparePublish": "npm run rimraf && npm run tsc && npm run tslint && npm run test",
-        "publish": "lerna publish --no-push"
-    },
-    "devDependencies": {
-        "@types/jest": "^24.0.25",
-        "@types/lodash": "^4.14.149",
-        "@types/node": "^13.1.5",
-        "jest": "^24.9.0",
-        "lerna": "^3.20.2",
-        "prettier": "^1.19.1",
-        "ts-jest": "^24.3.0",
-        "tslint": "^5.20.1",
-        "typescript": "^3.7.4"
-    }
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "lerna": "lerna",
+    "init": "lerna bootstrap",
+    "tsc": "lerna exec npm run tsc",
+    "build": "lerna exec npm run build",
+    "tslint": "lerna exec npm run tslint",
+    "test": "lerna exec npm test",
+    "clean": "lerna clean",
+    "bootstrap": "lerna bootstrap --hoist --no-ci",
+    "rimraf": "lerna exec npm run rimraf",
+    "typedoc": "npm run lerna exec npm run typedoc",
+    "preparePublish": "npm run rimraf && npm run tsc && npm run tslint && npm run test",
+    "publish": "lerna publish --no-push",
+    "setup": "npm run init && npm run tsc"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.1.5",
+    "jest": "^24.9.0",
+    "lerna": "^3.20.2",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.3.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4"
+  }
 }
