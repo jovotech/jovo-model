@@ -1,5 +1,6 @@
 import { join as pathJoin } from 'path';
 import * as yaml from 'yaml';
+import { readFileSync } from 'fs';
 import {
   Intent,
   JovoModel,
@@ -11,23 +12,23 @@ import {
 } from 'jovo-model';
 
 import * as JovoModelGoogleValidator from '../validators/JovoModelGoogleValidator.json';
-import { GAIntent, GAInput } from './Interfaces';
-import { readFileSync } from 'fs';
+import { GoogleActionIntent, GoogleActionInput, JovoModelGoogleActionData } from './Interfaces';
 
 export class JovoModelGoogle extends JovoModel {
-  static MODEL_KEY: string = 'google';
+  static MODEL_KEY = 'google';
   static defaultLocale?: string;
 
-  constructor(data?: JovoModelData, locale?: string, defaultLocale?: string) {
+  constructor(data?: JovoModelGoogleActionData, locale?: string, defaultLocale?: string) {
     super(data, locale);
     JovoModelGoogle.defaultLocale = defaultLocale;
   }
 
-  static fromJovoModel(model: JovoModelData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(model: JovoModelGoogleActionData, locale: string): NativeFileInformation[] {
+    const errorPrefix = `/models/${locale}.json - `;
     const returnFiles: NativeFileInformation[] = [];
 
     for (const intent of (model.intents || []) as Intent[]) {
-      const gaIntent: GAIntent = {
+      const gaIntent: GoogleActionIntent = {
         trainingPhrases: [],
       };
       const path: string[] = ['custom', 'intents'];
@@ -56,8 +57,13 @@ export class JovoModelGoogle extends JovoModel {
           // Get input type for current input.
           for (const i of intent.inputs || []) {
             if (input === i.name) {
-              if (i.type === 'object') {
-                // ToDo: !
+              if (typeof i.type === 'object') {
+                if (!i.type.googleAction) {
+                  throw new Error(
+                    `${errorPrefix}Please add a "googleAction" property for input "${i.name}"`,
+                  );
+                }
+                type = i.type.googleAction;
                 continue;
               }
 
@@ -73,7 +79,7 @@ export class JovoModelGoogle extends JovoModel {
           }
 
           // For input type, get an example value to work with.
-          let sampleValue: string = '';
+          let sampleValue = '';
           for (const inputType of model.inputTypes || []) {
             if (inputType.name !== type) {
               continue;
@@ -112,7 +118,7 @@ export class JovoModelGoogle extends JovoModel {
     }
 
     for (const inputType of (model.inputTypes || []) as InputType[]) {
-      const gaInput: GAInput = {
+      const gaInput: GoogleActionInput = {
         synonym: {
           entities: {},
         },
@@ -145,8 +151,8 @@ export class JovoModelGoogle extends JovoModel {
     return returnFiles;
   }
 
-  static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
-    const jovoModel: JovoModelData = {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelGoogleActionData {
+    const jovoModel: JovoModelGoogleActionData = {
       invocation: '',
       intents: [],
       inputTypes: [],
@@ -158,7 +164,7 @@ export class JovoModelGoogle extends JovoModel {
       const modelName: string = filePath[filePath.length - 1].replace('.yaml', '');
 
       if (modelType === 'intents') {
-        const intent: GAIntent = inputFile.content;
+        const intent: GoogleActionIntent = inputFile.content;
         // Create regex to match input patterns such as ($input 'test' auto=true).
         const inputRegex: RegExp = /\(\$([a-z]*).*?\)/gi;
         const phrases: string[] = [];
@@ -177,14 +183,14 @@ export class JovoModelGoogle extends JovoModel {
             phrase = phrase.replace(matched, `{${inputName}}`);
 
             // Check if current model has parameters.
-            let model: GAIntent = intent;
+            let model: GoogleActionIntent = intent;
 
             if (!model.parameters) {
               // Get the input type from the default locale model.
               const defaultModelPath = pathJoin(filePath[0], modelType, `${modelName}.yaml`);
 
               const file = readFileSync(defaultModelPath, 'utf-8');
-              const defaultModel: GAIntent = yaml.parse(file);
+              const defaultModel: GoogleActionIntent = yaml.parse(file);
 
               if (!defaultModel.parameters) {
                 throw new Error(`Could not find parameters for type ${modelName}.`);
@@ -219,7 +225,7 @@ export class JovoModelGoogle extends JovoModel {
 
         jovoModel.intents!.push(jovoIntent);
       } else {
-        const input: GAInput = inputFile.content;
+        const input: GoogleActionInput = inputFile.content;
         const entities = input.synonym.entities;
         const values: InputTypeValue[] = [];
 

@@ -1,11 +1,15 @@
-export interface GAIntent {
+import { JovoModelData } from 'jovo-model';
+
+export interface GoogleActionIntent {
   trainingPhrases: string[];
-  parameters?: { name: string; type: { name: string } }[];
+  parameters?: Array<{ name: string; type: { name: string } }>;
 }
 
-export interface GAInput {
+export interface GoogleActionInput {
   synonym: {
     entities: { [key: string]: { synonyms: string[] } };
     matchType?: string;
   };
 }
+
+export interface JovoModelGoogleActionData extends JovoModelData {}
