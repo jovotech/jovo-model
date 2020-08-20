@@ -7,6 +7,7 @@
 The Jovo Model is a language model abstraction layer that works across NLU providers. It allows you to maintain a language model in a single source of truth and then translate it into different platform schemas like Amazon Alexa, Google Assistant, Dialogflow, Rasa NLU, Microsoft LUIS, and more.
 
 * [Introduction](#introduction)
+* [Supported Platforms](#supported-platforms)
 * [Model Structure](#model-structure)
    * [Invocation](#invocation)
    * [Intents](#intents)
@@ -19,7 +20,6 @@ The Jovo Model is a language model abstraction layer that works across NLU provi
 * [Using the Jovo Model npm Packages](#using-the-jovo-model-npm-packages)
    * [Model Conversions](#model-conversions)
    * [Updating the Model](#updating-the-model)
-* [Platforms](#platforms)
 * [Contributing](#contributing)
 
 
@@ -36,7 +36,16 @@ The Jovo Model is mainly used by the [Jovo CLI](https://www.jovo.tech/marketplac
 We chose to open source this repository to provide more flexibility to Jovo users and tool providers. You can directly access the Jovo Model features from your code and make transformations yourself. Learn more here: [Using the Jovo Model npm Packages](#using-the-jovo-model-npm-packages).
 
 
-Let's take a look at the JSON schema first.
+## Supported Platforms
+
+The Jovo Model supports the following NLU providers (see the [`packages` folder in the `jovo-model` repository](https://github.com/jovotech/jovo-model/tree/master/packages)):
+* [Amazon Alexa](./docs/amazon-alexa.md)
+* [Amazon Lex](./docs/amazon-lex.md)
+* [Google Dialogflow](./docs/dialogflow.md)
+* [Google Assistant Conversational Actions](./docs/google-assistant.md) (alpha)
+* [Microsoft LUIS](./docs/microsoft-luis.md)
+* [Rasa NLU](./docs/rasa.md) (alpha)
+* [NLP.js](./docs/nlpjs.md) (alpha)
 
 ## Model Structure
 
@@ -500,18 +509,6 @@ const jovoModelData = jovoModelInstanceAlexa.exportJovoModel();
 // As Dialogflow Model
 const dialogflowModelFiles = jovoModelInstance.exportNative();
 ```
-
-
-## Platforms
-
-The Jovo Model supports the following NLU providers (see the [`packages` folder in the `jovo-model` repository](https://github.com/jovotech/jovo-model/tree/master/packages)):
-* [Amazon Alexa](./docs/amazon-alexa.md)
-* [Amazon Lex](./docs/amazon-lex.md)
-* [Google Dialogflow](./docs/dialogflow.md)
-* [Google Assistant Conversational Actions](./docs/google-assistant.md) (alpha)
-* [Microsoft LUIS](./docs/microsoft-luis.md)
-* [Rasa NLU](./docs/rasa.md) (alpha)
-* [NLP.js](./docs/nlpjs.md) (alpha)
 
 
 ## Contributing
