@@ -3,13 +3,13 @@
 Learn how to turn the Jovo Model into an NLP.js language model. This integration is currently in `alpha` development.
 
 * [Introduction](#introduction)
-* [Using the NLP.js Jovo Model npm Package](#using-the-nlp.js-jovo-model-npm-package)
+* [Using the NLP.js Jovo Model npm Package](#using-the-nlpjs-jovo-model-npm-package)
 
 ## Introduction
 
 [NLP.js](https://github.com/axa-group/nlp.js) is an open source natural language understanding (NLU) service. [You can learn more about the Jovo Framework NLP.js integration here](https://www.jovo.tech/marketplace/jovo-nlu-nlpjs).
 
-Learn more about the language model structure language in the [official NLP.js docs](https://github.com/axa-group/nlp.js/blob/master/README.md). The Jovo Model can be translated into this structure by using the npm package ([see below](#using-the-nlp.js-jovo-model-npm-package)).
+Learn more about the language model structure language in the [official NLP.js docs](https://github.com/axa-group/nlp.js/blob/master/README.md). The Jovo Model can be translated into this structure by using the npm package ([see below](#using-the-nlpjs-jovo-model-npm-package)).
 
 
 ## Using the NLP.js Jovo Model npm Package
