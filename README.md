@@ -51,7 +51,7 @@ The Jovo Model supports the following NLU providers (see the [`packages` folder 
 
 Every language you choose to support will have its very own language model (`en-US`, `de-DE`, etc.).
 
-Each locale is represented by its on model. For example, the `en-US.json` in the [Jovo "Hello World" template](https://github.com/jovotech/jovo-templates/blob/master/01_helloworld/javascript/models/en-US.json) looks like this:
+Each locale is represented by its own model. For example, the `en-US.json` in the [Jovo "Hello World" template](https://github.com/jovotech/jovo-templates/blob/master/01_helloworld/javascript/models/en-US.json) looks like this:
 
 ```javascript
 {
