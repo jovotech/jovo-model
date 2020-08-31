@@ -6,8 +6,8 @@
     ],
     "version": "independent",
     "command": {
-    "publish": {
-      "message": ":bookmark: Publish"
+        "publish": {
+            "message": ":bookmark: Publish"
+        }
     }
-  },
 }
