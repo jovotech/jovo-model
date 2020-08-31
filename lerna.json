@@ -4,5 +4,10 @@
         "jovo-model-util/",
         "packages/*"
     ],
-    "version": "independent"
+    "version": "independent",
+    "command": {
+    "publish": {
+      "message": ":bookmark: Publish"
+    }
+  },
 }
