@@ -4,7 +4,6 @@ import { readFileSync } from 'fs';
 import {
   Intent,
   JovoModel,
-  JovoModelData,
   NativeFileInformation,
   InputType,
   InputTypeValue,
