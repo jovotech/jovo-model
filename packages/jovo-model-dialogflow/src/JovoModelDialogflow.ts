@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import {
   DialogflowLMEntity,
   DialogflowLMInputObject,
@@ -349,6 +350,7 @@ export class JovoModelDialogflow extends JovoModel {
                       for (const matchedInputType of matchedInputTypes) {
                           let dfEntityObj: DialogflowLMEntity = {
                               ...DIALOGFLOW_LM_ENTITY,
+                              id: uuid(),
                               name: matchedInputType.name,
                           };
 
@@ -431,6 +433,7 @@ export class JovoModelDialogflow extends JovoModel {
                     // Parse system entities with default values for validation.
                     const dfEntityObj = {
                         ...DIALOGFLOW_LM_ENTITY,
+                        id: uuid(),
                         name: parameterObj.dataType.replace('@', ''),
                     };
 
