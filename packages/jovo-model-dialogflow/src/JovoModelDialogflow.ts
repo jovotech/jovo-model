@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import {
   DialogflowLMEntity,
   DialogflowLMInputObject,
@@ -7,7 +8,6 @@ import {
   IntentDialogflow,
   JovoModelDialogflowData
 } from ".";
-import { uuid } from 'uuidv4';
 import {
   InputType,
   InputTypeValue,
@@ -19,6 +19,8 @@ import {
 import * as JovoModelDialogflowValidator from "../validators/JovoModelDialogflowData.json";
 
 import * as _ from "lodash";
+import { DialogflowLMEntries } from "./utils/Interfaces";
+import { DIALOGFLOW_LM_ENTITY } from "./utils";
 
 const BUILTIN_PREFIX = "@sys.";
 
@@ -307,6 +309,7 @@ export class JovoModelDialogflow extends JovoModel {
                           );
                       }
                   }
+
                   // handle custom input types
                   if (parameterObj.dataType === "") {
                       if (!input.type) {
@@ -345,14 +348,10 @@ export class JovoModelDialogflow extends JovoModel {
 
                       // create alexaTypeObj from matched input types
                       for (const matchedInputType of matchedInputTypes) {
-                          let dfEntityObj = {
+                          let dfEntityObj: DialogflowLMEntity = {
+                              ...DIALOGFLOW_LM_ENTITY,
                               id: uuid(),
                               name: matchedInputType.name,
-                              isOverridable: true,
-                              isEnum: false,
-                              automatedExpansion: false,
-                              isRegexp: false,
-                              allowFuzzyExtraction: false
                           };
 
                           if (matchedInputType.dialogflow) {
@@ -386,11 +385,8 @@ export class JovoModelDialogflow extends JovoModel {
                               const entityValues = [];
                               // create dfEntityValueObj
                               for (const value of matchedInputType.values) {
-                                  const dfEntityValueObj = {
+                                  const dfEntityValueObj: DialogflowLMEntries = {
                                       value: value.value,
-                                  } as {
-                                      value: string,
-                                      synonyms?: string[]
                                   };
 
                                   // save synonyms, if defined
@@ -433,6 +429,37 @@ export class JovoModelDialogflow extends JovoModel {
                               });
                           }
                       }
+                  } else {
+                    // Parse system entities with default values for validation.
+                    const dfEntityObj = {
+                        ...DIALOGFLOW_LM_ENTITY,
+                        id: uuid(),
+                        name: parameterObj.dataType.replace('@', ''),
+                    };
+
+                    returnFiles.push({
+                      path: [
+                        'entities',
+                        `${dfEntityObj.name}.json`,
+                      ],
+                      content: dfEntityObj
+                    });
+
+                    const dfEntityValueObj: DialogflowLMEntries[] = [{
+                      value: input.name,
+                      synonyms: [
+                        input.name
+                      ]
+                    }];
+
+                    returnFiles.push({
+                      path: [
+                          "entities",
+                          `${dfEntityObj.name}_entries_${locale}.json`
+                      ],
+                      content: dfEntityValueObj
+                    });
+
                   }
 
                   // merges dialogflow specific data

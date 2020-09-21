@@ -1,0 +1,30 @@
+[
+    {
+        "title": "Amazon Alexa",
+        "route": "amazon-alexa"
+    },
+    {
+        "title": "Dialogflow",
+        "route": "dialogflow"
+    },
+    {
+        "title": "Google Assistant",
+        "route": "google-assistant"
+    },
+    {
+        "title": "Microsoft LUIS",
+        "route": "microsoft-luis"
+    },
+    {
+        "title": "Amazon Lex",
+        "route": "amazon-lex"
+    },
+    {
+        "title": "NLP.js",
+        "route": "nlpjs"
+    },
+    {
+        "title": "Rasa NLU",
+        "route": "rasa"
+    }
+]

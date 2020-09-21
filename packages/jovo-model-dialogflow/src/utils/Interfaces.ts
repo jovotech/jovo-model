@@ -47,11 +47,18 @@ export interface DialogflowResponse {
 }
 
 export interface DialogflowLMEntity {
+  id: string;
+  name: string;
   isOverridable?: boolean;
   isEnum?: boolean;
   automatedExpansion?: boolean;
   isRegexp?: boolean;
   allowFuzzyExtraction?: boolean;
+}
+
+export interface DialogflowLMEntries {
+  value: string;
+  synonyms?: string[];
 }
 
 export interface DialogflowInputType extends InputType {

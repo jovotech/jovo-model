@@ -21,6 +21,7 @@
         "@types/jest": "^24.0.25",
         "@types/node": "^13.1.5",
         "@types/tv4": "^1.2.29",
+        "@types/uuid": "3.4.3",
         "gulp": "^4.0.2",
         "jest": "^24.9.0",
         "jovo-model-util": "^3.0.0",
@@ -30,8 +31,7 @@
         "typescript": "^3.7.4"
     },
     "dependencies": {
-        "jovo-model": "^3.0.0",
-        "uuidv4": "^6.0.7"
+        "jovo-model": "^3.0.0"
     },
     "jest": {
         "transform": {
