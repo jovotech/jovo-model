@@ -1,6 +1,6 @@
 {
   "name": "jovo-model-alexa",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Jovo Model for Alexa",
   "main": "dist/src/index",
   "types": "dist/src/index.d.ts",
