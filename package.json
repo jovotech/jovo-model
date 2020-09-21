@@ -14,7 +14,7 @@
     "typedoc": "npm run lerna exec npm run typedoc",
     "preparePublish": "npm run rimraf && npm run tsc && npm run tslint && npm run test",
     "publish": "lerna publish --no-push",
-    "sqqetup": "npm run init && npm run tsc"
+    "setup": "npm run init && npm run tsc"
   },
   "devDependencies": {
     "@types/jest": "^24.0.25",
