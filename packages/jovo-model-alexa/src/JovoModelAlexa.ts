@@ -325,6 +325,15 @@ export class JovoModelAlexa extends JovoModel {
       );
     }
 
+      // modelConfiguration
+      if (_.get(model, 'alexa.interactionModel.languageModel.modelConfiguration')) {
+          _.set(
+              alexaModel,
+              'interactionModel.languageModel.modelConfiguration',
+              _.get(model, 'alexa.interactionModel.languageModel.modelConfiguration'),
+          );
+      }
+
     // dialog
     if (_.get(model, 'alexa.interactionModel.dialog')) {
       _.set(alexaModel, 'interactionModel.dialog', _.get(model, 'alexa.interactionModel.dialog'));
