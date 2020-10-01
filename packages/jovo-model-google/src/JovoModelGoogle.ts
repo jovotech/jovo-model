@@ -192,7 +192,7 @@ export class JovoModelGoogle extends JovoModel {
       for (const [name, content] of Object.entries(googleGlobalIntents)) {
         returnFiles.push({
           path: ['custom', 'global', `${name}.yaml`],
-          content: content,
+          content,
         });
       }
     }
@@ -203,7 +203,7 @@ export class JovoModelGoogle extends JovoModel {
       for (const [name, content] of Object.entries(googleIntents)) {
         returnFiles.push({
           path: ['custom', 'intents', `${name}.yaml`],
-          content: content,
+          content,
         });
       }
     }
@@ -214,7 +214,7 @@ export class JovoModelGoogle extends JovoModel {
       for (const [name, content] of Object.entries(googleTypes)) {
         returnFiles.push({
           path: ['custom', 'types', `${name}.yaml`],
-          content: content,
+          content,
         });
       }
     }
@@ -326,9 +326,9 @@ export class JovoModelGoogle extends JovoModel {
         const props: GoogleActionLanguageModelProperty[] = _.get(
           jovoModel,
           `googleAssistant.custom.${modelType}`,
-          [],
+          {},
         );
-        props.push({ name: modelName, content: inputFile.content });
+        _.set(props, [modelName], inputFile.content);
         _.set(jovoModel, `googleAssistant.custom.${modelType}`, props);
       }
     }
