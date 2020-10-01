@@ -66,12 +66,12 @@ export class JovoModelGoogle extends JovoModel {
           for (const i of intent.inputs || []) {
             if (input === i.name) {
               if (typeof i.type === 'object') {
-                if (!i.type.googleAction) {
+                if (!i.type.googleAssistant) {
                   throw new Error(
-                    `${errorPrefix}Please add a "googleAction" property for input "${i.name}"`,
+                    `${errorPrefix}Please add a "googleAssistant" property for input "${i.name}"`,
                   );
                 }
-                type = i.type.googleAction;
+                type = i.type.googleAssistant;
                 continue;
               }
 
@@ -134,7 +134,7 @@ export class JovoModelGoogle extends JovoModel {
         },
       });
 
-      // Register actions.
+      // Register intents as actions.
       actions[intent.name] = {};
     }
 
@@ -186,7 +186,7 @@ export class JovoModelGoogle extends JovoModel {
     }
 
     // Set google specific properties.
-    const googleGlobalIntents = _.get(model, 'google.custom.global');
+    const googleGlobalIntents = _.get(model, 'googleAssistant.custom.global');
 
     if (googleGlobalIntents) {
       for (const intent of googleGlobalIntents) {
@@ -197,7 +197,7 @@ export class JovoModelGoogle extends JovoModel {
       }
     }
 
-    const googleIntents = _.get(model, 'google.custom.intents');
+    const googleIntents = _.get(model, 'googleAssistant.custom.intents');
 
     if (googleIntents) {
       for (const intent of googleIntents) {
@@ -208,7 +208,7 @@ export class JovoModelGoogle extends JovoModel {
       }
     }
 
-    const googleTypes = _.get(model, 'google.custom.types');
+    const googleTypes = _.get(model, 'googleAssistant.custom.types');
 
     if (googleTypes) {
       for (const type of googleTypes) {
@@ -325,11 +325,11 @@ export class JovoModelGoogle extends JovoModel {
       } else {
         const props: GoogleActionLanguageModelProperty[] = _.get(
           jovoModel,
-          `google.custom.${modelType}`,
+          `googleAssistant.custom.${modelType}`,
           [],
         );
         props.push({ name: modelName, content: inputFile.content });
-        _.set(jovoModel, `google.custom.${modelType}`, props);
+        _.set(jovoModel, `googleAssistant.custom.${modelType}`, props);
       }
     }
 
