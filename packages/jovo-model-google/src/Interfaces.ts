@@ -26,7 +26,7 @@ export interface GoogleActionInput {
 }
 
 export interface JovoModelGoogleActionData extends JovoModelData {
-  google?: {
+  googleAssistant?: {
     custom?: {
       global?: GoogleActionLanguageModelProperty;
       intents?: GoogleActionLanguageModelProperty;
