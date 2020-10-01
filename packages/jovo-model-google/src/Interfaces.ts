@@ -38,6 +38,5 @@ export interface JovoModelGoogleActionData extends JovoModelData {
 
 export interface GoogleActionLanguageModelProperty {
   name: string;
-  // @ts-ignore
-  content: any;
+  content: object;
 }
