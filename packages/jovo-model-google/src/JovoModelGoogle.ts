@@ -66,12 +66,12 @@ export class JovoModelGoogle extends JovoModel {
           for (const i of intent.inputs || []) {
             if (input === i.name) {
               if (typeof i.type === 'object') {
-                if (!i.type.googleAction) {
+                if (!i.type.googleAssistant) {
                   throw new Error(
-                    `${errorPrefix}Please add a "googleAction" property for input "${i.name}"`,
+                    `${errorPrefix}Please add a "googleAssistant" property for input "${i.name}"`,
                   );
                 }
-                type = i.type.googleAction;
+                type = i.type.googleAssistant;
                 continue;
               }
 
@@ -134,7 +134,7 @@ export class JovoModelGoogle extends JovoModel {
         },
       });
 
-      // Register actions.
+      // Register intents as actions.
       actions[intent.name] = {};
     }
 
@@ -186,35 +186,35 @@ export class JovoModelGoogle extends JovoModel {
     }
 
     // Set google specific properties.
-    const googleGlobalIntents = _.get(model, 'google.custom.global');
+    const googleGlobalIntents = _.get(model, 'googleAssistant.custom.global');
 
     if (googleGlobalIntents) {
-      for (const intent of googleGlobalIntents) {
+      for (const [name, content] of Object.entries(googleGlobalIntents)) {
         returnFiles.push({
-          path: ['custom', 'global', `${intent.name}.yaml`],
-          content: intent.content,
+          path: ['custom', 'global', `${name}.yaml`],
+          content,
         });
       }
     }
 
-    const googleIntents = _.get(model, 'google.custom.intents');
+    const googleIntents = _.get(model, 'googleAssistant.custom.intents');
 
     if (googleIntents) {
-      for (const intent of googleIntents) {
+      for (const [name, content] of Object.entries(googleIntents)) {
         returnFiles.push({
-          path: ['custom', 'intents', `${intent.name}.yaml`],
-          content: intent.content,
+          path: ['custom', 'intents', `${name}.yaml`],
+          content,
         });
       }
     }
 
-    const googleTypes = _.get(model, 'google.custom.types');
+    const googleTypes = _.get(model, 'googleAssistant.custom.types');
 
     if (googleTypes) {
-      for (const type of googleTypes) {
+      for (const [name, content] of Object.entries(googleTypes)) {
         returnFiles.push({
-          path: ['custom', 'types', `${type.name}.yaml`],
-          content: type.content,
+          path: ['custom', 'types', `${name}.yaml`],
+          content,
         });
       }
     }
@@ -325,11 +325,11 @@ export class JovoModelGoogle extends JovoModel {
       } else {
         const props: GoogleActionLanguageModelProperty[] = _.get(
           jovoModel,
-          `google.custom.${modelType}`,
-          [],
+          `googleAssistant.custom.${modelType}`,
+          {},
         );
-        props.push({ name: modelName, content: inputFile.content });
-        _.set(jovoModel, `google.custom.${modelType}`, props);
+        _.set(props, [modelName], inputFile.content);
+        _.set(jovoModel, `googleAssistant.custom.${modelType}`, props);
       }
     }
 

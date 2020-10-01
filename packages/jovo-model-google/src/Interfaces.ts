@@ -28,15 +28,14 @@ export interface GoogleActionInput {
 export interface JovoModelGoogleActionData extends JovoModelData {
   google?: {
     custom?: {
-      global?: GoogleActionLanguageModelProperty[];
-      intents?: GoogleActionLanguageModelProperty[];
-      scenes?: GoogleActionLanguageModelProperty[];
-      types?: GoogleActionLanguageModelProperty[];
+      global?: GoogleActionLanguageModelProperty;
+      intents?: GoogleActionLanguageModelProperty;
+      scenes?: GoogleActionLanguageModelProperty;
+      types?: GoogleActionLanguageModelProperty;
     };
   };
 }
 
 export interface GoogleActionLanguageModelProperty {
-  name: string;
-  content: object;
+  [key: string]: object;
 }
