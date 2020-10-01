@@ -1,5 +1,6 @@
 import { join as pathJoin } from 'path';
 import * as yaml from 'yaml';
+import * as _ from 'lodash';
 import { readFileSync } from 'fs';
 import {
   Intent,
@@ -11,7 +12,12 @@ import {
 } from 'jovo-model';
 
 import * as JovoModelGoogleValidator from '../validators/JovoModelGoogleValidator.json';
-import { GoogleActionIntent, GoogleActionInput, JovoModelGoogleActionData } from './Interfaces';
+import {
+  GoogleActionIntent,
+  GoogleActionInput,
+  JovoModelGoogleActionData,
+  GoogleActionLanguageModelProperty,
+} from './Interfaces';
 
 export class JovoModelGoogle extends JovoModel {
   static MODEL_KEY = 'google';
@@ -25,6 +31,9 @@ export class JovoModelGoogle extends JovoModel {
   static fromJovoModel(model: JovoModelGoogleActionData, locale: string): NativeFileInformation[] {
     const errorPrefix = `/models/${locale}.json - `;
     const returnFiles: NativeFileInformation[] = [];
+    const actions: { [key: string]: object } = {
+      'actions.intent.MAIN': {},
+    };
 
     for (const intent of (model.intents || []) as Intent[]) {
       const gaIntent: GoogleActionIntent = {
@@ -114,7 +123,36 @@ export class JovoModelGoogle extends JovoModel {
         path,
         content: gaIntent,
       });
+
+      // Set global intent.
+      returnFiles.push({
+        path: ['custom', 'global', `${intent.name}.yaml`],
+        content: {
+          handler: {
+            webhookHandler: 'Jovo',
+          },
+        },
+      });
+
+      // Register actions.
+      actions[intent.name] = {};
     }
+
+    // Generate global main intent.
+    returnFiles.push({
+      path: ['custom', 'global', 'actions.intent.MAIN.yaml'],
+      content: {
+        handler: {
+          webhookHandler: 'Jovo',
+        },
+      },
+    });
+
+    // Write actions into collected file.
+    returnFiles.push({
+      path: ['actions', 'actions.yaml'],
+      content: { custom: actions },
+    });
 
     for (const inputType of (model.inputTypes || []) as InputType[]) {
       const gaInput: GoogleActionInput = {
@@ -145,6 +183,40 @@ export class JovoModelGoogle extends JovoModel {
         path,
         content: gaInput,
       });
+    }
+
+    // Set google specific properties.
+    const googleGlobalIntents = _.get(model, 'google.custom.global');
+
+    if (googleGlobalIntents) {
+      for (const intent of googleGlobalIntents) {
+        returnFiles.push({
+          path: ['custom', 'global', `${intent.name}.yaml`],
+          content: intent.content,
+        });
+      }
+    }
+
+    const googleIntents = _.get(model, 'google.custom.intents');
+
+    if (googleIntents) {
+      for (const intent of googleIntents) {
+        returnFiles.push({
+          path: ['custom', 'intents', `${intent.name}.yaml`],
+          content: intent.content,
+        });
+      }
+    }
+
+    const googleTypes = _.get(model, 'google.custom.types');
+
+    if (googleTypes) {
+      for (const type of googleTypes) {
+        returnFiles.push({
+          path: ['custom', 'types', `${type.name}.yaml`],
+          content: type.content,
+        });
+      }
     }
 
     return returnFiles;
@@ -192,7 +264,11 @@ export class JovoModelGoogle extends JovoModel {
               const defaultModel: GoogleActionIntent = yaml.parse(file);
 
               if (!defaultModel.parameters) {
-                throw new Error(`Could not find parameters for type ${modelName}.`);
+                // If no type is given, convert the input to a simple string.
+                const inputValue = matched.match(/'.*'/);
+                const inputPhrase: string = inputValue?.shift()?.replace(/'/g, '') || inputName;
+                phrase = phrase.replace(`{${inputName}}`, inputPhrase);
+                continue;
               }
 
               model = defaultModel;
@@ -223,9 +299,9 @@ export class JovoModelGoogle extends JovoModel {
         }
 
         jovoModel.intents!.push(jovoIntent);
-      } else {
+      } else if (modelType === 'types') {
         const input: GoogleActionInput = inputFile.content;
-        const entities = input.synonym.entities;
+        const entities = input.synonym?.entities || {};
         const values: InputTypeValue[] = [];
 
         for (const inputKey of Object.keys(entities)) {
@@ -246,6 +322,14 @@ export class JovoModelGoogle extends JovoModel {
         };
 
         jovoModel.inputTypes!.push(jovoInput);
+      } else {
+        const props: GoogleActionLanguageModelProperty[] = _.get(
+          jovoModel,
+          `google.custom.${modelType}`,
+          [],
+        );
+        props.push({ name: modelName, content: inputFile.content });
+        _.set(jovoModel, `google.custom.${modelType}`, props);
       }
     }
 
