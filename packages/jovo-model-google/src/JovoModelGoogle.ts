@@ -189,10 +189,10 @@ export class JovoModelGoogle extends JovoModel {
     const googleGlobalIntents = _.get(model, 'googleAssistant.custom.global');
 
     if (googleGlobalIntents) {
-      for (const intent of googleGlobalIntents) {
+      for (const [name, content] of Object.entries(googleGlobalIntents)) {
         returnFiles.push({
-          path: ['custom', 'global', `${intent.name}.yaml`],
-          content: intent.content,
+          path: ['custom', 'global', `${name}.yaml`],
+          content: content,
         });
       }
     }
@@ -200,10 +200,10 @@ export class JovoModelGoogle extends JovoModel {
     const googleIntents = _.get(model, 'googleAssistant.custom.intents');
 
     if (googleIntents) {
-      for (const intent of googleIntents) {
+      for (const [name, content] of Object.entries(googleIntents)) {
         returnFiles.push({
-          path: ['custom', 'intents', `${intent.name}.yaml`],
-          content: intent.content,
+          path: ['custom', 'intents', `${name}.yaml`],
+          content: content,
         });
       }
     }
@@ -211,10 +211,10 @@ export class JovoModelGoogle extends JovoModel {
     const googleTypes = _.get(model, 'googleAssistant.custom.types');
 
     if (googleTypes) {
-      for (const type of googleTypes) {
+      for (const [name, content] of Object.entries(googleTypes)) {
         returnFiles.push({
-          path: ['custom', 'types', `${type.name}.yaml`],
-          content: type.content,
+          path: ['custom', 'types', `${name}.yaml`],
+          content: content,
         });
       }
     }
