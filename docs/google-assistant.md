@@ -2,9 +2,10 @@
 
 Learn how to turn the Jovo Model into a Conversational Actions model for Google Assistant.
 
-* [Introduction](#introduction)
-* [Using the Google Assistant Jovo Model with the Jovo CLI](#using-the-google-assistant-jovo-model-with-the-jovo-cli)
-* [Using the Google Assistant Jovo Model npm Package](#using-the-google-assistant-jovo-model-npm-package)
+- [Introduction](#introduction)
+- [Google Assistant-specific Elements in the Jovo Model](#google-assistant-specific-elements-in-the-jovo-model)
+- [Using the Google Assistant Jovo Model with the Jovo CLI](#using-the-google-assistant-jovo-model-with-the-jovo-cli)
+- [Using the Google Assistant Jovo Model npm Package](#using-the-google-assistant-jovo-model-npm-package)
 
 ## Introduction
 
@@ -12,6 +13,64 @@ Google Assistant Conversational Actions are a new way to build Google Actions th
 
 Learn more about the structure in the [official Conversational Actions documentation](https://developers.google.com/assistant/conversational/build/conversation?tool=sdk). The Jovo Model can be translated into this structure by using the [`jovo build` command](https://www.jovo.tech/marketplace/jovo-cli/build) ([see below](#using-the-google-assistant-jovo-model-with-the-jovo-cli)) or the npm package ([see below](#using-the-google-assistant-jovo-model-npm-package)).
 
+## Google Assistant-specific Elements in the Jovo Model
+
+This section provides an overview of how the Jovo Model [see general structure in the main Jovo Model docs](https://www.jovo.tech/marketplace/jovo-model#model-structure) can be extended with platform-specific content for Google Assistant.
+
+### Invocation
+
+You can define a Google Assistant-specific invocation name like this:
+
+```js
+"invocation": {
+    "googleAction": "my test action"
+    // Other platforms
+},
+```
+
+### Built-in Types
+
+> Find all built-in types in the official [Conversational Action System Types Reference](https://developers.google.com/assistant/conversational/types#system_types).
+
+If your intent uses an input ([see how they are added to the Jovo Model](http://jovo.tech/marketplace/jovo-model#intents)) that requires a Google Assistant system type, you can add it like this:
+
+```js
+"inputs": [
+    {
+        "name": "number",
+        "type": {
+            "googleAssistant": "actions.type.Number"
+        }
+    }
+]
+```
+
+### Google Assistant-only Elements
+
+Some elements (intents, types) might be required only by the Google Assistant portion of your Jovo project. For this you can add a `googleAssistant` object to your Jovo Model.
+
+```js
+"googleAssistant": {
+  "custom": {
+    "global": {
+			"actions.intent.MAIN": {
+				"handler": {
+					"webhookHandler": "Jovo"
+				}
+			}
+    },
+    "intents": {
+      "TestIntent": {
+        "trainingPhrases": [
+          "Hello World"
+        ]
+      }
+    }
+  }
+}
+```
+
+This object follows the structure of the Google Assistant Model .yaml files in JSON format.
 
 ## Using the Google Assistant Jovo Model with the Jovo CLI
 
