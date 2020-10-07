@@ -19,6 +19,10 @@ import {
   GoogleActionLanguageModelProperty,
 } from './Interfaces';
 
+// Configure yaml to always use double quotes on properties.
+// @ts-ignore
+yaml.scalarOptions.str.defaultType = 'QUOTE_DOUBLE';
+
 export class JovoModelGoogle extends JovoModel {
   static MODEL_KEY = 'google';
   static defaultLocale?: string;
@@ -31,9 +35,6 @@ export class JovoModelGoogle extends JovoModel {
   static fromJovoModel(model: JovoModelGoogleActionData, locale: string): NativeFileInformation[] {
     const errorPrefix = `/models/${locale}.json - `;
     const returnFiles: NativeFileInformation[] = [];
-    const actions: { [key: string]: object } = {
-      'actions.intent.MAIN': {},
-    };
 
     for (const intent of (model.intents || []) as Intent[]) {
       const gaIntent: GoogleActionIntent = {
@@ -97,6 +98,11 @@ export class JovoModelGoogle extends JovoModel {
             break;
           }
 
+          // If no sample value is given, take the input id as a sample value.
+          if (!sampleValue) {
+            sampleValue = input;
+          }
+
           phrase = phrase.replace(matched, `($${input} '${sampleValue}' auto=true)`);
 
           if (locale === this.defaultLocale && intent.inputs) {
@@ -121,37 +127,28 @@ export class JovoModelGoogle extends JovoModel {
 
       returnFiles.push({
         path,
-        content: gaIntent,
+        content: yaml.stringify(gaIntent),
       });
 
       // Set global intent.
       returnFiles.push({
         path: ['custom', 'global', `${intent.name}.yaml`],
-        content: {
+        content: yaml.stringify({
           handler: {
             webhookHandler: 'Jovo',
           },
-        },
+        }),
       });
-
-      // Register intents as actions.
-      actions[intent.name] = {};
     }
 
     // Generate global main intent.
     returnFiles.push({
       path: ['custom', 'global', 'actions.intent.MAIN.yaml'],
-      content: {
+      content: yaml.stringify({
         handler: {
           webhookHandler: 'Jovo',
         },
-      },
-    });
-
-    // Write actions into collected file.
-    returnFiles.push({
-      path: ['actions', 'actions.yaml'],
-      content: { custom: actions },
+      }),
     });
 
     for (const inputType of (model.inputTypes || []) as InputType[]) {
@@ -181,40 +178,22 @@ export class JovoModelGoogle extends JovoModel {
 
       returnFiles.push({
         path,
-        content: gaInput,
+        content: yaml.stringify(gaInput),
       });
     }
 
     // Set google specific properties.
-    const googleGlobalIntents = _.get(model, 'googleAssistant.custom.global');
+    for (const key of ['global', 'intents', 'types', 'scenes']) {
+      const googleProps = _.get(model, `googleAssistant.custom.${key}`);
 
-    if (googleGlobalIntents) {
-      for (const [name, content] of Object.entries(googleGlobalIntents)) {
-        returnFiles.push({
-          path: ['custom', 'global', `${name}.yaml`],
-          content,
-        });
+      if (!googleProps) {
+        continue;
       }
-    }
 
-    const googleIntents = _.get(model, 'googleAssistant.custom.intents');
-
-    if (googleIntents) {
-      for (const [name, content] of Object.entries(googleIntents)) {
+      for (const [name, content] of Object.entries(googleProps)) {
         returnFiles.push({
-          path: ['custom', 'intents', `${name}.yaml`],
-          content,
-        });
-      }
-    }
-
-    const googleTypes = _.get(model, 'googleAssistant.custom.types');
-
-    if (googleTypes) {
-      for (const [name, content] of Object.entries(googleTypes)) {
-        returnFiles.push({
-          path: ['custom', 'types', `${name}.yaml`],
-          content,
+          path: ['custom', key, `${name}.yaml`],
+          content: yaml.stringify(content),
         });
       }
     }
