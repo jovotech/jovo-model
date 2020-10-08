@@ -175,15 +175,11 @@ export class JovoModelGoogle extends JovoModel {
 
     // Set google specific properties.
     for (const key of ['global', 'intents', 'types', 'scenes']) {
-      const googleProps = _.get(model, `googleAssistant.custom.${key}`);
-
-      if (!googleProps) {
-        continue;
-      }
+      const googleProps = _.get(model, `googleAssistant.custom.${key}`, {});
 
       // Merge existing global intents with configured ones in language model.
       if (key === 'global') {
-        _.mergeWith(googleProps, globalIntents, (objValue, srcValue, key) => {
+        _.mergeWith(googleProps, globalIntents, (objValue) => {
           // Don't overwrite original properties.
           if (objValue) {
             return objValue;
