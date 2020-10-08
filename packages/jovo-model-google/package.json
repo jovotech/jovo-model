@@ -1,6 +1,6 @@
 {
     "name": "jovo-model-google",
-    "version": "3.0.3",
+    "version": "3.0.4",
     "description": "Jovo Model for Google Conversational Actions.",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
