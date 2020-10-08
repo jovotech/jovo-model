@@ -36,6 +36,14 @@ export class JovoModelGoogle extends JovoModel {
     const errorPrefix = `/models/${locale}.json - `;
     const returnFiles: NativeFileInformation[] = [];
 
+    const globalIntents: GoogleActionLanguageModelProperty = {
+      'actions.intent.MAIN': {
+        handler: {
+          webhookHandler: 'Jovo',
+        },
+      },
+    };
+
     for (const intent of (model.intents || []) as Intent[]) {
       const gaIntent: GoogleActionIntent = {
         trainingPhrases: [],
@@ -131,25 +139,8 @@ export class JovoModelGoogle extends JovoModel {
       });
 
       // Set global intent.
-      returnFiles.push({
-        path: ['custom', 'global', `${intent.name}.yaml`],
-        content: yaml.stringify({
-          handler: {
-            webhookHandler: 'Jovo',
-          },
-        }),
-      });
+      globalIntents[intent.name] = { handler: { webhookHandler: 'Jovo' } };
     }
-
-    // Generate global main intent.
-    returnFiles.push({
-      path: ['custom', 'global', 'actions.intent.MAIN.yaml'],
-      content: yaml.stringify({
-        handler: {
-          webhookHandler: 'Jovo',
-        },
-      }),
-    });
 
     for (const inputType of (model.inputTypes || []) as InputType[]) {
       const gaInput: GoogleActionInput = {
@@ -188,6 +179,16 @@ export class JovoModelGoogle extends JovoModel {
 
       if (!googleProps) {
         continue;
+      }
+
+      // Merge existing global intents with configured ones in language model.
+      if (key === 'global') {
+        _.mergeWith(googleProps, globalIntents, (objValue, srcValue, key) => {
+          // Don't overwrite original properties.
+          if (objValue) {
+            return objValue;
+          }
+        });
       }
 
       for (const [name, content] of Object.entries(googleProps)) {
