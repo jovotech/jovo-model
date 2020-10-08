@@ -23,8 +23,8 @@ You can define a Google Assistant-specific invocation name like this:
 
 ```js
 "invocation": {
-    "googleAction": "my test action"
-    // Other platforms
+  "googleAction": "my test action"
+  // Other platforms
 },
 ```
 
@@ -36,12 +36,12 @@ If your intent uses an input ([see how they are added to the Jovo Model](http://
 
 ```js
 "inputs": [
-    {
-        "name": "number",
-        "type": {
-            "googleAssistant": "actions.type.Number"
-        }
+  {
+    "name": "number",
+    "type": {
+      "googleAssistant": "actions.type.Number"
     }
+  }
 ]
 ```
 
@@ -53,11 +53,11 @@ Some elements (intents, types) might be required only by the Google Assistant po
 "googleAssistant": {
   "custom": {
     "global": {
-			"actions.intent.MAIN": {
-				"handler": {
-					"webhookHandler": "Jovo"
-				}
-			}
+      "actions.intent.MAIN": {
+        "handler": {
+          "webhookHandler": "Jovo"
+        }
+      }
     },
     "intents": {
       "TestIntent": {
@@ -81,12 +81,13 @@ Make sure that you remove the `dialogflow` part in your `project.js` file. There
 ```javascript
 // Before
 googleAction: {
-    nlu: 'dialogflow',
-  },
+  nlu: 'dialogflow',
+},
 
 // After
 googleAction: {
-  },
+
+},
 ```
 
 After successfully running `jovo build`, you can find the files inside the `platforms/googleAction` folder.
