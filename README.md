@@ -306,7 +306,7 @@ Some intents or input types may be needed for just some platforms. You can defin
 
 The format of the elements inside the `alexa` object from above is the original structure of the Alexa Interaction Model. For example, `phrases` (Jovo Model naming) are called `samples`.
 
-For more information, see the respective platform docs [referenced here](#platforms).
+For more information, see the respective platform docs [referenced here](#supported-platforms).
 
 
 ## Using the Jovo Model with the Jovo CLI
