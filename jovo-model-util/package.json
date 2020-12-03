@@ -1,6 +1,6 @@
 {
   "name": "jovo-model-util",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Jovo Model Util",
   "main": "dist/index",
   "types": "dist/index.d.ts",
@@ -29,7 +29,7 @@
     "typescript-json-schema": "^0.42.0"
   },
   "dependencies": {
-    "jovo-model": "^3.0.0"
+    "jovo-model": "^3.0.1"
   },
   "jest": {
     "transform": {
