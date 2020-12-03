@@ -113,11 +113,21 @@ export class JovoModelGoogle extends JovoModel {
 
           phrase = phrase.replace(matched, `($${input} '${sampleValue}' auto=true)`);
 
+          // Check for freeText input type.
+          if (type === 'actions.type.FreeText') {
+            // Create InputType with content freeText: {}.
+            const inputType: InputType = { name: 'FreeTextType' };
+            model.inputTypes?.push(inputType);
+            // Change type to that InputType.
+            type = inputType.name;
+          }
+
           if (locale === this.defaultLocale && intent.inputs) {
             if (!gaIntent.parameters) {
               gaIntent.parameters = [];
             }
 
+            // If parameters already contain input, skip.
             if (gaIntent.parameters.find((el) => el.name === input)) {
               continue;
             }
@@ -167,10 +177,18 @@ export class JovoModelGoogle extends JovoModel {
         };
       }
 
-      returnFiles.push({
-        path,
-        content: yaml.stringify(gaInput),
-      });
+      // If InputType is FreeText, don't include any input values.
+      if (inputType.name === 'FreeTextType') {
+        returnFiles.push({
+          path,
+          content: yaml.stringify({ freeText: {} }),
+        });
+      } else {
+        returnFiles.push({
+          path,
+          content: yaml.stringify(gaInput),
+        });
+      }
     }
 
     // Set google specific properties.
@@ -250,10 +268,18 @@ export class JovoModelGoogle extends JovoModel {
               model = defaultModel;
             }
 
+            // Find input parameter for the current input name.
             const inputParameter = model.parameters!.find((el) => el.name === inputName)!;
 
+            // Check for freeText.
+            if (inputParameter.type.name === 'FreeTextType') {
+              inputParameter.type.name = 'actions.type.FreeText';
+            }
+
+            // Check for duplicated inputs.
             const hasInput = inputs.find((el) => el.name === inputParameter.name);
 
+            // If the current input already has been registered, skip.
             if (!hasInput) {
               inputs.push({
                 name: inputParameter.name,
@@ -279,6 +305,11 @@ export class JovoModelGoogle extends JovoModel {
         const input: GoogleActionInput = inputFile.content;
         const entities = input.synonym?.entities || {};
         const values: InputTypeValue[] = [];
+
+        // Check for FreeTextType.
+        if (modelName === 'FreeTextType') {
+          continue;
+        }
 
         for (const inputKey of Object.keys(entities)) {
           const inputValues: string[] = entities[inputKey].synonyms;
