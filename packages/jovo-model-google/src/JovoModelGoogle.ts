@@ -271,20 +271,25 @@ export class JovoModelGoogle extends JovoModel {
             // Find input parameter for the current input name.
             const inputParameter = model.parameters!.find((el) => el.name === inputName)!;
 
-            // Check for freeText.
-            if (inputParameter.type.name === 'FreeTextType') {
-              inputParameter.type.name = 'actions.type.FreeText';
-            }
-
             // Check for duplicated inputs.
             const hasInput = inputs.find((el) => el.name === inputParameter.name);
 
             // If the current input already has been registered, skip.
             if (!hasInput) {
-              inputs.push({
-                name: inputParameter.name,
-                type: inputParameter.type.name,
-              });
+              // Check for freeText.
+              if (inputParameter.type.name === 'FreeTextType') {
+                inputs.push({
+                  name: inputParameter.name,
+                  type: {
+                    googleAssistant: 'actions.type.FreeText',
+                  },
+                });
+              } else {
+                inputs.push({
+                  name: inputParameter.name,
+                  type: inputParameter.type.name,
+                });
+              }
             }
           }
 
