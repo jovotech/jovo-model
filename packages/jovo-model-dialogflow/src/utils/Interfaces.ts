@@ -1,6 +1,7 @@
 import { InputType, Intent, IntentInput, JovoModelData } from 'jovo-model';
 
 export interface DialogflowLMInputObject {
+  id: string;
   name: string;
   auto: boolean;
   webhookUsed: boolean;
@@ -21,9 +22,11 @@ export interface DialogflowLMIntentData {
 }
 
 export interface DialogflowLMIntent {
+  id: string;
+  data: DialogflowLMIntentData[];
   isTemplate: boolean;
   count: number;
-  data: DialogflowLMIntentData[];
+  lang: string;
 }
 
 export interface IntentDialogflow extends Intent {
