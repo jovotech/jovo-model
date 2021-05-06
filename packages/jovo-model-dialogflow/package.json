@@ -19,6 +19,11 @@
     "license": "Apache-2.0",
     "devDependencies": {
         "@types/jest": "^24.0.25",
+        "@types/lodash.difference": "^4.5.6",
+        "@types/lodash.get": "^4.4.6",
+        "@types/lodash.isequal": "^4.5.5",
+        "@types/lodash.merge": "^4.6.6",
+        "@types/lodash.set": "^4.3.6",
         "@types/node": "^13.1.5",
         "@types/tv4": "^1.2.29",
         "@types/uuid": "3.4.3",
@@ -31,7 +36,12 @@
         "typescript": "^3.7.4"
     },
     "dependencies": {
-        "jovo-model": "^3.0.1"
+        "jovo-model": "^3.0.1",
+        "lodash.difference": "^4.5.0",
+        "lodash.get": "^4.4.2",
+        "lodash.isequal": "^4.5.0",
+        "lodash.merge": "^4.6.2",
+        "lodash.set": "^4.3.2"
     },
     "jest": {
         "transform": {

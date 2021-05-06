@@ -9,6 +9,7 @@
         "strictNullChecks": true,
         "strict": true,
         "preserveConstEnums": true,
+        "esModuleInterop": true,
         "declaration": true,
         "outDir": "./dist/",
         "target": "es2017",
