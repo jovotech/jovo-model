@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import {
   DialogflowLMEntity,
   DialogflowLMInputObject,
@@ -15,10 +15,14 @@ import {
   JovoModel,
   NativeFileInformation
 } from "jovo-model";
+import _get from 'lodash.get';
+import _set from 'lodash.set';
+import _difference from 'lodash.difference';
+import _merge from 'lodash.merge';
+import _isEqual from 'lodash.isequal';
 
 import * as JovoModelDialogflowValidator from "../validators/JovoModelDialogflowData.json";
 
-import * as _ from "lodash";
 import { DialogflowLMEntries } from "./utils/Interfaces";
 import { DIALOGFLOW_LM_ENTITY } from "./utils";
 
@@ -103,17 +107,17 @@ export class JovoModelDialogflow extends JovoModel {
           if (dialogFlowIntent.fallbackIntent === true) {
               const fallbackIntent = jovoIntent.dialogflow;
               fallbackIntent!.name = dialogFlowIntent.name;
-              _.set(jovoModel, "dialogflow.intents", [fallbackIntent]);
+              _set(jovoModel, "dialogflow.intents", [fallbackIntent]);
               continue;
           }
 
           // is welcome intent?
-          if (_.get(dialogFlowIntent, "events[0].name") === "WELCOME") {
+          if (_get(dialogFlowIntent, "events[0].name") === "WELCOME") {
               const welcomeIntent = jovoIntent.dialogflow;
               welcomeIntent!.name = dialogFlowIntent.name;
 
-              if (!_.get(jovoModel, "dialogflow.intents")) {
-                  _.set(jovoModel, "dialogflow.intents", [welcomeIntent]);
+              if (!_get(jovoModel, "dialogflow.intents")) {
+                  _set(jovoModel, "dialogflow.intents", [welcomeIntent]);
               } else {
                   // @ts-ignore
                   jovoModel.dialogflow.intents.push(welcomeIntent);
@@ -124,12 +128,12 @@ export class JovoModelDialogflow extends JovoModel {
           const inputs: IntentInput[] = [];
           if (dialogFlowIntent.responses) {
               for (const response of dialogFlowIntent.responses) {
-                  for (const parameter of _.get(response, "parameters", [])) {
+                  for (const parameter of _get(response, "parameters", [])) {
                       const input: IntentInput = {
                           name: parameter.name
                       };
                       if (parameter.dataType) {
-                          if (_.startsWith(parameter.dataType, "@sys.")) {
+                          if(parameter.dataType.startsWith('@sys.')) {
                               input.type = {
                                   dialogflow: parameter.dataType
                               };
@@ -269,6 +273,7 @@ export class JovoModelDialogflow extends JovoModel {
 
       for (const intent of (model.intents || []) as IntentDialogflow[]) {
           const dfIntentObj: DialogflowLMInputObject = {
+              id: uuidv4(),
               name: intent.name,
               auto: true,
               webhookUsed: true
@@ -292,10 +297,7 @@ export class JovoModelDialogflow extends JovoModel {
                   if (typeof input.type === "object") {
                       if (input.type.dialogflow) {
                           if (
-                              _.startsWith(
-                                  input.type.dialogflow,
-                                  BUILTIN_PREFIX
-                              )
+                              input.type.dialogflow.startsWith(BUILTIN_PREFIX)
                           ) {
                               parameterObj.dataType = input.type.dialogflow;
                           } else {
@@ -350,7 +352,7 @@ export class JovoModelDialogflow extends JovoModel {
                       for (const matchedInputType of matchedInputTypes) {
                           let dfEntityObj: DialogflowLMEntity = {
                               ...DIALOGFLOW_LM_ENTITY,
-                              id: uuid(),
+                              id: uuidv4(),
                               name: matchedInputType.name,
                           };
 
@@ -362,7 +364,7 @@ export class JovoModelDialogflow extends JovoModel {
                                   dfEntityObj.name =
                                       matchedInputType.dialogflow;
                               } else {
-                                  dfEntityObj = _.merge(
+                                  dfEntityObj = _merge(
                                       dfEntityObj,
                                       matchedInputType.dialogflow
                                   );
@@ -433,7 +435,7 @@ export class JovoModelDialogflow extends JovoModel {
                     // Parse system entities with default values for validation.
                     const dfEntityObj = {
                         ...DIALOGFLOW_LM_ENTITY,
-                        id: uuid(),
+                        id: uuidv4(),
                         name: parameterObj.dataType.replace('@', ''),
                     };
 
@@ -464,15 +466,15 @@ export class JovoModelDialogflow extends JovoModel {
 
                   // merges dialogflow specific data
                   if (input.dialogflow) {
-                      parameterObj = _.merge(parameterObj, input.dialogflow);
+                      parameterObj = _merge(parameterObj, input.dialogflow);
                   }
 
                   dfIntentObj.responses[0].parameters.push(parameterObj);
               }
           }
 
-          if (_.get(intent, "dialogflow")) {
-              _.merge(dfIntentObj, intent.dialogflow);
+          if (_get(intent, "dialogflow")) {
+              _merge(dfIntentObj, intent.dialogflow);
           }
 
           returnFiles.push({
@@ -531,7 +533,7 @@ export class JovoModelDialogflow extends JovoModel {
                   }
 
                   // create entity object based on parameters objects
-                  if (_.get(dfIntentObj, "responses[0].parameters")) {
+                  if (_get(dfIntentObj, "responses[0].parameters")) {
                       dfIntentObj.responses![0].parameters.forEach(item => {
                           if (item.name === entity) {
                               dataEntityObj.alias = item.name;
@@ -561,9 +563,11 @@ export class JovoModelDialogflow extends JovoModel {
               }
 
               dialogFlowIntentUserSays.push({
-                  data,
-                  isTemplate: false,
-                  count: 0
+                id: uuidv4(),  
+                data,
+                isTemplate: false,
+                count: 0,
+                lang: locale
               });
           }
           if (dialogFlowIntentUserSays.length > 0) {
@@ -577,8 +581,8 @@ export class JovoModelDialogflow extends JovoModel {
           }
       }
       // dialogflow intents form locale.json
-      if (_.get(model, "dialogflow.intents")) {
-          for (const modelDialogflowIntent of _.get(
+      if (_get(model, "dialogflow.intents")) {
+          for (const modelDialogflowIntent of _get(
               model,
               "dialogflow.intents"
           )) {
@@ -605,8 +609,8 @@ export class JovoModelDialogflow extends JovoModel {
       }
 
       // dialogflow entities form locale.json
-      if (_.get(model, "dialogflow.entities")) {
-          for (const modelDialogflowEntity of _.get(
+      if (_get(model, "dialogflow.entities")) {
+          for (const modelDialogflowEntity of _get(
               model,
               "dialogflow.entities"
           )) {
@@ -645,138 +649,138 @@ export class JovoModelDialogflow extends JovoModel {
       dialogFlowIntent: DialogflowLMInputObject,
       locale: string
   ) {
-      if (_.get(dialogFlowIntent, "auto") !== _.get(DEFAULT_INTENT, "auto")) {
-          _.set(
+      if (_get(dialogFlowIntent, "auto") !== _get(DEFAULT_INTENT, "auto")) {
+          _set(
               jovoIntent,
               "dialogflow.auto",
-              _.get(dialogFlowIntent, "auto")
+              _get(dialogFlowIntent, "auto")
           );
       }
 
       if (
-          _.difference(
-              _.get(dialogFlowIntent, "contexts"),
-              _.get(DEFAULT_INTENT, "contexts")
+          _difference(
+              _get(dialogFlowIntent, "contexts"),
+              _get(DEFAULT_INTENT, "contexts")
           ).length > 0
       ) {
-          _.set(
+          _set(
               jovoIntent,
               "dialogflow.contexts",
-              _.get(dialogFlowIntent, "contexts")
+              _get(dialogFlowIntent, "contexts")
           );
       }
 
-      const priority = _.get(dialogFlowIntent, "priority");
+      const priority = _get(dialogFlowIntent, "priority");
       if (
           priority !== undefined &&
-          priority !== _.get(DEFAULT_INTENT, "priority")
+          priority !== _get(DEFAULT_INTENT, "priority")
       ) {
-          _.set(jovoIntent, "dialogflow.priority", priority);
+          _set(jovoIntent, "dialogflow.priority", priority);
       }
 
-      const webhookUsed = _.get(dialogFlowIntent, "webhookUsed");
+      const webhookUsed = _get(dialogFlowIntent, "webhookUsed");
       if (
           webhookUsed !== undefined &&
-          webhookUsed !== _.get(DEFAULT_INTENT, "webhookUsed")
+          webhookUsed !== _get(DEFAULT_INTENT, "webhookUsed")
       ) {
-          _.set(jovoIntent, "dialogflow.webhookUsed", webhookUsed);
+          _set(jovoIntent, "dialogflow.webhookUsed", webhookUsed);
       }
 
-      const webhookForSlotFilling = _.get(
+      const webhookForSlotFilling = _get(
           dialogFlowIntent,
           "webhookForSlotFilling"
       );
       if (
           webhookForSlotFilling !== undefined &&
           webhookForSlotFilling !==
-              _.get(DEFAULT_INTENT, "webhookForSlotFilling")
+              _get(DEFAULT_INTENT, "webhookForSlotFilling")
       ) {
-          _.set(
+          _set(
               jovoIntent,
               "dialogflow.webhookForSlotFilling",
               webhookForSlotFilling
           );
       }
 
-      const fallbackIntent = _.get(dialogFlowIntent, "fallbackIntent");
+      const fallbackIntent = _get(dialogFlowIntent, "fallbackIntent");
       if (
           fallbackIntent !== undefined &&
-          fallbackIntent !== _.get(DEFAULT_INTENT, "fallbackIntent")
+          fallbackIntent !== _get(DEFAULT_INTENT, "fallbackIntent")
       ) {
-          _.set(jovoIntent, "dialogflow.fallbackIntent", fallbackIntent);
+          _set(jovoIntent, "dialogflow.fallbackIntent", fallbackIntent);
       }
       if (
-          _.difference(
-              _.get(dialogFlowIntent, "events"),
-              _.get(DEFAULT_INTENT, "events")
+          _difference(
+              _get(dialogFlowIntent, "events"),
+              _get(DEFAULT_INTENT, "events")
           ).length > 0
       ) {
-          _.set(
+          _set(
               jovoIntent,
               "dialogflow.events",
-              _.get(dialogFlowIntent, "events")
+              _get(dialogFlowIntent, "events")
           );
       }
 
       // skip parameters object in responses. it's handled somewhere else
-      const responses = _.get(dialogFlowIntent, "responses");
+      const responses = _get(dialogFlowIntent, "responses");
 
       if (
           responses !== undefined &&
           responses.length !== 0 &&
-          !_.isEqual(responses, _.get(DEFAULT_INTENT, "responses"))
+          !_isEqual(responses, _get(DEFAULT_INTENT, "responses"))
       ) {
-          const resetContexts = _.get(
+          const resetContexts = _get(
               dialogFlowIntent,
               "responses[0].resetContexts"
           );
           if (
               resetContexts !== undefined &&
-              !_.isEqual(
+              !_isEqual(
                   resetContexts,
-                  _.get(DEFAULT_INTENT, "responses[0].resetContexts")
+                  _get(DEFAULT_INTENT, "responses[0].resetContexts")
               )
           ) {
-              _.set(
+              _set(
                   jovoIntent,
                   "dialogflow.responses[0].resetContexts",
                   resetContexts
               );
           }
 
-          const affectedContexts = _.get(
+          const affectedContexts = _get(
               dialogFlowIntent,
               "responses[0].affectedContexts"
           );
           if (
               affectedContexts !== undefined &&
-              !_.isEqual(
+              !_isEqual(
                   affectedContexts,
-                  _.get(DEFAULT_INTENT, "responses[0].affectedContexts")
+                  _get(DEFAULT_INTENT, "responses[0].affectedContexts")
               )
           ) {
-              _.set(
+              _set(
                   jovoIntent,
                   "dialogflow.responses[0].affectedContexts",
                   affectedContexts
               );
           }
 
-          const defaultResponsePlatforms = _.get(
+          const defaultResponsePlatforms = _get(
               dialogFlowIntent,
               "responses[0].defaultResponsePlatforms"
           );
           if (
               defaultResponsePlatforms !== undefined &&
-              !_.isEqual(
+              !_isEqual(
                   defaultResponsePlatforms,
-                  _.get(
+                  _get(
                       DEFAULT_INTENT,
                       "responses[0].defaultResponsePlatforms"
                   )
               )
           ) {
-              _.set(
+              _set(
                   jovoIntent,
                   "dialogflow.responses[0].defaultResponsePlatforms",
                   defaultResponsePlatforms
@@ -784,25 +788,25 @@ export class JovoModelDialogflow extends JovoModel {
           }
 
           if (
-              !_.isEqual(
-                  _.get(dialogFlowIntent, "responses[0].messages"),
-                  _.get(DEFAULT_INTENT, "responses[0].messages")
+              !_isEqual(
+                  _get(dialogFlowIntent, "responses[0].messages"),
+                  _get(DEFAULT_INTENT, "responses[0].messages")
               )
           ) {
-              for (const message of _.get(
+              for (const message of _get(
                   dialogFlowIntent,
                   "responses[0].messages"
               )) {
-                  if (_.get(message, "lang") === locale) {
-                      const jovoIntentDialogflowMessages = _.get(
+                  if (_get(message, "lang") === locale) {
+                      const jovoIntentDialogflowMessages = _get(
                           jovoIntent,
                           "dialogflow.responses[0].messages",
                           []
                       );
 
-                      if (_.get(message, 'speech', '').length > 0) {
+                      if (_get(message, 'speech', '').length > 0) {
                           jovoIntentDialogflowMessages.push(message);
-                          _.set(
+                          _set(
                               jovoIntent,
                               "dialogflow.responses[0].messages",
                               jovoIntentDialogflowMessages
@@ -812,18 +816,18 @@ export class JovoModelDialogflow extends JovoModel {
               }
           }
 
-          const responseSpeech = _.get(
+          const responseSpeech = _get(
               dialogFlowIntent,
               "responses[0].speech"
           );
           if (
               responseSpeech !== undefined &&
-              !_.isEqual(
+              !_isEqual(
                   responseSpeech,
-                  _.get(DEFAULT_INTENT, "responses[0].speech")
+                  _get(DEFAULT_INTENT, "responses[0].speech")
               )
           ) {
-              _.set(
+              _set(
                   jovoIntent,
                   "dialogflow.responses[0].speech",
                   responseSpeech
@@ -839,55 +843,55 @@ export class JovoModelDialogflow extends JovoModel {
   ) {
       //isOverridable
       if (
-          _.get(dialogflowEntity, "isOverridable") !==
-          _.get(DEFAULT_ENTITY, "isOverridable")
+          _get(dialogflowEntity, "isOverridable") !==
+          _get(DEFAULT_ENTITY, "isOverridable")
       ) {
-          _.set(
+          _set(
               jovoInput,
               "dialogflow.isOverridable",
-              _.get(dialogflowEntity, "isOverridable")
+              _get(dialogflowEntity, "isOverridable")
           );
       }
       //isEnum
       if (
-          _.get(dialogflowEntity, "isEnum") !==
-          _.get(DEFAULT_ENTITY, "isEnum")
+          _get(dialogflowEntity, "isEnum") !==
+          _get(DEFAULT_ENTITY, "isEnum")
       ) {
-          _.set(
+          _set(
               jovoInput,
               "dialogflow.isEnum",
-              _.get(dialogflowEntity, "isEnum")
+              _get(dialogflowEntity, "isEnum")
           );
       }
       //automatedExpansion
       if (
-          _.get(dialogflowEntity, "automatedExpansion") !==
-          _.get(DEFAULT_ENTITY, "automatedExpansion")
+          _get(dialogflowEntity, "automatedExpansion") !==
+          _get(DEFAULT_ENTITY, "automatedExpansion")
       ) {
-          _.set(
+          _set(
               jovoInput,
               "dialogflow.automatedExpansion",
-              _.get(dialogflowEntity, "automatedExpansion")
+              _get(dialogflowEntity, "automatedExpansion")
           );
       }
       //isRegexp
-      if (_.get(dialogflowEntity, "isRegexp") !==
-          _.get(DEFAULT_ENTITY, "isRegexp")
+      if (_get(dialogflowEntity, "isRegexp") !==
+          _get(DEFAULT_ENTITY, "isRegexp")
       ) {
-          _.set(
+          _set(
               jovoInput,
               "dialogflow.isRegexp",
-              _.get(dialogflowEntity, "isRegexp")
+              _get(dialogflowEntity, "isRegexp")
           );
       }
       //allowFuzzyExtraction
-      if (_.get(dialogflowEntity, "allowFuzzyExtraction") !==
-          _.get(DEFAULT_ENTITY, "allowFuzzyExtraction")
+      if (_get(dialogflowEntity, "allowFuzzyExtraction") !==
+          _get(DEFAULT_ENTITY, "allowFuzzyExtraction")
       ) {
-          _.set(
+          _set(
               jovoInput,
               "dialogflow.allowFuzzyExtraction",
-              _.get(dialogflowEntity, "allowFuzzyExtraction")
+              _get(dialogflowEntity, "allowFuzzyExtraction")
           );
       }
       return jovoInput;

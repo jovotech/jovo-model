@@ -2,6 +2,8 @@ import { JovoModelDialogflow } from '../src';
 
 import { NativeFileInformation, JovoModelData } from 'jovo-model';
 
+jest.mock('uuid');
+
 describe('JovoModelDialogflow.ts', () => {
   describe('exportJovoModel (toJovoModel)', () => {
     const testsData = [
@@ -30,6 +32,7 @@ describe('JovoModelDialogflow.ts', () => {
                   ],
                   isTemplate: false,
                   count: 0,
+                  lang: 'en',
                 },
                 {
                   data: [
@@ -40,6 +43,7 @@ describe('JovoModelDialogflow.ts', () => {
                   ],
                   isTemplate: false,
                   count: 0,
+                  lang: 'en',
                 },
               ],
             },
@@ -163,6 +167,7 @@ describe('JovoModelDialogflow.ts', () => {
                   ],
                   isTemplate: false,
                   count: 0,
+                  lang: 'en',
                 },
                 {
                   data: [
@@ -179,6 +184,7 @@ describe('JovoModelDialogflow.ts', () => {
                   ],
                   isTemplate: false,
                   count: 0,
+                  lang: 'en',
                 },
                 {
                   data: [
@@ -199,6 +205,7 @@ describe('JovoModelDialogflow.ts', () => {
                   ],
                   isTemplate: false,
                   count: 0,
+                  lang: 'en',
                 },
                 {
                   data: [
@@ -225,6 +232,7 @@ describe('JovoModelDialogflow.ts', () => {
                   ],
                   isTemplate: false,
                   count: 0,
+                  lang: 'en',
                 },
               ],
             },
@@ -473,6 +481,7 @@ describe('JovoModelDialogflow.ts', () => {
                 ],
                 isTemplate: false,
                 count: 0,
+                lang: 'en',
               },
               {
                 data: [
@@ -483,6 +492,7 @@ describe('JovoModelDialogflow.ts', () => {
                 ],
                 isTemplate: false,
                 count: 0,
+                lang: 'en',
               },
             ],
           },
@@ -631,6 +641,7 @@ describe('JovoModelDialogflow.ts', () => {
                 ],
                 isTemplate: false,
                 count: 0,
+                lang: 'en',
               },
               {
                 data: [
@@ -647,6 +658,7 @@ describe('JovoModelDialogflow.ts', () => {
                 ],
                 isTemplate: false,
                 count: 0,
+                lang: 'en',
               },
               {
                 data: [
@@ -667,6 +679,7 @@ describe('JovoModelDialogflow.ts', () => {
                 ],
                 isTemplate: false,
                 count: 0,
+                lang: 'en',
               },
               {
                 data: [
@@ -693,6 +706,7 @@ describe('JovoModelDialogflow.ts', () => {
                 ],
                 isTemplate: false,
                 count: 0,
+                lang: 'en',
               },
             ],
           },
