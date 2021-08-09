@@ -12,7 +12,7 @@ import {
   NativeFileInformation,
 } from 'jovo-model';
 
-import * as JovoModelAlexaValidator from '../validators/JovoModelSnipsData.json';
+import * as JovoModelSnipsValidator from '../validators/JovoModelSnipsData.json';
 import {
   NativeSnipsInformation,
   SnipsEntity,
@@ -239,6 +239,6 @@ export class JovoModelSnips extends JovoModel {
   }
 
   static getValidator(): tv4.JsonSchema {
-    return JovoModelAlexaValidator;
+    return JovoModelSnipsValidator;
   }
 }
