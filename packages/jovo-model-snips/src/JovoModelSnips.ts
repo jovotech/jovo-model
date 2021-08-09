@@ -6,6 +6,7 @@ import {
   InputType,
   InputTypeValue,
   Intent,
+  IntentInput,
   JovoModel,
   JovoModelData,
   NativeFileInformation,
@@ -59,18 +60,17 @@ export class JovoModelSnips extends JovoModel {
               );
             }
 
-            let inputSample: string | undefined;
+            // For built-in entities, no input samples are provided, use the slot name instead
+            let inputSample: string = matchedInput;
             let intentInputType: string | undefined;
 
             // Try to get the input type for the matched input to insert random samples
             for (const input of intent.inputs) {
-              console.log(matchedInput);
               if (matchedInput !== input.name) {
                 continue;
               }
 
               if (!input.type) {
-                console.log('Input Type found: ', input.type);
                 throw new Error(`${errorPrefix} No input type found for input "${matchedInput}".`);
               }
 
@@ -78,6 +78,13 @@ export class JovoModelSnips extends JovoModel {
                 intentInputType = input.type.snips;
               } else {
                 intentInputType = input.type;
+              }
+
+              // Catch built-in entities
+              if (intentInputType.startsWith('snips/')) {
+                // Add entity to model and exit
+                snipsModel.entities[intentInputType] = {};
+                break;
               }
 
               if (!model.inputTypes) {
@@ -99,18 +106,12 @@ export class JovoModelSnips extends JovoModel {
                 const randomIndex: number = Math.round(
                   Math.random() * (inputType.values.length - 1),
                 );
-                inputSample = inputType.values[randomIndex].value;
+                inputSample = inputType.values[randomIndex]?.value || inputSample;
               }
             }
 
             if (!intentInputType) {
               throw new Error(`${errorPrefix} No input type found for input "${matchedInput}".`);
-            }
-
-            if (!inputSample) {
-              throw new Error(
-                `${errorPrefix} No sample input found for input "${matchedInput}". Please provide at least one input value.`,
-              );
             }
 
             // For every input defined in an intent phrase, this takes the last data entry,
@@ -168,7 +169,7 @@ export class JovoModelSnips extends JovoModel {
               }
             }
 
-            entity.data.push(entityData);
+            entity.data!.push(entityData);
           }
         }
 
@@ -202,7 +203,10 @@ export class JovoModelSnips extends JovoModel {
               intent.inputs = [];
             }
 
-            intent.inputs.push({ name: data.slot_name, type: { snips: data.entity } });
+            // Only add input if not present already
+            if (!intent.inputs.find((input: IntentInput) => input.name === data.slot_name)) {
+              intent.inputs.push({ name: data.slot_name, type: { snips: data.entity } });
+            }
           }
 
           return `${phrase}${appended}`;
@@ -219,7 +223,7 @@ export class JovoModelSnips extends JovoModel {
       }
       const inputType: InputType = { name: entityKey, values: [] };
 
-      for (const data of entityData.data) {
+      for (const data of entityData.data!) {
         const inputValue: InputTypeValue = { value: data.value, synonyms: data.synonyms };
         inputType.values!.push(inputValue);
       }
