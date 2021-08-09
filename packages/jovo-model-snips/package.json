@@ -1,0 +1,60 @@
+{
+  "name": "jovo-model-snips",
+  "version": "1.0.0",
+  "description": "Jovo Model for Snips NLU",
+  "main": "dist/src/index",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "gulp && tsc",
+    "tslint": "tslint -p tsconfig.json -c tslint.json",
+    "tsc": "tsc",
+    "tscw": "tsc --watch",
+    "test": "jest",
+    "rimraf": "rimraf ./dist"
+  },
+  "files": [
+    "dist"
+  ],
+  "author": "jovotech",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "@types/lodash.get": "^4.4.6",
+    "@types/lodash.set": "^4.3.6",
+    "@types/lodash.startswith": "^4.2.6",
+    "@types/node": "^13.1.5",
+    "@types/tv4": "^1.2.29",
+    "gulp": "^4.0.2",
+    "jest": "^24.9.0",
+    "jovo-model-util": "^3.0.1",
+    "rimraf": "^3.0.0",
+    "ts-jest": "^24.3.0",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "jovo-model": "^3.0.1",
+    "lodash.get": "^4.4.2",
+    "lodash.set": "^4.3.2",
+    "lodash.startswith": "^4.2.1",
+    "tv4": "^1.3.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testURL": "http://localhost/",
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testPathIgnorePatterns": [
+      "/dist/",
+      "/node_modules/"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  },
+  "gitHead": "f0e129be4a51123dcf3f47fc79db1f2a94794a99"
+}
