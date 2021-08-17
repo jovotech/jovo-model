@@ -1,4 +1,4 @@
-import { IntentInput, JovoModelData } from 'jovo-model';
+import { IntentEntity, JovoModelData } from 'jovo-model';
 
 export interface AlexaLMTypeObject {
   name: string;
@@ -39,7 +39,7 @@ export interface AlexaModel {
   };
 }
 
-export interface IntentInputAlexa extends IntentInput {
+export interface IntentEntityAlexa extends IntentEntity {
   alexa?: {
     samples: string[];
   };
