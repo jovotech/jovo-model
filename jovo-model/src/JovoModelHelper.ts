@@ -1,20 +1,20 @@
 import has = require('lodash.has');
-import { InputType, InputTypeValue, Intent, IntentInput, JovoModelData } from './Interfaces';
+import { EntityType, EntityTypeValue, Intent, IntentEntity, JovoModelData } from './Interfaces';
 
 export type ModelIntent = Intent | string;
-export type ModelIntentInput = IntentInput | string;
+export type ModelIntentEntity = IntentEntity | string;
 
-export type ModelInputType = InputType | string;
-export type ModelInputTypeValue = InputTypeValue | string;
+export type ModelEntityType = EntityType | string;
+export type ModelEntityTypeValue = EntityTypeValue | string;
 
 export interface IntentIndex {
   index: number;
   intentIndex: number;
 }
 
-export interface InputTypeIndex {
+export interface EntityTypeIndex {
   index: number;
-  inputTypeIndex: number;
+  entityTypeIndex: number;
 }
 
 /**
@@ -25,21 +25,22 @@ export class JovoModelHelper {
   static new(
     invocation = 'app',
     intents: Intent[] = [],
-    inputTypes: InputType[] = [],
+    entityTypes: EntityType[] = [],
   ): JovoModelData {
     return {
+      version: 4.0,
       invocation,
       intents,
-      inputTypes,
+      entityTypes,
     };
   }
 
   static prepareModel(model: JovoModelData): JovoModelData {
     // remove observers
-    if (model.inputTypes && model.inputTypes.length > 0) {
-      model.inputTypes.forEach((inputType: InputType) => {
-        if (inputType.values && inputType.values.length > 0) {
-          inputType.values.forEach((value: InputTypeValue) => {
+    if (model.entityTypes && model.entityTypes.length > 0) {
+      model.entityTypes.forEach((entityType: EntityType) => {
+        if (entityType.values && entityType.values.length > 0) {
+          entityType.values.forEach((value: EntityTypeValue) => {
             if (!value.id) {
               value.id = '';
             }
@@ -48,11 +49,11 @@ export class JovoModelHelper {
             }
           });
         } else {
-          inputType.values = [];
+          entityType.values = [];
         }
       });
     } else {
-      model.inputTypes = [];
+      model.entityTypes = [];
     }
 
     if (model.intents && model.intents.length > 0) {
@@ -63,8 +64,8 @@ export class JovoModelHelper {
         if (!intent.samples) {
           intent.samples = [];
         }
-        if (!intent.inputs) {
-          intent.inputs = [];
+        if (!intent.entities) {
+          intent.entities = [];
         }
       });
     } else {
@@ -78,7 +79,7 @@ export class JovoModelHelper {
       intent = {
         name: intent,
         phrases: [],
-        inputs: [],
+        entities: [],
         samples: [],
       };
     }
@@ -208,19 +209,19 @@ export class JovoModelHelper {
     });
   }
 
-  static getInputs(model: JovoModelData, intent: ModelIntent): IntentInput[] {
+  static getEntities(model: JovoModelData, intent: ModelIntent): IntentEntity[] {
     if (typeof intent !== 'string') {
       intent = intent.name;
     }
 
     const foundIntent = this.getIntentByName(model, intent);
-    return foundIntent && foundIntent.inputs ? foundIntent.inputs : [];
+    return foundIntent && foundIntent.entities ? foundIntent.entities : [];
   }
 
-  static addInput(
+  static addEntity(
     model: JovoModelData,
     intent: ModelIntent,
-    input: ModelIntentInput,
+    entity: ModelIntentEntity,
     checkForDuplicates = true,
   ) {
     if (typeof intent !== 'string') {
@@ -228,73 +229,73 @@ export class JovoModelHelper {
     }
     const foundIntent = this.getIntentByName(model, intent);
     if (foundIntent) {
-      if (!foundIntent.inputs) {
-        foundIntent.inputs = [];
+      if (!foundIntent.entities) {
+        foundIntent.entities = [];
       }
 
-      if (typeof input === 'string') {
-        input = {
+      if (typeof entity === 'string') {
+        entity = {
           type: '',
           text: '',
-          name: input,
+          name: entity,
         };
       }
 
       if (checkForDuplicates) {
-        // check if there is no input with the name of 'input'; if true => add
+        // check if there is no entity with the name of 'entity'; if true => add
         if (
-          !foundIntent.inputs.some((intentInput: IntentInput) => {
-            return intentInput.name === (input as IntentInput).name;
+          !foundIntent.entities.some((intentEntity: IntentEntity) => {
+            return intentEntity.name === (entity as IntentEntity).name;
           })
         ) {
-          foundIntent.inputs.push(input);
+          foundIntent.entities.push(entity);
         }
       } else {
-        foundIntent.inputs.push(input);
+        foundIntent.entities.push(entity);
       }
     }
   }
 
-  static removeInput(model: JovoModelData, intent: ModelIntent, input: ModelIntentInput) {
-    const indexes = this.getInputIndex(model, intent, input);
+  static removeEntity(model: JovoModelData, intent: ModelIntent, entity: ModelIntentEntity) {
+    const indexes = this.getEntityIndex(model, intent, entity);
 
-    if (has(model, `intents[${indexes.intentIndex}].inputs[${indexes.index}]`)) {
-      model.intents![indexes.intentIndex].inputs!.splice(indexes.index, 1);
+    if (has(model, `intents[${indexes.intentIndex}].entities[${indexes.index}]`)) {
+      model.intents![indexes.intentIndex].entities!.splice(indexes.index, 1);
     }
   }
 
-  static updateInput(
+  static updateEntity(
     model: JovoModelData,
     intent: ModelIntent,
-    oldInput: ModelIntentInput,
-    newInput: IntentInput,
+    oldEntity: ModelIntentEntity,
+    newEntity: IntentEntity,
   ) {
-    const indexes = this.getInputIndex(model, intent, oldInput);
+    const indexes = this.getEntityIndex(model, intent, oldEntity);
 
-    if (has(model, `intents[${indexes.intentIndex}].inputs[${indexes.index}]`)) {
-      const inputs = model.intents![indexes.intentIndex].inputs!.slice();
-      inputs[indexes.index] = newInput;
-      model.intents![indexes.intentIndex].inputs = inputs;
+    if (has(model, `intents[${indexes.intentIndex}].entities[${indexes.index}]`)) {
+      const entities = model.intents![indexes.intentIndex].entities!.slice();
+      entities[indexes.index] = newEntity;
+      model.intents![indexes.intentIndex].entities = entities;
     }
   }
 
-  static getInputIndex(
+  static getEntityIndex(
     model: JovoModelData,
     intent: ModelIntent,
-    input: ModelIntentInput,
+    entity: ModelIntentEntity,
   ): IntentIndex {
     if (typeof intent !== 'string') {
       intent = intent.name;
     }
 
     const intentIndex = this.getIntentIndexByName(model, intent);
-    if (has(model, `intents[${intentIndex}].inputs`)) {
-      if (typeof input !== 'string') {
-        input = input.name;
+    if (has(model, `intents[${intentIndex}].entities`)) {
+      if (typeof entity !== 'string') {
+        entity = entity.name;
       }
 
-      const index = model.intents![intentIndex].inputs!.findIndex((intentInput: IntentInput) => {
-        return intentInput.name === input;
+      const index = model.intents![intentIndex].entities!.findIndex((intentEntity: IntentEntity) => {
+        return intentEntity.name === entity;
       });
       return {
         intentIndex,
@@ -304,88 +305,92 @@ export class JovoModelHelper {
     return { intentIndex, index: -1 };
   }
 
-  static addInputType(model: JovoModelData, inputType: ModelInputType) {
-    if (typeof inputType === 'string') {
-      inputType = {
-        name: inputType,
+  static addEntityType(model: JovoModelData, entityType: ModelEntityType) {
+    if (typeof entityType === 'string') {
+      entityType = {
+        name: entityType,
         values: [],
       };
     }
 
-    if (!model.inputTypes) {
-      model.inputTypes = [];
+    if (!model.entityTypes) {
+      model.entityTypes = [];
     }
 
-    if (!this.getInputTypeByName(model, inputType.name)) {
-      model.inputTypes.push(inputType);
-    }
-  }
-
-  static removeInputType(model: JovoModelData, inputType: ModelInputType) {
-    if (typeof inputType !== 'string') {
-      inputType = inputType.name;
-    }
-
-    const index = this.getInputTypeIndexByName(model, inputType);
-    if (index >= 0 && model.inputTypes) {
-      model.inputTypes.splice(index, 1);
+    if (!this.getEntityTypeByName(model, entityType.name)) {
+      model.entityTypes.push(entityType);
     }
   }
 
-  static updateInputType(model: JovoModelData, inputType: ModelInputType, newInputType: InputType) {
-    if (typeof inputType !== 'string') {
-      inputType = inputType.name;
+  static removeEntityType(model: JovoModelData, entityType: ModelEntityType) {
+    if (typeof entityType !== 'string') {
+      entityType = entityType.name;
     }
 
-    const index = this.getInputTypeIndexByName(model, inputType);
-    if (index >= 0 && model.inputTypes) {
-      const inputTypes = model.inputTypes.slice();
-      inputTypes[index] = newInputType;
-      model.inputTypes = inputTypes;
+    const index = this.getEntityTypeIndexByName(model, entityType);
+    if (index >= 0 && model.entityTypes) {
+      model.entityTypes.splice(index, 1);
     }
   }
 
-  static getInputTypeByName(model: JovoModelData, name: string): InputType | undefined {
-    if (!model.inputTypes) {
+  static updateEntityType(
+    model: JovoModelData,
+    entityType: ModelEntityType,
+    newEntityType: EntityType,
+  ) {
+    if (typeof entityType !== 'string') {
+      entityType = entityType.name;
+    }
+
+    const index = this.getEntityTypeIndexByName(model, entityType);
+    if (index >= 0 && model.entityTypes) {
+      const entityTypes = model.entityTypes.slice();
+      entityTypes[index] = newEntityType;
+      model.entityTypes = entityTypes;
+    }
+  }
+
+  static getEntityTypeByName(model: JovoModelData, name: string): EntityType | undefined {
+    if (!model.entityTypes) {
       return;
     }
-    return model.inputTypes.find((type: InputType) => {
+    return model.entityTypes.find((type: EntityType) => {
       return type.name === name;
     });
   }
 
-  static getInputTypeIndexByName(model: JovoModelData, name: string): number {
-    if (!model.inputTypes) {
+  static getEntityTypeIndexByName(model: JovoModelData, name: string): number {
+    if (!model.entityTypes) {
       return -1;
     }
-    return model.inputTypes.findIndex((type: InputType) => {
+    return model.entityTypes.findIndex((type: EntityType) => {
       return type.name === name;
     });
   }
 
-  static getInputTypeValues(model: JovoModelData, inputType: ModelInputType): InputTypeValue[] {
-    if (typeof inputType !== 'string') {
-      inputType = inputType.name;
+  static getEntityTypeValues(model: JovoModelData, entityType: ModelEntityType): EntityTypeValue[] {
+    if (typeof entityType !== 'string') {
+      entityType = entityType.name;
     }
 
-    const foundInputType = this.getInputTypeByName(model, inputType);
-    return foundInputType && foundInputType.values ? foundInputType.values : [];
+    const foundEntityType = this.getEntityTypeByName(model, entityType);
+    return foundEntityType && foundEntityType.values ? foundEntityType.values : [];
   }
 
-  static addInputTypeValue(
+  static addEntityTypeValue(
     model: JovoModelData,
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+    entityType: ModelEntityType,
+    value: ModelEntityTypeValue,
     checkForDuplicates = true,
   ) {
-    if (typeof inputType !== 'string') {
-      inputType = inputType.name;
+    if (typeof entityType !== 'string') {
+      entityType = entityType.name;
     }
 
-    const foundInputType = this.getInputTypeByName(model, inputType);
-    if (foundInputType) {
-      if (!foundInputType.values) {
-        foundInputType.values = [];
+    const foundEntityType = this.getEntityTypeByName(model, entityType);
+    if (foundEntityType) {
+      if (!foundEntityType.values) {
+        foundEntityType.values = [];
       }
 
       if (typeof value === 'string') {
@@ -397,122 +402,125 @@ export class JovoModelHelper {
       }
 
       if (checkForDuplicates) {
-        // check if there is no input with the name of 'input'; if true => add
+        // check if there is no entity with the name of 'entity'; if true => add
         if (
-          !foundInputType.values.some((inputTypeValue: InputTypeValue) => {
-            return inputTypeValue.value === (value as InputTypeValue).value;
+          !foundEntityType.values.some((entityTypeValue: EntityTypeValue) => {
+            return entityTypeValue.value === (value as EntityTypeValue).value;
           })
         ) {
-          foundInputType.values.push(value);
+          foundEntityType.values.push(value);
         }
       } else {
-        foundInputType.values.push(value);
+        foundEntityType.values.push(value);
       }
     }
   }
 
-  static removeInputTypeValue(
+  static removeEntityTypeValue(
     model: JovoModelData,
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+    entityType: ModelEntityType,
+    value: ModelEntityTypeValue,
   ) {
-    const indexes = this.getInputTypeValueIndex(model, inputType, value);
+    const indexes = this.getEntityTypeValueIndex(model, entityType, value);
 
-    if (has(model, `inputTypes[${indexes.inputTypeIndex}].values[${indexes.index}]`)) {
-      model.inputTypes![indexes.inputTypeIndex].values!.splice(indexes.index, 1);
+    if (has(model, `entityTypes[${indexes.entityTypeIndex}].values[${indexes.index}]`)) {
+      model.entityTypes![indexes.entityTypeIndex].values!.splice(indexes.index, 1);
     }
   }
 
-  static updateInputTypeValue(
+  static updateEntityTypeValue(
     model: JovoModelData,
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
-    newValue: InputTypeValue,
+    entityType: ModelEntityType,
+    value: ModelEntityTypeValue,
+    newValue: EntityTypeValue,
   ) {
-    const indexes = this.getInputTypeValueIndex(model, inputType, value);
+    const indexes = this.getEntityTypeValueIndex(model, entityType, value);
 
-    if (has(model, `inputTypes[${indexes.inputTypeIndex}].values[${indexes.index}]`)) {
-      const values = model.inputTypes![indexes.inputTypeIndex].values!.slice();
+    if (has(model, `entityTypes[${indexes.entityTypeIndex}].values[${indexes.index}]`)) {
+      const values = model.entityTypes![indexes.entityTypeIndex].values!.slice();
       values[indexes.index] = newValue;
-      model.inputTypes![indexes.inputTypeIndex].values = values;
+      model.entityTypes![indexes.entityTypeIndex].values = values;
     }
   }
 
-  static getInputTypeValueIndex(
+  static getEntityTypeValueIndex(
     model: JovoModelData,
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
-  ): InputTypeIndex {
-    if (typeof inputType !== 'string') {
-      inputType = inputType.name;
+    entityType: ModelEntityType,
+    value: ModelEntityTypeValue,
+  ): EntityTypeIndex {
+    if (typeof entityType !== 'string') {
+      entityType = entityType.name;
     }
 
-    const inputTypeIndex = this.getInputTypeIndexByName(model, inputType);
-    if (has(model, `inputTypes[${inputTypeIndex}].values`)) {
+    const entityTypeIndex = this.getEntityTypeIndexByName(model, entityType);
+    if (has(model, `entityTypes[${entityTypeIndex}].values`)) {
       if (typeof value !== 'string') {
         value = value.value;
       }
-      const index = model.inputTypes![inputTypeIndex].values!.findIndex(
-        (inputTypeValue: InputTypeValue) => {
-          return inputTypeValue.value === value;
+      const index = model.entityTypes![entityTypeIndex].values!.findIndex(
+        (entityTypeValue: EntityTypeValue) => {
+          return entityTypeValue.value === value;
         },
       );
       return {
-        inputTypeIndex,
+        entityTypeIndex,
         index,
       };
     }
-    return { inputTypeIndex, index: -1 };
+    return { entityTypeIndex, index: -1 };
   }
 
-  static addInputTypeValueSynonym(
+  static addEntityTypeValueSynonym(
     model: JovoModelData,
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+    entityType: ModelEntityType,
+    value: ModelEntityTypeValue,
     synonym: string,
     checkForDuplicates = true,
   ) {
-    if (typeof inputType !== 'string') {
-      inputType = inputType.name;
+    if (typeof entityType !== 'string') {
+      entityType = entityType.name;
     }
 
-    const indexes = this.getInputTypeValueIndex(model, inputType, value);
-    if (has(model, `inputTypes[${indexes.inputTypeIndex}].values[${indexes.index}]`)) {
-      if (!model.inputTypes![indexes.inputTypeIndex].values![indexes.index].synonyms) {
-        model.inputTypes![indexes.inputTypeIndex].values![indexes.index].synonyms = [];
+    const indexes = this.getEntityTypeValueIndex(model, entityType, value);
+    if (has(model, `entityTypes[${indexes.entityTypeIndex}].values[${indexes.index}]`)) {
+      if (!model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms) {
+        model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms = [];
       }
 
       if (checkForDuplicates) {
         if (
-          !model.inputTypes![indexes.inputTypeIndex].values![indexes.index].synonyms!.includes(
+          !model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms!.includes(
             synonym,
           )
         ) {
-          model.inputTypes![indexes.inputTypeIndex].values![indexes.index].synonyms!.push(synonym);
+          model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms!.push(
+            synonym,
+          );
         }
       } else {
-        model.inputTypes![indexes.inputTypeIndex].values![indexes.index].synonyms!.push(synonym);
+        model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms!.push(synonym);
       }
     }
   }
 
-  static removeInputTypeValueSynonym(
+  static removeEntityTypeValueSynonym(
     model: JovoModelData,
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+    entityType: ModelEntityType,
+    value: ModelEntityTypeValue,
     synonym: string,
   ) {
-    if (typeof inputType !== 'string') {
-      inputType = inputType.name;
+    if (typeof entityType !== 'string') {
+      entityType = entityType.name;
     }
 
-    const indexes = this.getInputTypeValueIndex(model, inputType, value);
-    if (has(model, `inputTypes[${indexes.inputTypeIndex}].values[${indexes.index}].synonyms`)) {
-      const synonymIndex = model.inputTypes![indexes.inputTypeIndex].values![
-        indexes.index
-      ].synonyms!.indexOf(synonym);
+    const indexes = this.getEntityTypeValueIndex(model, entityType, value);
+    if (has(model, `entityTypes[${indexes.entityTypeIndex}].values[${indexes.index}].synonyms`)) {
+      const synonymIndex =
+        model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms!.indexOf(
+          synonym,
+        );
       if (synonymIndex >= 0) {
-        model.inputTypes![indexes.inputTypeIndex].values![indexes.index].synonyms!.splice(
+        model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms!.splice(
           synonymIndex,
           1,
         );
@@ -520,28 +528,28 @@ export class JovoModelHelper {
     }
   }
 
-  static updateInputTypeValueSynonym(
+  static updateEntityTypeValueSynonym(
     model: JovoModelData,
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+    entityType: ModelEntityType,
+    value: ModelEntityTypeValue,
     synonym: string,
     newSynonym: string,
   ) {
-    if (typeof inputType !== 'string') {
-      inputType = inputType.name;
+    if (typeof entityType !== 'string') {
+      entityType = entityType.name;
     }
 
-    const indexes = this.getInputTypeValueIndex(model, inputType, value);
-    if (has(model, `inputTypes[${indexes.inputTypeIndex}].values[${indexes.index}].synonyms`)) {
-      const synonymIndex = model.inputTypes![indexes.inputTypeIndex].values![
-        indexes.index
-      ].synonyms!.indexOf(synonym);
+    const indexes = this.getEntityTypeValueIndex(model, entityType, value);
+    if (has(model, `entityTypes[${indexes.entityTypeIndex}].values[${indexes.index}].synonyms`)) {
+      const synonymIndex =
+        model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms!.indexOf(
+          synonym,
+        );
       if (synonymIndex >= 0) {
-        const synonyms = model.inputTypes![indexes.inputTypeIndex].values![
-          indexes.index
-        ].synonyms!.slice();
+        const synonyms =
+          model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms!.slice();
         synonyms[synonymIndex] = newSynonym;
-        model.inputTypes![indexes.inputTypeIndex].values![indexes.index].synonyms = synonyms;
+        model.entityTypes![indexes.entityTypeIndex].values![indexes.index].synonyms = synonyms;
       }
     }
   }

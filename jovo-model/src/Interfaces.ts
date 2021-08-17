@@ -1,9 +1,9 @@
-export interface InputType {
+export interface EntityType {
   name: string;
-  values?: InputTypeValue[];
+  values?: EntityTypeValue[];
 }
 
-export interface InputTypeValue {
+export interface EntityTypeValue {
   value: string;
   id?: string;
   key?: string;
@@ -14,24 +14,25 @@ export interface Intent {
   name: string;
   phrases?: string[];
   samples?: string[];
-  inputs?: IntentInput[];
+  entities?: IntentEntity[];
 }
 
-export interface IntentInput {
+export interface IntentEntity {
   name: string;
   text?: string;
-  type?: IntentInputType;
+  type?: IntentEntityType;
 }
 
-export type IntentInputType = string | IntentInputTypeObject;
-export type IntentInputTypeObject = Record<string, string>;
+export type IntentEntityType = string | IntentEntityTypeObject;
+export type IntentEntityTypeObject = Record<string, string>;
 
 export interface InvocationObject {
   [key: string]: string;
 }
 
 export interface JovoModelData {
-  inputTypes?: InputType[];
+  version: number;
+  entityTypes?: EntityType[];
   intents?: Intent[];
   invocation: string | InvocationObject;
 }

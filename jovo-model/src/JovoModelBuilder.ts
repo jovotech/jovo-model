@@ -1,12 +1,12 @@
-import { InputType, InputTypeValue, Intent, IntentInput, JovoModelData } from './Interfaces';
+import { EntityType, EntityTypeValue, Intent, IntentEntity, JovoModelData } from './Interfaces';
 import {
-  InputTypeIndex,
+  EntityTypeIndex,
   IntentIndex,
   JovoModelHelper,
-  ModelInputType,
-  ModelInputTypeValue,
+  ModelEntityType,
+  ModelEntityTypeValue,
   ModelIntent,
-  ModelIntentInput,
+  ModelIntentEntity,
 } from './JovoModelHelper';
 
 type JovoModelHelperKeys = keyof typeof JovoModelHelper;
@@ -36,17 +36,17 @@ const EXCLUDED_PROPERTIES: JovoModelHelperKeys[] = ['new', 'prototype'];
 export class JovoModelBuilder implements JovoModelBuilderInterface {
   private static $initialized = false;
 
-  addInput!: (
+  addEntity!: (
     intent: ModelIntent,
-    input: ModelIntentInput,
+    input: ModelIntentEntity,
     checkForDuplicates?: boolean,
   ) => JovoModelBuilder;
 
-  addInputType!: (inputType: ModelInputType) => JovoModelBuilder;
+  addEntityType!: (inputType: ModelEntityType) => JovoModelBuilder;
 
-  addInputTypeValue!: (
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+  addEntityTypeValue!: (
+    inputType: ModelEntityType,
+    value: ModelEntityTypeValue,
     checkForDuplicates?: boolean,
   ) => JovoModelBuilder;
 
@@ -54,20 +54,20 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   addPhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilder;
 
-  getInputIndex!: (intent: ModelIntent, input: ModelIntentInput) => IntentIndex;
+  getEntityIndex!: (intent: ModelIntent, input: ModelIntentEntity) => IntentIndex;
 
-  getInputTypeByName!: (name: string) => InputType | undefined;
+  getEntityTypeByName!: (name: string) => EntityType | undefined;
 
-  getInputTypeIndexByName!: (name: string) => number;
+  getEntityTypeIndexByName!: (name: string) => number;
 
-  getInputTypeValueIndex!: (
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
-  ) => InputTypeIndex;
+  getEntityTypeValueIndex!: (
+    inputType: ModelEntityType,
+    value: ModelEntityTypeValue,
+  ) => EntityTypeIndex;
 
-  getInputTypeValues!: (inputType: ModelInputType) => InputTypeValue[];
+  getEntityTypeValues!: (inputType: ModelEntityType) => EntityTypeValue[];
 
-  getInputs!: (intent: ModelIntent) => IntentInput[];
+  getEntities!: (intent: ModelIntent) => IntentEntity[];
 
   getIntentByName!: (name: string) => Intent | undefined;
 
@@ -81,53 +81,53 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   prepareModel!: () => JovoModelBuilder;
 
-  removeInput!: (intent: ModelIntent, input: ModelIntentInput) => JovoModelBuilder;
+  removeEntity!: (intent: ModelIntent, input: ModelIntentEntity) => JovoModelBuilder;
 
-  removeInputType!: (inputType: ModelInputType) => JovoModelBuilder;
+  removeEntityType!: (inputType: ModelEntityType) => JovoModelBuilder;
 
-  removeInputTypeValue!: (
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+  removeEntityTypeValue!: (
+    inputType: ModelEntityType,
+    value: ModelEntityTypeValue,
   ) => JovoModelBuilder;
 
   removeIntent!: (intent: ModelIntent) => JovoModelBuilder;
 
   removePhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilder;
 
-  updateInputType!: (inputType: ModelInputType, newInputType: InputType) => JovoModelBuilder;
+  updateEntityType!: (inputType: ModelEntityType, newEntityType: EntityType) => JovoModelBuilder;
 
   updateIntent!: (intent: ModelIntent, newIntent: Intent) => JovoModelBuilder;
 
-  updateInput!: (
+  updateEntity!: (
     intent: ModelIntent,
-    oldInput: ModelIntentInput,
-    newInput: IntentInput,
+    oldEntity: ModelIntentEntity,
+    newEntity: IntentEntity,
   ) => JovoModelBuilder;
 
-  updateInputTypeValue!: (
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
-    newValue: InputTypeValue,
+  updateEntityTypeValue!: (
+    inputType: ModelEntityType,
+    value: ModelEntityTypeValue,
+    newValue: EntityTypeValue,
   ) => JovoModelBuilder;
 
   updatePhrase!: (intent: ModelIntent, oldPhrase: string, newPhrase: string) => JovoModelBuilder;
 
-  addInputTypeValueSynonym!: (
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+  addEntityTypeValueSynonym!: (
+    inputType: ModelEntityType,
+    value: ModelEntityTypeValue,
     synonym: string,
     checkForDuplicates?: boolean,
   ) => JovoModelBuilder;
 
-  removeInputTypeValueSynonym!: (
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+  removeEntityTypeValueSynonym!: (
+    inputType: ModelEntityType,
+    value: ModelEntityTypeValue,
     synonym: string,
   ) => JovoModelBuilder;
 
-  updateInputTypeValueSynonym!: (
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+  updateEntityTypeValueSynonym!: (
+    inputType: ModelEntityType,
+    value: ModelEntityTypeValue,
     synonym: string,
     newSynonym: string,
   ) => JovoModelBuilder;
@@ -139,7 +139,7 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
     this.$model = model
       ? JSON.parse(JSON.stringify(model))
-      : JovoModelHelper.prepareModel({ invocation: '' });
+      : JovoModelHelper.prepareModel({ version: 4.0, invocation: '' });
   }
 
   build(): JovoModelData {
@@ -168,7 +168,7 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
       (JovoModelBuilder.prototype as any)[methodName] = (...args: any[]) => {
         const result = method.call(JovoModelHelper, this.$model, ...args);
 
-        if (result || methodName === 'getIntentByName' || methodName === 'getInputTypeByName') {
+        if (result || methodName === 'getIntentByName' || methodName === 'getEntityTypeByName') {
           return result;
         }
 
