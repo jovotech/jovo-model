@@ -1,4 +1,13 @@
 import {
+  EntityType,
+  EntityTypeValue,
+  Intent,
+  IntentEntity,
+  JovoModel,
+  JovoModelData,
+  NativeFileInformation,
+} from 'jovo-model';
+import {
   JovoModelLuisData,
   LuisModelClosedList,
   LuisModelClosedSubList,
@@ -7,22 +16,9 @@ import {
   LuisModelIntent,
   LuisModelUtterances,
 } from '.';
-
-import {
-  InputType,
-  Intent,
-  IntentInput,
-  InputTypeValue,
-  JovoModel,
-  JovoModelData,
-  NativeFileInformation,
-} from 'jovo-model';
-
 import * as JovoModelLuisValidator from '../validators/JovoModelLuisData.json';
 
-import * as _ from 'lodash';
-
-export interface InputTypeNameUsedCounter {
+export interface EntityTypeNameUsedCounter {
   [key: string]: number;
 }
 
@@ -38,15 +34,16 @@ export class JovoModelLuis extends JovoModel {
     const inputData: LuisModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
+      version: 4.0,
       invocation: '',
       intents: [],
-      inputTypes: [],
+      entityTypes: [],
     };
 
-    let tempInputType: InputType;
-    let tempInputTypeValue: InputTypeValue;
+    let entityType: EntityType;
+    let entityTypeValue: EntityTypeValue;
     for (const closedList of inputData.closedLists) {
-      tempInputType = {
+      entityType = {
         name: closedList.name,
         values: [],
       };
@@ -55,25 +52,25 @@ export class JovoModelLuis extends JovoModel {
         continue;
       }
       for (const subList of closedList.subLists) {
-        tempInputTypeValue = {
+        entityTypeValue = {
           value: subList.canonicalForm,
         };
 
         if (subList.list !== undefined) {
-          tempInputTypeValue.synonyms = subList.list;
+          entityTypeValue.synonyms = subList.list;
         }
 
-        tempInputType.values!.push(tempInputTypeValue);
+        entityType.values!.push(entityTypeValue);
       }
 
-      jovoModel.inputTypes!.push(tempInputType);
+      jovoModel.entityTypes!.push(entityType);
     }
 
     const tempIntents: {
       [key: string]: Intent;
     } = {};
 
-    const inputNamesByIntent: {
+    const entityNamesByIntent: {
       [key: string]: string[];
     } = {};
     for (const utterance of inputData.utterances) {
@@ -93,10 +90,10 @@ export class JovoModelLuis extends JovoModel {
 
       let entityName: string;
       for (const entity of utterance.entities) {
-        if (inputNamesByIntent[utterance.intent] === undefined) {
-          inputNamesByIntent[utterance.intent] = [entity.entity];
-        } else if (!inputNamesByIntent[utterance.intent].includes(entity.entity)) {
-          inputNamesByIntent[utterance.intent].push(entity.entity);
+        if (entityNamesByIntent[utterance.intent] === undefined) {
+          entityNamesByIntent[utterance.intent] = [entity.entity];
+        } else if (!entityNamesByIntent[utterance.intent].includes(entity.entity)) {
+          entityNamesByIntent[utterance.intent].push(entity.entity);
         }
 
         entityName = entity.entity;
@@ -114,22 +111,22 @@ export class JovoModelLuis extends JovoModel {
     }
 
     // Now that we did itterate over all utterances we can add all the found intents
-    for (const intentName of Object.keys(inputNamesByIntent)) {
-      tempIntents[intentName].inputs = [];
-      for (const inputName of inputNamesByIntent[intentName]) {
-        if (inputName.startsWith('builtin.')) {
+    for (const intentName of Object.keys(entityNamesByIntent)) {
+      tempIntents[intentName].entities = [];
+      for (const entityName of entityNamesByIntent[intentName]) {
+        if (entityName.startsWith('builtin.')) {
           // Is a built-in luis type
-          tempIntents[intentName].inputs!.unshift({
-            name: inputName.slice(8),
+          tempIntents[intentName].entities!.unshift({
+            name: entityName.slice(8),
             type: {
-              luis: inputName,
+              luis: entityName,
             },
           });
         } else {
           // Is a regular type
-          tempIntents[intentName].inputs!.unshift({
-            name: inputName,
-            type: inputName,
+          tempIntents[intentName].entities!.unshift({
+            name: entityName,
+            type: entityName,
           });
         }
       }
@@ -141,7 +138,7 @@ export class JovoModelLuis extends JovoModel {
   }
 
   static fromJovoModel(model: JovoModelLuisData, locale: string): NativeFileInformation[] {
-    const inputTypeNameUsedCounter: InputTypeNameUsedCounter = {};
+    const entityTypeNameUsedCounter: EntityTypeNameUsedCounter = {};
 
     const luisIntents: LuisModelIntent[] = [];
     const luisUtterances: LuisModelUtterances[] = [];
@@ -158,8 +155,8 @@ export class JovoModelLuis extends JovoModel {
 
         intentInformation = this.getIntentInformation(
           intent,
-          model.inputTypes,
-          inputTypeNameUsedCounter,
+          model.entityTypes,
+          entityTypeNameUsedCounter,
         );
         luisUtterances.push.apply(luisUtterances, intentInformation.utterances);
 
@@ -179,25 +176,25 @@ export class JovoModelLuis extends JovoModel {
       });
     }
 
-    // Convert the inputTypes to closedLists
+    // Convert the entityTypes to closedLists
     let tempSubLists: LuisModelClosedSubList[];
     let tempSubList: LuisModelClosedSubList;
-    if (model.inputTypes !== undefined) {
-      for (const inputType of model.inputTypes) {
-        if (inputType.name.startsWith('builtin.')) {
+    if (model.entityTypes !== undefined) {
+      for (const entityType of model.entityTypes) {
+        if (entityType.name.startsWith('builtin.')) {
           // Skip the builtin types
           continue;
         }
 
         tempSubLists = [];
 
-        if (inputType.values === undefined) {
-          // If an InputType does not have any values defined
+        if (entityType.values === undefined) {
+          // If an EntityType does not have any values defined
           // for some reason, skip it.
           continue;
         }
 
-        for (const typeValue of inputType.values) {
+        for (const typeValue of entityType.values) {
           tempSubList = {
             canonicalForm: typeValue.value,
           };
@@ -210,7 +207,7 @@ export class JovoModelLuis extends JovoModel {
         }
 
         luisClosedLists.push({
-          name: inputType.name,
+          name: entityType.name,
           subLists: tempSubLists,
         });
       }
@@ -246,8 +243,8 @@ export class JovoModelLuis extends JovoModel {
 
   static getIntentInformation(
     intent: Intent,
-    inputTypes: InputType[] | undefined,
-    inputTypeNameUsedCounter: InputTypeNameUsedCounter,
+    entityTypes: EntityType[] | undefined,
+    entityTypeNameUsedCounter: EntityTypeNameUsedCounter,
   ): IntentInformation {
     const returnData: IntentInformation = {
       entityNames: [],
@@ -257,10 +254,10 @@ export class JovoModelLuis extends JovoModel {
     let tempUtterance: LuisModelUtterances;
 
     let startIndex: number;
-    let inputType: InputType | undefined;
-    let intentInput: IntentInput | undefined;
+    let entityType: EntityType | undefined;
+    let intentEntity: IntentEntity | undefined;
     let exampleValue = '';
-    let inputTypeName:
+    let entityTypeName:
       | string
       | {
           [key: string]: string;
@@ -274,91 +271,91 @@ export class JovoModelLuis extends JovoModel {
           entities: [],
         };
 
-        // Get the inputs of the phrase
-        const phraseInputs = phrase.match(/{[^}]*}/g);
+        // Get the entities of the phrase
+        const phraseEntities = phrase.match(/{[^}]*}/g);
 
         // Add the ones which are defined as entities
-        if (phraseInputs !== null) {
-          for (let inputName of phraseInputs) {
+        if (phraseEntities !== null) {
+          for (let entityName of phraseEntities) {
             // Cut the curly braces away
-            inputName = inputName.slice(1, -1);
+            entityName = entityName.slice(1, -1);
 
-            if (intent.inputs === undefined) {
-              // No inputs are defined so the value is not an input
+            if (intent.entities === undefined) {
+              // No entities are defined so the value is not an entity
               continue;
             }
 
-            // Check if the value is really an input
-            intentInput = intent.inputs.find((data) => data.name === inputName);
-            if (intentInput === undefined) {
-              // No input exists with that name so it is not an input
+            // Check if the value is really an entity
+            intentEntity = intent.entities.find((data) => data.name === entityName);
+            if (intentEntity === undefined) {
+              // No entity exists with that name so it is not an entity
               continue;
             }
 
-            if (intentInput.type === undefined) {
+            if (intentEntity.type === undefined) {
               throw new Error(
-                `No type is defined for input "${inputName}" which is used in phrase "${phrase}"!`,
+                `No type is defined for entity "${entityName}" which is used in phrase "${phrase}"!`,
               );
             }
 
-            // Get the InputType data to get an example value to replace the placeholder with
-            if (inputTypes === undefined) {
+            // Get the EntityType data to get an example value to replace the placeholder with
+            if (entityTypes === undefined) {
               throw new Error(
-                `No InputTypes are defined but type "${inputName}" is used in phrase "${phrase}"!`,
+                `No EntityTypes are defined but type "${entityName}" is used in phrase "${phrase}"!`,
               );
             }
 
-            inputTypeName = intentInput.type;
-            if (typeof intentInput.type === 'object') {
-              if (intentInput.type.luis === undefined) {
+            entityTypeName = intentEntity.type;
+            if (typeof intentEntity.type === 'object') {
+              if (intentEntity.type.luis === undefined) {
                 throw new Error(
-                  `No Luis-Type is defined for input "${inputName}" which is used in phrase "${phrase}"!`,
+                  `No Luis-Type is defined for entity "${entityName}" which is used in phrase "${phrase}"!`,
                 );
               } else {
-                inputTypeName = intentInput.type.luis as string;
+                entityTypeName = intentEntity.type.luis as string;
               }
             } else {
-              inputTypeName = inputTypeName as string;
+              entityTypeName = entityTypeName as string;
             }
 
-            inputType = inputTypes.find((data) => data.name === inputTypeName);
-            if (inputType === undefined) {
+            entityType = entityTypes.find((data) => data.name === entityTypeName);
+            if (entityType === undefined) {
               throw new Error(
-                `InputType "${inputTypeName}" is not defined but is used in phrase "${phrase}"!`,
+                `EntityType "${entityTypeName}" is not defined but is used in phrase "${phrase}"!`,
               );
             }
-            if (inputType.values === undefined || inputType.values.length === 0) {
-              throw new Error(`InputType "${inputTypeName}" does not have any values!`);
+            if (entityType.values === undefined || entityType.values.length === 0) {
+              throw new Error(`EntityType "${entityTypeName}" does not have any values!`);
             }
 
             // As we are going in order of appearance in the text we can be sure
             // that the start index does not change. The end index gets calculated
             // by adding the length of the value the placeholder got replaced with.
-            startIndex = tempUtterance.text.indexOf(`{${inputName}}`);
+            startIndex = tempUtterance.text.indexOf(`{${entityName}}`);
 
             // Make sure that different example values get used becaues if not
             // entities do not seem to get extracted properly
-            if (inputTypeNameUsedCounter[inputTypeName] === undefined) {
-              inputTypeNameUsedCounter[inputTypeName] = 0;
+            if (entityTypeNameUsedCounter[entityTypeName] === undefined) {
+              entityTypeNameUsedCounter[entityTypeName] = 0;
             }
-            const exampleInputIndex =
-              inputTypeNameUsedCounter[inputTypeName]++ % inputType.values.length;
-            exampleValue = inputType.values[exampleInputIndex].value;
+            const exampleEntityIndex =
+              entityTypeNameUsedCounter[entityTypeName]++ % entityType.values.length;
+            exampleValue = entityType.values[exampleEntityIndex].value;
 
             tempUtterance.entities.push({
               // value: exampleValue,
-              entity: inputTypeName,
+              entity: entityTypeName,
               startPos: startIndex,
               endPos: startIndex + exampleValue.length - 1, // No idea why they are always one to short in examples
             });
 
-            if (!returnData.entityNames.includes(inputTypeName)) {
-              returnData.entityNames.push(inputTypeName);
+            if (!returnData.entityNames.includes(entityTypeName)) {
+              returnData.entityNames.push(entityTypeName);
             }
 
             // Replace the placeholder with an example value
             tempUtterance.text = tempUtterance.text.replace(
-              new RegExp(`{${inputName}}`, 'g'),
+              new RegExp(`{${entityName}}`, 'g'),
               exampleValue,
             );
           }

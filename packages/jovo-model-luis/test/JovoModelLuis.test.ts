@@ -147,6 +147,7 @@ describe('JovoModelLuis.ts', () => {
           ],
         },
         result: {
+          version: 4.0,
           invocation: '',
           intents: [
             {
@@ -321,6 +322,7 @@ describe('JovoModelLuis.ts', () => {
           ],
         },
         result: {
+          version: 4.0,
           invocation: '',
           intents: [
             {
@@ -370,6 +372,7 @@ describe('JovoModelLuis.ts', () => {
         input: {
           locale: 'en-US',
           data: {
+            version: 4.0,
             invocation: '',
             intents: [
               {
@@ -588,6 +591,7 @@ describe('JovoModelLuis.ts', () => {
         input: {
           locale: 'en-US',
           data: {
+            version: 4.0,
             invocation: '',
             intents: [
               {
