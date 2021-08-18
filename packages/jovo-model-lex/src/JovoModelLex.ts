@@ -1,22 +1,20 @@
 import {
-  JovoModelLexData,
-  LexModelEnumerationValue,
-  LexModelIntentResource,
-  LexModelSlotTypeResource,
-  LexModelFileResource,
-  LexModelFile,
-} from '.';
-
-import {
-  InputType,
+  EntityType,
+  EntityTypeValue,
   Intent,
-  IntentInput,
-  InputTypeValue,
+  IntentEntity,
   JovoModel,
   JovoModelData,
   NativeFileInformation,
 } from 'jovo-model';
-
+import {
+  JovoModelLexData,
+  LexModelEnumerationValue,
+  LexModelFile,
+  LexModelFileResource,
+  LexModelIntentResource,
+  LexModelSlotTypeResource,
+} from '.';
 import * as JovoModelLexValidator from '../validators/JovoModelLexData.json';
 
 export class JovoModelLex extends JovoModel {
@@ -26,28 +24,29 @@ export class JovoModelLex extends JovoModel {
     const inputData: LexModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
+      version: 4.0,
       invocation: '',
       intents: [],
-      inputTypes: [],
+      entityTypes: [],
     };
 
     const lexModel: LexModelFileResource = inputData.resource;
 
-    let tempJovoIntent: Intent;
+    let jovoIntent: Intent;
     if (lexModel.intents !== undefined) {
-      let tempIntentInput: IntentInput;
+      let tempIntentInput: IntentEntity;
 
       for (const lexIntent of lexModel.intents) {
-        tempJovoIntent = {
+        jovoIntent = {
           name: lexIntent.name,
         };
 
         if (lexIntent.sampleUtterances !== undefined && lexIntent.sampleUtterances.length !== 0) {
-          tempJovoIntent.phrases = lexIntent.sampleUtterances;
+          jovoIntent.phrases = lexIntent.sampleUtterances;
         }
 
         if (lexIntent.slots !== undefined && lexIntent.slots.length !== 0) {
-          tempJovoIntent.inputs = [];
+          jovoIntent.entities = [];
           for (const lexIntentSlot of lexIntent.slots) {
             tempIntentInput = {
               name: lexIntentSlot.name,
@@ -63,18 +62,18 @@ export class JovoModelLex extends JovoModel {
               }
             }
 
-            tempJovoIntent.inputs.push(tempIntentInput);
+            jovoIntent.entities.push(tempIntentInput);
           }
         }
 
-        jovoModel.intents!.push(tempJovoIntent);
+        jovoModel.intents!.push(jovoIntent);
       }
     }
     if (lexModel.slotTypes !== undefined) {
-      let tempInputType: InputType;
-      let tempInputTypeValue: InputTypeValue;
+      let entityType: EntityType;
+      let entityTypeValue: EntityTypeValue;
       for (const lexSlotType of lexModel.slotTypes) {
-        tempInputType = {
+        entityType = {
           name: lexSlotType.name,
         };
 
@@ -82,21 +81,21 @@ export class JovoModelLex extends JovoModel {
           lexSlotType.enumerationValues !== undefined &&
           lexSlotType.enumerationValues.length !== 0
         ) {
-          tempInputType.values = [];
+          entityType.values = [];
           for (const enumerationValue of lexSlotType.enumerationValues) {
-            tempInputTypeValue = {
+            entityTypeValue = {
               value: enumerationValue.value,
             };
 
             if (enumerationValue.synonyms !== undefined && enumerationValue.synonyms.length !== 0) {
-              tempInputTypeValue.synonyms = enumerationValue.synonyms;
+              entityTypeValue.synonyms = enumerationValue.synonyms;
             }
 
-            tempInputType.values.push(tempInputTypeValue);
+            entityType.values.push(entityTypeValue);
           }
         }
 
-        jovoModel.inputTypes!.push(tempInputType);
+        jovoModel.entityTypes!.push(entityType);
       }
     }
 
@@ -113,11 +112,11 @@ export class JovoModelLex extends JovoModel {
     };
 
     if (model.intents !== undefined && model.intents.length !== 0) {
-      let tempIntent: LexModelIntentResource;
-      let inputTypeName: string;
+      let lexIntent: LexModelIntentResource;
+      let entityTypeName: string;
 
       for (const intent of model.intents) {
-        tempIntent = {
+        lexIntent = {
           name: intent.name,
           version: '$LATEST',
           fulfillmentActivity: {
@@ -126,60 +125,60 @@ export class JovoModelLex extends JovoModel {
         };
 
         if (intent.phrases !== undefined) {
-          tempIntent.sampleUtterances = intent.phrases;
+          lexIntent.sampleUtterances = intent.phrases;
         }
 
-        if (intent.inputs !== undefined && intent.inputs.length !== 0) {
-          tempIntent.slots = [];
-          for (const intentInput of intent.inputs) {
-            if (typeof intentInput.type === 'object') {
-              if (intentInput.type.alexa === undefined) {
+        if (intent.entities !== undefined && intent.entities.length !== 0) {
+          lexIntent.slots = [];
+          for (const intentEntity of intent.entities) {
+            if (typeof intentEntity.type === 'object') {
+              if (intentEntity.type.alexa === undefined) {
                 throw new Error(
-                  `No Alexa-Type is defined for input "${intentInput.name}" which is used in intent "${intent.name}"!`,
+                  `No Alexa-Type is defined for entity "${intentEntity.name}" which is used in intent "${intent.name}"!`,
                 );
               } else {
-                inputTypeName = intentInput.type.alexa as string;
+                entityTypeName = intentEntity.type.alexa as string;
               }
             } else {
-              inputTypeName = intentInput.type as string;
+              entityTypeName = intentEntity.type as string;
             }
 
-            tempIntent.slots.push({
-              name: intentInput.name,
-              slotType: inputTypeName,
+            lexIntent.slots.push({
+              name: intentEntity.name,
+              slotType: entityTypeName,
               slotConstraint: 'Required',
             });
           }
         }
 
-        lexModel.intents!.push(tempIntent);
+        lexModel.intents!.push(lexIntent);
       }
     }
 
-    if (model.inputTypes !== undefined && model.inputTypes.length !== 0) {
-      let tempSlot: LexModelSlotTypeResource;
-      let tempEnumerationValue: LexModelEnumerationValue;
+    if (model.entityTypes !== undefined && model.entityTypes.length !== 0) {
+      let lexSlot: LexModelSlotTypeResource;
+      let lexEnumerationValue: LexModelEnumerationValue;
 
-      for (const inputType of model.inputTypes) {
-        tempSlot = {
-          name: inputType.name,
+      for (const entityType of model.entityTypes) {
+        lexSlot = {
+          name: entityType.name,
         };
 
-        if (inputType.values) {
-          tempSlot.enumerationValues = [];
-          for (const inputTypeValue of inputType.values) {
-            tempEnumerationValue = {
-              value: inputTypeValue.value,
+        if (entityType.values) {
+          lexSlot.enumerationValues = [];
+          for (const entityTypeValue of entityType.values) {
+            lexEnumerationValue = {
+              value: entityTypeValue.value,
             };
 
-            if (inputTypeValue.synonyms !== undefined && inputTypeValue.synonyms.length) {
-              tempEnumerationValue.synonyms = inputTypeValue.synonyms;
+            if (entityTypeValue.synonyms !== undefined && entityTypeValue.synonyms.length) {
+              lexEnumerationValue.synonyms = entityTypeValue.synonyms;
             }
-            tempSlot.enumerationValues.push(tempEnumerationValue);
+            lexSlot.enumerationValues.push(lexEnumerationValue);
           }
         }
 
-        lexModel.slotTypes!.push(tempSlot);
+        lexModel.slotTypes!.push(lexSlot);
       }
     }
 
