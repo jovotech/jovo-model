@@ -18,10 +18,10 @@
     "author": "jovotech",
     "license": "Apache-2.0",
     "devDependencies": {
+        "@jovotech/model-util": "^4.0.0-beta.1",
         "@types/jest": "^24.0.25",
         "@types/node": "^13.1.5",
         "@types/tv4": "^1.2.29",
-        "@jovotech/model-util": "^4.0.0-beta.1",
         "gulp": "^4.0.2",
         "jest": "^24.9.0",
         "rimraf": "^3.0.0",
