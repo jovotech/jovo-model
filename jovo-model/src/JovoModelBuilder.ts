@@ -139,7 +139,7 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
     this.$model = model
       ? JSON.parse(JSON.stringify(model))
-      : JovoModelHelper.prepareModel({ version: 4.0, invocation: '' });
+      : JovoModelHelper.prepareModel({ version: '4.0', invocation: '' });
   }
 
   build(): JovoModelData {

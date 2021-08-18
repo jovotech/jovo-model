@@ -27,7 +27,7 @@ export class JovoModelRasa extends JovoModel {
     const inputData = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
-      version: 4.0,
+      version: '4.0',
       invocation: '',
       intents: [],
       entityTypes: [],

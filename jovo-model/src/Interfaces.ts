@@ -31,7 +31,7 @@ export interface InvocationObject {
 }
 
 export interface JovoModelData {
-  version: number;
+  version: `${number}.${number}`;
   entityTypes?: EntityType[];
   intents?: Intent[];
   invocation: string | InvocationObject;

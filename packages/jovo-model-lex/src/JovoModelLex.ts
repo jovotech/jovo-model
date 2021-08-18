@@ -24,7 +24,7 @@ export class JovoModelLex extends JovoModel {
     const inputData: LexModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
-      version: 4.0,
+      version: '4.0',
       invocation: '',
       intents: [],
       entityTypes: [],

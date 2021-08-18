@@ -184,7 +184,7 @@ export class JovoModelSnips extends JovoModel {
   }
 
   static toJovoModel(inputFiles: NativeSnipsInformation[]): JovoModelData {
-    const jovoModel: JovoModelData = { version: 4.0, invocation: '', intents: [], entityTypes: [] };
+    const jovoModel: JovoModelData = { version: '4.0', invocation: '', intents: [], entityTypes: [] };
     const snipsModel: SnipsModel = inputFiles.pop()!.content;
 
     for (const [intentKey, intentData] of Object.entries(snipsModel.intents)) {

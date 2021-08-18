@@ -257,7 +257,7 @@ describe('JovoModelDialogflow.ts', () => {
           ],
         },
         result: {
-          version: 4.0,
+          version: '4.0',
           invocation: '',
           intents: [
             {
@@ -369,7 +369,7 @@ describe('JovoModelDialogflow.ts', () => {
         input: {
           locale: 'en',
           data: {
-            version: 4.0,
+            version: '4.0',
             invocation: 'my test app',
             intents: [
               {

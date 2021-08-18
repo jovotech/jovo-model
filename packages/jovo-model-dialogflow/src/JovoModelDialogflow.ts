@@ -58,7 +58,7 @@ export class JovoModelDialogflow extends JovoModel {
 
   static toJovoModel(inputData: NativeFileInformation[], locale: string): JovoModelDialogflowData {
     const jovoModel: JovoModelDialogflowData = {
-      version: 4.0,
+      version: '4.0',
       invocation: '',
       intents: [],
       entityTypes: [],

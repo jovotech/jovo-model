@@ -219,7 +219,7 @@ export class JovoModelGoogle extends JovoModel {
 
   static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelGoogleActionData {
     const jovoModel: JovoModelGoogleActionData = {
-      version: 4.0,
+      version: '4.0',
       invocation: '',
       intents: [],
       entityTypes: [],

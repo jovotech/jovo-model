@@ -34,8 +34,9 @@ describe('JovoModelRasa.ts', () => {
           ],
         },
         result: {
+          version: '4.0',
           invocation: '',
-          inputTypes: [],
+          entityTypes: [],
           intents: [
             {
               name: 'greet',
@@ -46,7 +47,7 @@ describe('JovoModelRasa.ts', () => {
       },
       {
         description:
-          "should replace used entity in 'common_examples' with placeholder and add as 'inputs' to 'intents'",
+          "should replace used entity in 'common_examples' with placeholder and add as 'entities' to 'intents'",
         input: {
           locale: 'en',
           inputFiles: [
@@ -112,6 +113,7 @@ describe('JovoModelRasa.ts', () => {
           ],
         },
         result: {
+          version: '4.0',
           invocation: '',
           intents: [
             {
@@ -121,7 +123,7 @@ describe('JovoModelRasa.ts', () => {
                 'show me {Cuisine} restaurants',
                 'show me a {Cuisine} place in the {Location}',
               ],
-              inputs: [
+              entities: [
                 {
                   name: 'Cuisine',
                   type: 'Cuisine',
@@ -133,7 +135,7 @@ describe('JovoModelRasa.ts', () => {
               ],
             },
           ],
-          inputTypes: [
+          entityTypes: [
             {
               name: 'Cuisine',
               values: [
@@ -160,7 +162,7 @@ describe('JovoModelRasa.ts', () => {
         },
       },
       {
-        description: "should export 'lookup_tables' and 'entity_synonyms' as 'inputTypes'",
+        description: "should export 'lookup_tables' and 'entity_synonyms' as 'entityTypes'",
         input: {
           locale: 'en',
           inputFiles: [
@@ -206,12 +208,13 @@ describe('JovoModelRasa.ts', () => {
           ],
         },
         result: {
+          version: '4.0',
           invocation: '',
           intents: [
             {
               name: 'restaurant_search',
               phrases: ['show me a {Cuisine} place which sells {Plates}'],
-              inputs: [
+              entities: [
                 {
                   name: 'Cuisine',
                   type: 'Cuisine',
@@ -223,7 +226,7 @@ describe('JovoModelRasa.ts', () => {
               ],
             },
           ],
-          inputTypes: [
+          entityTypes: [
             {
               name: 'Plates',
               values: [
@@ -347,6 +350,7 @@ describe('JovoModelRasa.ts', () => {
           ],
         },
         result: {
+          version: '4.0',
           invocation: '',
           intents: [
             {
@@ -361,7 +365,7 @@ describe('JovoModelRasa.ts', () => {
                 'show me {Cuisine} restaurants',
                 'show me a {Cuisine} place in the {Location}',
               ],
-              inputs: [
+              entities: [
                 {
                   name: 'Plates',
                   type: 'Plates',
@@ -377,7 +381,7 @@ describe('JovoModelRasa.ts', () => {
               ],
             },
           ],
-          inputTypes: [
+          entityTypes: [
             {
               name: 'Plates',
               values: [
@@ -433,10 +437,11 @@ describe('JovoModelRasa.ts', () => {
   describe('exportNative (fromJovoModel)', () => {
     const testsData = [
       {
-        description: "should export 'intents' without inputs as 'common_examples'",
+        description: "should export 'intents' without entities as 'common_examples'",
         input: {
           locale: 'en',
           data: {
+            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -476,6 +481,7 @@ describe('JovoModelRasa.ts', () => {
         input: {
           locale: 'en',
           data: {
+            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -485,7 +491,7 @@ describe('JovoModelRasa.ts', () => {
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                inputs: [
+                entities: [
                   {
                     name: 'cuisine',
                     type: 'Cuisine',
@@ -497,7 +503,7 @@ describe('JovoModelRasa.ts', () => {
                 ],
               },
             ],
-            inputTypes: [
+            entityTypes: [
               {
                 name: 'Cuisine',
                 values: [
@@ -595,6 +601,7 @@ describe('JovoModelRasa.ts', () => {
         input: {
           locale: 'en',
           data: {
+            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -604,7 +611,7 @@ describe('JovoModelRasa.ts', () => {
               {
                 name: 'MyNameIsIntent',
                 phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
-                inputs: [
+                entities: [
                   {
                     name: 'name',
                     type: {
@@ -614,7 +621,7 @@ describe('JovoModelRasa.ts', () => {
                 ],
               },
             ],
-            inputTypes: [
+            entityTypes: [
               {
                 name: 'PERSON',
                 values: [
@@ -731,12 +738,13 @@ describe('JovoModelRasa.ts', () => {
       },
       {
         description:
-          "should export 'inputTypes' values with only 'value' set as 'lookup_tables' and all other ones as 'entity_synonyms'",
+          "should export 'entityTypes' values with only 'value' set as 'lookup_tables' and all other ones as 'entity_synonyms'",
         input: {
           locale: 'en',
           data: {
+            version: '4.0',
             invocation: '',
-            inputTypes: [
+            entityTypes: [
               {
                 name: 'Cuisine',
                 values: [
@@ -796,6 +804,7 @@ describe('JovoModelRasa.ts', () => {
         input: {
           locale: 'en',
           data: {
+            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -810,7 +819,7 @@ describe('JovoModelRasa.ts', () => {
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                inputs: [
+                entities: [
                   {
                     name: 'cuisine',
                     type: 'Cuisine',
@@ -826,7 +835,7 @@ describe('JovoModelRasa.ts', () => {
                 ],
               },
             ],
-            inputTypes: [
+            entityTypes: [
               {
                 name: 'Cuisine',
                 values: [

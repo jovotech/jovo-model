@@ -30,7 +30,7 @@ export class JovoModelAlexa extends JovoModel {
     const inputData = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
-      version: 4.0,
+      version: '4.0',
       invocation: _get(inputData, 'interactionModel.languageModel.invocationName'),
     };
 

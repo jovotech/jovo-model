@@ -28,7 +28,7 @@ export class JovoModelHelper {
     entityTypes: EntityType[] = [],
   ): JovoModelData {
     return {
-      version: 4.0,
+      version: '4.0',
       invocation,
       intents,
       entityTypes,

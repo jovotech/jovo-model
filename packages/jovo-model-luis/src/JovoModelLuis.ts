@@ -34,7 +34,7 @@ export class JovoModelLuis extends JovoModel {
     const inputData: LuisModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
-      version: 4.0,
+      version: '4.0',
       invocation: '',
       intents: [],
       entityTypes: [],
