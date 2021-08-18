@@ -5,7 +5,7 @@ import {
   JovoModel,
   JovoModelData,
   NativeFileInformation,
-} from 'jovo-model';
+} from '@jovotech/model';
 import _set from 'lodash.set';
 import _merge from 'lodash.merge';
 import _startsWith from 'lodash.startswith';

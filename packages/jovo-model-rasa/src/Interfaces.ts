@@ -1,4 +1,4 @@
-import { JovoModelData } from 'jovo-model';
+import { JovoModelData } from '@jovotech/model';
 
 // Jovo Model Rasa Format
 

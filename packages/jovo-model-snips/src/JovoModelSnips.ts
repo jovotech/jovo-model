@@ -6,7 +6,7 @@ import {
   JovoModel,
   JovoModelData,
   NativeFileInformation,
-} from 'jovo-model';
+} from '@jovotech/model';
 import tv4 from 'tv4';
 import * as JovoModelSnipsValidator from '../validators/JovoModelSnipsData.json';
 import {

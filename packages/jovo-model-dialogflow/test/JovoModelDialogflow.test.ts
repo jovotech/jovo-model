@@ -1,6 +1,6 @@
 import { JovoModelDialogflow } from '../src';
 
-import { NativeFileInformation, JovoModelData } from 'jovo-model';
+import { NativeFileInformation, JovoModelData } from '@jovotech/model';
 
 jest.mock('uuid');
 

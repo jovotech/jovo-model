@@ -6,7 +6,7 @@ import {
   JovoModel,
   JovoModelData,
   NativeFileInformation,
-} from 'jovo-model';
+} from '@jovotech/model';
 import {
   JovoModelLuisData,
   LuisModelClosedList,

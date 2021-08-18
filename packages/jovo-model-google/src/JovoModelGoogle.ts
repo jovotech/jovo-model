@@ -6,7 +6,7 @@ import {
   IntentEntity,
   JovoModel,
   NativeFileInformation,
-} from 'jovo-model';
+} from '@jovotech/model';
 import _get from 'lodash.get';
 import _mergeWith from 'lodash.mergewith';
 import _set from 'lodash.set';

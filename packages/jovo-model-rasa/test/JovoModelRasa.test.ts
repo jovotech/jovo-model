@@ -1,6 +1,6 @@
 import { JovoModelRasa } from '../src';
 
-import { NativeFileInformation, JovoModelData } from 'jovo-model';
+import { NativeFileInformation, JovoModelData } from '@jovotech/model';
 
 describe('JovoModelRasa.ts', () => {
   describe('exportJovoModel (toJovoModel)', () => {

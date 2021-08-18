@@ -15,6 +15,7 @@
         "sourceMap": true,
         "resolveJsonModule": true,
         "newLine": "LF",
+        "skipLibCheck": true,
         "esModuleInterop": true
     },
     "include": [

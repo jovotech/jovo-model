@@ -8,7 +8,7 @@ import {
   JovoModel,
   JovoModelData,
   NativeFileInformation,
-} from 'jovo-model';
+} from '@jovotech/model';
 
 import * as JovoModelNlpjsValidator from '../validators/JovoModelNlpjsData.json';
 

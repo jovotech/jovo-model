@@ -1,4 +1,4 @@
-import { EntityType, Intent, IntentEntity, JovoModelData } from 'jovo-model';
+import { EntityType, Intent, IntentEntity, JovoModelData } from '@jovotech/model';
 
 export interface DialogflowLMInputObject {
   id: string;

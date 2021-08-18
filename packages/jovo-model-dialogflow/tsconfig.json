@@ -15,7 +15,8 @@
         "target": "es2017",
         "sourceMap": true,
         "resolveJsonModule": true,
-        "newLine": "LF"
+        "newLine": "LF",
+        "skipLibCheck": true
     },
     "include": [
         "**/*.d.ts",

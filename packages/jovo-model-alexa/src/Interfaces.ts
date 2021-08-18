@@ -1,4 +1,4 @@
-import { IntentEntity, JovoModelData } from 'jovo-model';
+import { IntentEntity, JovoModelData } from '@jovotech/model';
 
 export interface AlexaLMTypeObject {
   name: string;

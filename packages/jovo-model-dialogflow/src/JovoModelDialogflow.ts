@@ -4,7 +4,7 @@ import {
   IntentEntity,
   JovoModel,
   NativeFileInformation,
-} from 'jovo-model';
+} from '@jovotech/model';
 import _difference from 'lodash.difference';
 import _get from 'lodash.get';
 import _isEqual from 'lodash.isequal';
