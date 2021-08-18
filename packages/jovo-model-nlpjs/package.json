@@ -1,5 +1,6 @@
 {
     "name": "@jovotech/model-nlpjs",
+    "private": false,
     "version": "4.0.0-beta.1",
     "description": "Jovo Model for nlp.js",
     "main": "dist/src/index",
