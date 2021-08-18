@@ -1,26 +1,22 @@
 import {
-  JovoModelRasaData,
-  RasaNluData,
-  RasaCommonExample,
-  RasaEntitySynonym,
-  RasaLookupTable,
-} from '.';
-
-import {
-  InputType,
-  InputTypeValue,
+  EntityType,
+  EntityTypeValue,
   Intent,
-  IntentInput,
+  IntentEntity,
   JovoModel,
   JovoModelData,
   NativeFileInformation,
 } from 'jovo-model';
-
+import {
+  JovoModelRasaData,
+  RasaCommonExample,
+  RasaEntitySynonym,
+  RasaLookupTable,
+  RasaNluData,
+} from '.';
 import * as JovoModelRasaValidator from '../validators/JovoModelRasaData.json';
 
-import * as _ from 'lodash';
-
-export interface InputTypeNameUsedCounter {
+export interface EntityTypeNameUsedCounter {
   [key: string]: number;
 }
 
@@ -31,9 +27,10 @@ export class JovoModelRasa extends JovoModel {
     const inputData = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
+      version: 4.0,
       invocation: '',
       intents: [],
-      inputTypes: [],
+      entityTypes: [],
     };
 
     const intentDirectory: {
@@ -48,11 +45,11 @@ export class JovoModelRasa extends JovoModel {
       [key: string]: RasaLookupTable;
     } = {};
 
-    const existingIntentInputsDirectory: {
+    const existingIntentEntitiesDirectory: {
       [key: string]: string[];
     } = {};
 
-    const inputTypes: {
+    const entityTypes: {
       [key: string]: string[];
     } = {};
 
@@ -60,7 +57,7 @@ export class JovoModelRasa extends JovoModel {
       let example: RasaCommonExample;
       let phraseText: string;
 
-      // Convert the Rasa examples to intents and InputTypes
+      // Convert the Rasa examples to intents and EntityTypes
       for (example of inputData.rasa_nlu_data.common_examples) {
         if (example.intent === undefined) {
           // If the example does not have an intent defined
@@ -82,51 +79,51 @@ export class JovoModelRasa extends JovoModel {
         }
 
         // Replace the example entity texts with placeholders and save all
-        // the used inputs
+        // the used entities
         phraseText = example.text;
-        const inputNames: string[] = [];
+        const entityNames: string[] = [];
         for (const entity of example.entities) {
           phraseText =
             phraseText.slice(0, entity.start) + `{${entity.entity}}` + phraseText.slice(entity.end);
 
-          if (!inputNames.includes(entity.entity)) {
-            inputNames.unshift(entity.entity);
+          if (!entityNames.includes(entity.entity)) {
+            entityNames.unshift(entity.entity);
 
-            // Save all the InputTypes which exist
-            if (inputTypes[entity.entity] === undefined) {
-              inputTypes[entity.entity] = [entity.value];
-            } else if (!inputTypes[entity.entity].includes(entity.value)) {
-              inputTypes[entity.entity].push(entity.value);
+            // Save all the EntityTypes which exist
+            if (entityTypes[entity.entity] === undefined) {
+              entityTypes[entity.entity] = [entity.value];
+            } else if (!entityTypes[entity.entity].includes(entity.value)) {
+              entityTypes[entity.entity].push(entity.value);
             }
           }
         }
 
-        // Add all the inputs the phrase used
-        if (inputNames.length !== 0) {
-          // Prepare the directory for the inputs for each intent
+        // Add all the entities the phrase used
+        if (entityNames.length !== 0) {
+          // Prepare the directory for the entities for each intent
           // which gets added in the end to the model once everything
           // got processed.
-          if (intentDirectory[example.intent].inputs === undefined) {
-            intentDirectory[example.intent].inputs = [];
+          if (intentDirectory[example.intent].entities === undefined) {
+            intentDirectory[example.intent].entities = [];
           }
 
-          // Prepare the directory for the inputs for each intent
+          // Prepare the directory for the entities for each intent
           // to not add some multiple times and to not having to look
           // through all the already added ones on the intent very time.
-          if (existingIntentInputsDirectory[example.intent] === undefined) {
-            existingIntentInputsDirectory[example.intent] = [];
+          if (existingIntentEntitiesDirectory[example.intent] === undefined) {
+            existingIntentEntitiesDirectory[example.intent] = [];
           }
 
-          for (const inputName of inputNames) {
-            if (existingIntentInputsDirectory[example.intent].includes(inputName)) {
+          for (const entityName of entityNames) {
+            if (existingIntentEntitiesDirectory[example.intent].includes(entityName)) {
               continue;
             }
 
-            existingIntentInputsDirectory[example.intent].push(inputName);
+            existingIntentEntitiesDirectory[example.intent].push(entityName);
 
-            intentDirectory[example.intent].inputs!.push({
-              name: inputName,
-              type: inputName,
+            intentDirectory[example.intent].entities!.push({
+              name: entityName,
+              type: entityName,
             });
           }
         }
@@ -135,26 +132,26 @@ export class JovoModelRasa extends JovoModel {
       }
 
       // Save the synonyms by name that they are easily accessible
-      // when they are needed to create the inputTypes
+      // when they are needed to create the entityTypes
       for (const synonym of inputData.rasa_nlu_data.entity_synonyms) {
         synonymDirectory[synonym.value] = synonym;
       }
 
       // Save the lookupTable by name that we can add all its values
-      // to the inputType
+      // to the entityType
       for (const lookupTable of inputData.rasa_nlu_data.lookup_tables) {
         lookupTableDirectory[lookupTable.name] = lookupTable;
       }
 
-      let inputType: InputType;
+      let entityType: EntityType;
       let values: string[];
-      for (const inputTypeName of Object.keys(inputTypes)) {
-        values = inputTypes[inputTypeName];
+      for (const entityTypeName of Object.keys(entityTypes)) {
+        values = entityTypes[entityTypeName];
 
-        if (lookupTableDirectory[inputTypeName] !== undefined) {
-          if (Array.isArray(lookupTableDirectory[inputTypeName].elements)) {
+        if (lookupTableDirectory[entityTypeName] !== undefined) {
+          if (Array.isArray(lookupTableDirectory[entityTypeName].elements)) {
             // Is an array of values
-            for (const value of lookupTableDirectory[inputTypeName].elements) {
+            for (const value of lookupTableDirectory[entityTypeName].elements) {
               if (!values.includes(value)) {
                 values.push(value);
               }
@@ -166,12 +163,12 @@ export class JovoModelRasa extends JovoModel {
           }
         }
 
-        inputType = {
-          name: inputTypeName,
+        entityType = {
+          name: entityTypeName,
           values: values.map((value) => {
-            // Add all the inputType values with the synonyms
+            // Add all the entityType values with the synonyms
             // which got found
-            const returnData: InputTypeValue = {
+            const returnData: EntityTypeValue = {
               value,
             };
 
@@ -186,7 +183,7 @@ export class JovoModelRasa extends JovoModel {
           }),
         };
 
-        jovoModel.inputTypes!.push(inputType);
+        jovoModel.entityTypes!.push(entityType);
       }
     }
 
@@ -202,7 +199,7 @@ export class JovoModelRasa extends JovoModel {
       lookup_tables: [],
     };
 
-    const inputTypeNameUsedCounter: InputTypeNameUsedCounter = {};
+    const entityTypeNameUsedCounter: EntityTypeNameUsedCounter = {};
 
     let rasaExample: RasaCommonExample | undefined;
     if (model.intents !== undefined) {
@@ -212,8 +209,8 @@ export class JovoModelRasa extends JovoModel {
             rasaExample = this.getRasaExampleFromPhrase(
               phrase,
               intent,
-              model.inputTypes,
-              inputTypeNameUsedCounter,
+              model.entityTypes,
+              entityTypeNameUsedCounter,
             );
             returnData.common_examples.push(rasaExample);
           }
@@ -223,19 +220,19 @@ export class JovoModelRasa extends JovoModel {
 
     let saveAsLookupTable: boolean;
     let rasaSynonym: RasaEntitySynonym;
-    if (model.inputTypes !== undefined) {
-      for (const inputType of model.inputTypes) {
+    if (model.entityTypes !== undefined) {
+      for (const entityType of model.entityTypes) {
         saveAsLookupTable = true;
 
-        if (inputType.values === undefined) {
-          // If an InputType does not have any values defined
+        if (entityType.values === undefined) {
+          // If an EntityType does not have any values defined
           // for some reason skip it.
           continue;
         }
 
         // Check it it should be saved under synonyms or lookupTable
 
-        for (const typeValue of inputType.values) {
+        for (const typeValue of entityType.values) {
           if (Object.keys(typeValue).length !== 1 || typeValue.value === undefined) {
             // It can only be saved as lookupTable if it does not
             // have any other properties than "value"
@@ -247,13 +244,13 @@ export class JovoModelRasa extends JovoModel {
         if (saveAsLookupTable === true) {
           // Save a lookupTable
           returnData.lookup_tables!.push({
-            name: inputType.name,
+            name: entityType.name,
             // TODO: remove the !
-            elements: inputType.values.map((data) => data.value),
+            elements: entityType.values.map((data) => data.value),
           });
         } else {
           // Save as synonyms
-          for (const typeValue of inputType.values) {
+          for (const typeValue of entityType.values) {
             rasaSynonym = {
               value: typeValue.value,
               synonyms: [],
@@ -282,8 +279,8 @@ export class JovoModelRasa extends JovoModel {
   static getRasaExampleFromPhrase(
     phrase: string,
     intent: Intent,
-    inputTypes: InputType[] | undefined,
-    inputTypeNameUsedCounter: InputTypeNameUsedCounter,
+    entityTypes: EntityType[] | undefined,
+    entityTypeNameUsedCounter: EntityTypeNameUsedCounter,
   ): RasaCommonExample {
     const returnData: RasaCommonExample = {
       text: phrase,
@@ -292,95 +289,95 @@ export class JovoModelRasa extends JovoModel {
     };
 
     let startIndex: number;
-    let inputType: InputType | undefined;
-    let intentInput: IntentInput | undefined;
+    let entityType: EntityType | undefined;
+    let intentEntity: IntentEntity | undefined;
     let exampleValue = '';
-    let inputTypeName:
+    let entityTypeName:
       | string
       | {
           [key: string]: string;
         };
 
-    // Get the inputs of the phrase
-    const phraseInputs = phrase.match(/{[^}]*}/g);
+    // Get the entities of the phrase
+    const phraseEntities = phrase.match(/{[^}]*}/g);
 
-    // Add the ones which are defined as inputs as rasa Example
-    if (phraseInputs !== null) {
-      for (let inputName of phraseInputs) {
+    // Add the ones which are defined as entities as rasa Example
+    if (phraseEntities !== null) {
+      for (let entityName of phraseEntities) {
         // Cut the curly braces away
-        inputName = inputName.slice(1, -1);
+        entityName = entityName.slice(1, -1);
 
-        if (intent.inputs === undefined) {
-          // No inputs are defined so the value is not an input
+        if (intent.entities === undefined) {
+          // No entities are defined so the value is not an entity
           continue;
         }
 
-        // Check if the value is really an input
-        intentInput = intent.inputs.find((data) => data.name === inputName);
-        if (intentInput === undefined) {
-          // No input exists with that name so it is not an input
+        // Check if the value is really an entity
+        intentEntity = intent.entities.find((data) => data.name === entityName);
+        if (intentEntity === undefined) {
+          // No entity exists with that name so it is not an entity
           continue;
         }
 
-        if (intentInput.type === undefined) {
+        if (intentEntity.type === undefined) {
           throw new Error(
-            `No type is defined for input "${inputName}" which is used in phrase "${phrase}"!`,
+            `No type is defined for entity "${entityName}" which is used in phrase "${phrase}"!`,
           );
         }
 
-        // Get the InputType data to get an example value to replace the placeholder with
-        if (inputTypes === undefined) {
+        // Get the EntityType data to get an example value to replace the placeholder with
+        if (entityTypes === undefined) {
           throw new Error(
-            `No InputTypes are defined but type "${inputName}" is used in phrase "${phrase}"!`,
+            `No EntityTypes are defined but type "${entityName}" is used in phrase "${phrase}"!`,
           );
         }
 
-        inputTypeName = intentInput.type;
-        if (typeof intentInput.type === 'object') {
-          if (intentInput.type.rasa === undefined) {
+        entityTypeName = intentEntity.type;
+        if (typeof intentEntity.type === 'object') {
+          if (intentEntity.type.rasa === undefined) {
             throw new Error(
-              `No Rasa-Type is defined for input "${inputName}" which is used in phrase "${phrase}"!`,
+              `No Rasa-Type is defined for entity "${entityName}" which is used in phrase "${phrase}"!`,
             );
           } else {
-            inputTypeName = intentInput.type.rasa as string;
+            entityTypeName = intentEntity.type.rasa as string;
           }
         } else {
-          inputTypeName = inputTypeName as string;
+          entityTypeName = entityTypeName as string;
         }
 
-        inputType = inputTypes.find((data) => data.name === inputTypeName);
-        if (inputType === undefined) {
+        entityType = entityTypes.find((data) => data.name === entityTypeName);
+        if (entityType === undefined) {
           throw new Error(
-            `InputType "${inputTypeName}" is not defined but is used in phrase "${phrase}"!`,
+            `EntityType "${entityTypeName}" is not defined but is used in phrase "${phrase}"!`,
           );
         }
-        if (inputType.values === undefined || inputType.values.length === 0) {
-          throw new Error(`InputType "${inputTypeName}" does not have any values!`);
+        if (entityType.values === undefined || entityType.values.length === 0) {
+          throw new Error(`EntityType "${entityTypeName}" does not have any values!`);
         }
 
         // As we are going in order of appearance in the text we can be sure
         // that the start index does not change. The end index gets calculated
         // by adding the length of the value the placeholder got replaced with.
-        startIndex = returnData.text.indexOf(`{${inputName}}`);
+        startIndex = returnData.text.indexOf(`{${entityName}}`);
 
         // Make sure that different example values get used becaues if not
         // entities do not seem to get extracted properly
-        if (inputTypeNameUsedCounter[inputTypeName] === undefined) {
-          inputTypeNameUsedCounter[inputTypeName] = 0;
+        if (entityTypeNameUsedCounter[entityTypeName] === undefined) {
+          entityTypeNameUsedCounter[entityTypeName] = 0;
         }
-        const exampleInputIndex =
-          inputTypeNameUsedCounter[inputTypeName]++ % inputType.values.length;
-        exampleValue = inputType.values[exampleInputIndex].value;
+        const exampleEntityIndex =
+          entityTypeNameUsedCounter[entityTypeName]++ % entityType.values.length;
+        exampleValue = entityType.values[exampleEntityIndex].value;
 
         returnData.entities.push({
           value: exampleValue,
-          entity: inputTypeName,
+          entity: entityTypeName,
           start: startIndex,
           end: startIndex + exampleValue.length,
         });
 
         // Replace the placeholder with an example value
-        returnData.text = returnData.text.replace(new RegExp(`{${inputName}}`, 'g'), exampleValue);
+        returnData.text = returnData.text.replace(new RegExp(`{${entityName}}`, 'g'), exampleValue);
       }
     }
 
