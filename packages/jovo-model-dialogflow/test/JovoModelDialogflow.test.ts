@@ -1,6 +1,6 @@
 import { JovoModelDialogflow } from '../src';
 
-import { NativeFileInformation, JovoModelData } from 'jovo-model';
+import { NativeFileInformation, JovoModelData } from '@jovotech/model';
 
 jest.mock('uuid');
 
@@ -257,6 +257,7 @@ describe('JovoModelDialogflow.ts', () => {
           ],
         },
         result: {
+          version: '4.0',
           invocation: '',
           intents: [
             {
@@ -277,7 +278,7 @@ describe('JovoModelDialogflow.ts', () => {
                 'show me {cuisine} restaurants',
                 'show me a {cuisine} place in the {location}',
               ],
-              inputs: [
+              entities: [
                 {
                   name: 'cuisine',
                   type: 'Cuisine',
@@ -293,7 +294,7 @@ describe('JovoModelDialogflow.ts', () => {
               ],
             },
           ],
-          inputTypes: [
+          entityTypes: [
             {
               name: 'Cuisine',
               values: [
@@ -368,6 +369,7 @@ describe('JovoModelDialogflow.ts', () => {
         input: {
           locale: 'en',
           data: {
+            version: '4.0',
             invocation: 'my test app',
             intents: [
               {
@@ -382,7 +384,7 @@ describe('JovoModelDialogflow.ts', () => {
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                inputs: [
+                entities: [
                   {
                     name: 'cuisine',
                     type: 'Cuisine',
@@ -402,7 +404,7 @@ describe('JovoModelDialogflow.ts', () => {
                 ],
               },
             ],
-            inputTypes: [
+            entityTypes: [
               {
                 name: 'Cuisine',
                 values: [

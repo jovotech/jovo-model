@@ -1,14 +1,14 @@
 import { JovoModelNlpjsData, NlpjsData, NlpjsModelFile } from '.';
 
 import {
-  InputType,
-  InputTypeValue,
+  EntityType,
+  EntityTypeValue,
   Intent,
-  IntentInput,
+  IntentEntity,
   JovoModel,
   JovoModelData,
   NativeFileInformation,
-} from 'jovo-model';
+} from '@jovotech/model';
 
 import * as JovoModelNlpjsValidator from '../validators/JovoModelNlpjsData.json';
 
@@ -19,9 +19,10 @@ export class JovoModelNlpjs extends JovoModel {
     const inputData: NlpjsModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
+      version: '4.0',
       invocation: '',
       intents: [],
-      inputTypes: [],
+      entityTypes: [],
     };
 
     if (inputData.data) {
@@ -42,7 +43,7 @@ export class JovoModelNlpjs extends JovoModel {
       name: '',
       locale,
     };
-    const inputsMap: Record<string, string> = {};
+    const entitiesMap: Record<string, string> = {};
 
     if (model.intents) {
       model.intents.forEach((intent: Intent) => {
@@ -51,16 +52,16 @@ export class JovoModelNlpjs extends JovoModel {
           utterances: [],
         };
 
-        if (intent.inputs) {
+        if (intent.entities) {
           returnData.entities = {};
 
-          intent.inputs.forEach((input: IntentInput) => {
-            if (input.type && typeof input.type === 'string') {
+          intent.entities.forEach((entity: IntentEntity) => {
+            if (entity.type && typeof entity.type === 'string') {
               // inputsMap[input.name] = input.type;
-              inputsMap[input.type] = input.name;
-            } else if (input.type && typeof input.type === 'object' && input.type.nlpjs) {
+              entitiesMap[entity.type] = entity.name;
+            } else if (entity.type && typeof entity.type === 'object' && entity.type.nlpjs) {
               // inputsMap[input.name] = input.type.nlpjs;
-              inputsMap[input.type.nlpjs] = input.name;
+              entitiesMap[entity.type.nlpjs] = entity.name;
             }
           });
         }
@@ -72,8 +73,8 @@ export class JovoModelNlpjs extends JovoModel {
               matches.forEach((match: string) => {
                 const matchValue = match.replace('{', '').replace('}', '');
 
-                if (inputsMap[matchValue]) {
-                  phrase = phrase.replace(match, `@${inputsMap[matchValue]}`);
+                if (entitiesMap[matchValue]) {
+                  phrase = phrase.replace(match, `@${entitiesMap[matchValue]}`);
                 } else {
                   phrase = phrase.replace(match, `@${matchValue}`);
                 }
@@ -87,19 +88,19 @@ export class JovoModelNlpjs extends JovoModel {
       });
     }
 
-    if (model.inputTypes) {
+    if (model.entityTypes) {
       returnData.entities = {};
-      model.inputTypes.forEach((inputType: InputType) => {
+      model.entityTypes.forEach((entityType: EntityType) => {
         const options: Record<string, string[]> = {};
 
-        inputType.values!.forEach((inputTypeValue: InputTypeValue) => {
-          const key = inputTypeValue.value;
-          options[key] = [inputTypeValue.value];
-          if (inputTypeValue.synonyms) {
-            options[key] = options[key].concat(inputTypeValue.synonyms);
+        entityType.values!.forEach((entityTypeValue: EntityTypeValue) => {
+          const key = entityTypeValue.value;
+          options[key] = [entityTypeValue.value];
+          if (entityTypeValue.synonyms) {
+            options[key] = options[key].concat(entityTypeValue.synonyms);
           }
         });
-        returnData.entities![inputsMap[inputType.name]] = {
+        returnData.entities![entitiesMap[entityType.name]] = {
           options,
         };
       });

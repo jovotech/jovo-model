@@ -1,25 +1,25 @@
 import {
-  AlexaModel,
-  AlexaLMIntent,
-  AlexaLMInputObject,
-  AlexaLMTypeObject,
-  AlexaLMTypeValue,
-  IntentInputAlexa,
-  JovoModelAlexaData,
-} from '.';
-
-import {
-  InputType,
-  InputTypeValue,
+  EntityType,
+  EntityTypeValue,
   Intent,
   JovoModel,
   JovoModelData,
   NativeFileInformation,
-} from 'jovo-model';
-
+} from '@jovotech/model';
+import _set from 'lodash.set';
+import _merge from 'lodash.merge';
+import _startsWith from 'lodash.startswith';
+import _get from 'lodash.get';
+import {
+  AlexaLMInputObject,
+  AlexaLMIntent,
+  AlexaLMTypeObject,
+  AlexaLMTypeValue,
+  AlexaModel,
+  IntentEntityAlexa,
+  JovoModelAlexaData,
+} from '.';
 import * as JovoModelAlexaValidator from '../validators/JovoModelAlexaData.json';
-
-import * as _ from 'lodash';
 
 const BUILTIN_PREFIX = 'AMAZON.';
 
@@ -30,72 +30,73 @@ export class JovoModelAlexa extends JovoModel {
     const inputData = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
-      invocation: _.get(inputData, 'interactionModel.languageModel.invocationName'),
+      version: '4.0',
+      invocation: _get(inputData, 'interactionModel.languageModel.invocationName'),
     };
 
     // prompts
-    if (_.get(inputData, 'interactionModel.prompts')) {
-      _.set(
+    if (_get(inputData, 'interactionModel.prompts')) {
+      _set(
         jovoModel,
         'alexa.interactionModel.prompts',
-        _.get(inputData, 'interactionModel.prompts'),
+        _get(inputData, 'interactionModel.prompts'),
       );
     }
 
     // dialog
-    if (_.get(inputData, 'interactionModel.dialog')) {
-      _.set(
+    if (_get(inputData, 'interactionModel.dialog')) {
+      _set(
         jovoModel,
         'alexa.interactionModel.dialog',
-        _.get(inputData, 'interactionModel.dialog'),
+        _get(inputData, 'interactionModel.dialog'),
       );
     }
 
     const alexaIntents: Intent[] = [];
     const jovoIntents: Intent[] = [];
     let intent;
-    for (intent of _.get(inputData, 'interactionModel.languageModel.intents')) {
-      if (_.startsWith(intent.name, BUILTIN_PREFIX)) {
+    for (intent of _get(inputData, 'interactionModel.languageModel.intents')) {
+      if (_startsWith(intent.name, BUILTIN_PREFIX)) {
         alexaIntents.push(intent);
       } else {
         const jovoIntent: Intent = {
           name: intent.name,
           phrases: intent.samples,
         };
-        const inputs: IntentInputAlexa[] = [];
+        const entities: IntentEntityAlexa[] = [];
         if (intent.slots) {
           for (const slot of intent.slots) {
-            const input: IntentInputAlexa = {
+            const entity: IntentEntityAlexa = {
               name: slot.name,
               type: slot.type,
             };
-            if (_.startsWith(slot.type, BUILTIN_PREFIX)) {
-              input.type = {
+            if (_startsWith(slot.type, BUILTIN_PREFIX)) {
+              entity.type = {
                 alexa: slot.type,
               };
             }
 
             if (slot.samples) {
-              input.alexa = {
+              entity.alexa = {
                 samples: slot.samples,
               };
             }
-            inputs.push(input);
+            entities.push(entity);
           }
-          jovoIntent.inputs = inputs;
+          jovoIntent.entities = entities;
         }
         jovoIntents.push(jovoIntent);
       }
     }
 
-    _.set(jovoModel, 'intents', jovoIntents);
+    _set(jovoModel, 'intents', jovoIntents);
 
-    if (_.get(inputData, 'interactionModel.languageModel.types')) {
-      // input types
-      const inputTypes: InputType[] = [];
-      for (const type of _.get(inputData, 'interactionModel.languageModel.types')) {
-        const values: InputTypeValue[] = [];
-        let tV: InputTypeValue;
+    if (_get(inputData, 'interactionModel.languageModel.types')) {
+      // Entity types
+      const entityTypes: EntityType[] = [];
+      for (const type of _get(inputData, 'interactionModel.languageModel.types')) {
+        const values: EntityTypeValue[] = [];
+        let tV: EntityTypeValue;
         for (const typeValue of type.values) {
           tV = {
             value: typeValue.name.value,
@@ -108,15 +109,15 @@ export class JovoModelAlexa extends JovoModel {
           }
           values.push(tV);
         }
-        inputTypes.push({
+        entityTypes.push({
           name: type.name,
           values,
         });
       }
-      _.set(jovoModel, 'inputTypes', inputTypes);
+      _set(jovoModel, 'entityTypes', entityTypes);
     }
 
-    _.set(jovoModel, 'alexa.interactionModel.languageModel.intents', alexaIntents);
+    _set(jovoModel, 'alexa.interactionModel.languageModel.intents', alexaIntents);
 
     return jovoModel as JovoModelAlexaData;
   }
@@ -142,7 +143,7 @@ export class JovoModelAlexa extends JovoModel {
       invocationName = model.invocation.alexaSkill;
     }
 
-    _.set(alexaModel, 'interactionModel.languageModel.invocationName', invocationName);
+    _set(alexaModel, 'interactionModel.languageModel.invocationName', invocationName);
 
     // handle invocation name requirements
     if (alexaModel.interactionModel.languageModel.invocationName) {
@@ -184,59 +185,59 @@ export class JovoModelAlexa extends JovoModel {
           }
         }
 
-        // handle intent inputs
-        if (intent.inputs) {
+        // handle intent entities
+        if (intent.entities) {
           alexaIntentObj.slots = [];
 
-          let input: IntentInputAlexa;
-          for (input of intent.inputs) {
+          let entity: IntentEntityAlexa;
+          for (entity of intent.entities) {
             const alexaInputObj: AlexaLMInputObject = {
-              name: input.name,
+              name: entity.name,
               type: '',
             };
 
-            if (typeof input.type === 'object') {
-              if (input.type.alexa) {
-                alexaInputObj.type = input.type.alexa;
-                if (_.startsWith(input.type.alexa, BUILTIN_PREFIX)) {
-                  alexaInputObj.type = input.type.alexa;
+            if (typeof entity.type === 'object') {
+              if (entity.type.alexa) {
+                alexaInputObj.type = entity.type.alexa;
+                if (_startsWith(entity.type.alexa, BUILTIN_PREFIX)) {
+                  alexaInputObj.type = entity.type.alexa;
                 }
               } else {
                 throw new Error(
-                  errorPrefix + 'Please add an Alexa property for input "' + input.name + '"',
+                  errorPrefix + 'Please add an Alexa property for entity "' + entity.name + '"',
                 );
               }
             }
 
-            // handle custom input types
+            // handle custom entity types
             if (!alexaInputObj.type) {
-              if (!input.type) {
-                throw new Error(errorPrefix + 'Invalid input type in intent "' + intent.name + '"');
+              if (!entity.type) {
+                throw new Error(errorPrefix + 'Invalid entity type in intent "' + intent.name + '"');
               }
 
-              alexaInputObj.type = input.type;
+              alexaInputObj.type = entity.type;
 
-              // throw error when no inputTypes object defined
-              if (!model.inputTypes) {
+              // throw error when no entityTypes object defined
+              if (!model.entityTypes) {
                 throw new Error(
                   errorPrefix +
-                    'Input type "' +
+                    'Entity type "' +
                     alexaInputObj.type +
-                    '" must be defined in inputTypes',
+                    '" must be defined in entityTypes',
                 );
               }
 
-              // find type in global inputTypes array
-              const matchedInputTypes = model.inputTypes.filter((item) => {
+              // find type in global entityTypes array
+              const matchedEntityTypes = model.entityTypes.filter((item) => {
                 return item.name === alexaInputObj.type;
               });
 
-              if (matchedInputTypes.length === 0) {
+              if (matchedEntityTypes.length === 0) {
                 throw new Error(
                   errorPrefix +
-                    'Input type "' +
+                    'Entity type "' +
                     alexaInputObj.type +
-                    '" must be defined in inputTypes',
+                    '" must be defined in entityTypes',
                 );
               }
 
@@ -244,23 +245,23 @@ export class JovoModelAlexa extends JovoModel {
                 alexaModel.interactionModel.languageModel.types = [];
               }
 
-              // create alexaTypeObj from matched input types
-              for (const matchedInputType of matchedInputTypes) {
+              // create alexaTypeObj from matched entity types
+              for (const matchedEntityType of matchedEntityTypes) {
                 const alexaTypeObj: AlexaLMTypeObject = {
                   // @ts-ignore
-                  name: matchedInputType.alexa || matchedInputType.name,
+                  name: matchedEntityType.alexa || matchedEntityType.name,
                   values: [],
                 };
 
-                if (!matchedInputType.values) {
+                if (!matchedEntityType.values) {
                   throw new Error(
                     errorPrefix +
-                      `Input type "${matchedInputType.name}" must have at least one value`,
+                      `Entity type "${matchedEntityType.name}" must have at least one value`,
                   );
                 }
 
                 // create alexaTypeValueObj
-                for (const value of matchedInputType.values) {
+                for (const value of matchedEntityType.values) {
                   const alexaTypeValueObj: AlexaLMTypeValue = {
                     id: value.id ? value.id.toString() : null,
                     name: {
@@ -287,14 +288,14 @@ export class JovoModelAlexa extends JovoModel {
                 }
               }
             }
-            if (input.alexa) {
-              _.merge(alexaInputObj, input.alexa);
+            if (entity.alexa) {
+              _merge(alexaInputObj, entity.alexa);
             }
             alexaIntentObj.slots.push(alexaInputObj);
           }
         }
 
-        if (_.get(intent, 'alexa')) {
+        if (_get(intent, 'alexa')) {
           // @ts-ignore
           _.assign(alexaIntentObj, intent.alexa);
         }
@@ -304,50 +305,50 @@ export class JovoModelAlexa extends JovoModel {
     }
 
     // convert alexa specific intents
-    if (_.get(model, 'alexa.interactionModel.languageModel.intents')) {
-      for (const intent of _.get(model, 'alexa.interactionModel.languageModel.intents')) {
+    if (_get(model, 'alexa.interactionModel.languageModel.intents')) {
+      for (const intent of _get(model, 'alexa.interactionModel.languageModel.intents')) {
         alexaIntents.push(intent);
       }
     }
-    _.set(alexaModel, 'interactionModel.languageModel.intents', alexaIntents);
+    _set(alexaModel, 'interactionModel.languageModel.intents', alexaIntents);
 
     // prompts
-    if (_.get(model, 'alexa.interactionModel.prompts')) {
-      _.set(alexaModel, 'interactionModel.prompts', _.get(model, 'alexa.interactionModel.prompts'));
+    if (_get(model, 'alexa.interactionModel.prompts')) {
+      _set(alexaModel, 'interactionModel.prompts', _get(model, 'alexa.interactionModel.prompts'));
     }
 
     // types
-    if (_.get(model, 'alexa.interactionModel.languageModel.types')) {
-      _.set(
+    if (_get(model, 'alexa.interactionModel.languageModel.types')) {
+      _set(
         alexaModel,
         'interactionModel.languageModel.types',
-        _.get(model, 'alexa.interactionModel.languageModel.types'),
+        _get(model, 'alexa.interactionModel.languageModel.types'),
       );
     }
 
-      // modelConfiguration
-      if (_.get(model, 'alexa.interactionModel.languageModel.modelConfiguration')) {
-          _.set(
-              alexaModel,
-              'interactionModel.languageModel.modelConfiguration',
-              _.get(model, 'alexa.interactionModel.languageModel.modelConfiguration'),
-          );
-      }
+    // modelConfiguration
+    if (_get(model, 'alexa.interactionModel.languageModel.modelConfiguration')) {
+      _set(
+        alexaModel,
+        'interactionModel.languageModel.modelConfiguration',
+        _get(model, 'alexa.interactionModel.languageModel.modelConfiguration'),
+      );
+    }
 
     // dialog
-    if (_.get(model, 'alexa.interactionModel.dialog')) {
-      _.set(alexaModel, 'interactionModel.dialog', _.get(model, 'alexa.interactionModel.dialog'));
+    if (_get(model, 'alexa.interactionModel.dialog')) {
+      _set(alexaModel, 'interactionModel.dialog', _get(model, 'alexa.interactionModel.dialog'));
     }
 
     // types
-    if (_.get(model, 'inputTypes')) {
-      for (const inputType of model.inputTypes!) {
+    if (_get(model, 'entityTypes')) {
+      for (const entityType of model.entityTypes!) {
         let findings: AlexaLMTypeObject[] = [];
 
-        // skip input types that are already in alexa types
-        if (_.get(alexaModel, 'interactionModel.languageModel.types')) {
+        // skip entity types that are already in alexa types
+        if (_get(alexaModel, 'interactionModel.languageModel.types')) {
           findings = alexaModel.interactionModel.languageModel.types.filter((item) => {
-            return inputType.name === item.name;
+            return entityType.name === item.name;
           });
         }
 
@@ -357,13 +358,13 @@ export class JovoModelAlexa extends JovoModel {
 
         // create alexa type
         const alexaType: AlexaLMTypeObject = {
-          name: inputType.name,
+          name: entityType.name,
           values: [],
         };
 
         // iterate through values
-        if (inputType.values) {
-          for (const value of inputType.values) {
+        if (entityType.values) {
+          for (const value of entityType.values) {
             const alexaTypeValue: AlexaLMTypeValue = {
               id: value.id ? value.id.toString() : null,
               name: {

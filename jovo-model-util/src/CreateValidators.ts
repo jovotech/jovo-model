@@ -1,9 +1,8 @@
-import { join as pathJoin, resolve as pathResolve } from 'path';
 import { writeFile } from 'fs';
-import { promisify } from 'util';
-
+import { RunValidator } from '@jovotech/model';
+import { join as pathJoin, resolve as pathResolve } from 'path';
 import * as TJS from 'typescript-json-schema';
-import { RunValidator } from 'jovo-model';
+import { promisify } from 'util';
 
 const writeFileAsync = promisify(writeFile);
 

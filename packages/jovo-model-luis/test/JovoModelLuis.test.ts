@@ -1,13 +1,13 @@
 import { JovoModelLuis } from '../src';
 
-import { NativeFileInformation, JovoModelData } from 'jovo-model';
+import { NativeFileInformation, JovoModelData } from '@jovotech/model';
 
 describe('JovoModelLuis.ts', () => {
   describe('exportJovoModel (toJovoModel)', () => {
     const testsData = [
       {
         description:
-          'should replace all the values with placeholders and save the closedLists as custom inputTypes',
+          'should replace all the values with placeholders and save the closedLists as custom entityTypes',
         input: {
           locale: 'en',
           inputFiles: [
@@ -147,6 +147,7 @@ describe('JovoModelLuis.ts', () => {
           ],
         },
         result: {
+          version: '4.0',
           invocation: '',
           intents: [
             {
@@ -161,7 +162,7 @@ describe('JovoModelLuis.ts', () => {
                 'show me {Cuisine} restaurants',
                 'show me a {Cuisine} place in the {Location}',
               ],
-              inputs: [
+              entities: [
                 {
                   name: 'Location',
                   type: 'Location',
@@ -177,7 +178,7 @@ describe('JovoModelLuis.ts', () => {
               ],
             },
           ],
-          inputTypes: [
+          entityTypes: [
             {
               name: 'Cuisine',
               values: [
@@ -221,7 +222,7 @@ describe('JovoModelLuis.ts', () => {
         },
       },
       {
-        description: 'it should export inputs of built-in luis types without the prefix',
+        description: 'it should export entities of built-in luis types without the prefix',
         input: {
           locale: 'en',
           inputFiles: [
@@ -321,6 +322,7 @@ describe('JovoModelLuis.ts', () => {
           ],
         },
         result: {
+          version: '4.0',
           invocation: '',
           intents: [
             {
@@ -335,7 +337,7 @@ describe('JovoModelLuis.ts', () => {
                 'i am {personName}',
                 'you can call me {personName}',
               ],
-              inputs: [
+              entities: [
                 {
                   name: 'personName',
                   type: {
@@ -345,7 +347,7 @@ describe('JovoModelLuis.ts', () => {
               ],
             },
           ],
-          inputTypes: [],
+          entityTypes: [],
         },
       },
     ];
@@ -366,10 +368,11 @@ describe('JovoModelLuis.ts', () => {
     const testsData = [
       {
         description:
-          'should replace all the placeholders with example values and save the custom inputTypes as closedLists',
+          'should replace all the placeholders with example values and save the custom entityTypes as closedLists',
         input: {
           locale: 'en-US',
           data: {
+            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -384,7 +387,7 @@ describe('JovoModelLuis.ts', () => {
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                inputs: [
+                entities: [
                   {
                     name: 'cuisine',
                     type: 'Cuisine',
@@ -400,7 +403,7 @@ describe('JovoModelLuis.ts', () => {
                 ],
               },
             ],
-            inputTypes: [
+            entityTypes: [
               {
                 name: 'Cuisine',
                 values: [
@@ -588,6 +591,7 @@ describe('JovoModelLuis.ts', () => {
         input: {
           locale: 'en-US',
           data: {
+            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -597,7 +601,7 @@ describe('JovoModelLuis.ts', () => {
               {
                 name: 'MyNameIsIntent',
                 phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
-                inputs: [
+                entities: [
                   {
                     name: 'name',
                     type: {
@@ -607,7 +611,7 @@ describe('JovoModelLuis.ts', () => {
                 ],
               },
             ],
-            inputTypes: [
+            entityTypes: [
               {
                 name: 'builtin.personName',
                 values: [

@@ -1,13 +1,13 @@
 import { JovoModelLex } from '../src';
 
-import { NativeFileInformation, JovoModelData } from 'jovo-model';
+import { NativeFileInformation, JovoModelData } from '@jovotech/model';
 
 describe('JovoModelLex.ts', () => {
   describe('exportJovoModel (toJovoModel)', () => {
     const testsData = [
       {
         description:
-          'should replace all the values with placeholders and save the closedLists as custom inputTypes',
+          'should replace all the values with placeholders and save the closedLists as custom entityTypes',
         input: {
           locale: 'en',
           inputFiles: [
@@ -110,6 +110,7 @@ describe('JovoModelLex.ts', () => {
           ],
         },
         result: {
+          version: '4.0',
           invocation: '',
           intents: [
             {
@@ -124,7 +125,7 @@ describe('JovoModelLex.ts', () => {
                 'show me {cuisine} restaurants',
                 'show me a {cuisine} place in the {location}',
               ],
-              inputs: [
+              entities: [
                 {
                   name: 'cuisine',
                   type: 'Cuisine',
@@ -140,7 +141,7 @@ describe('JovoModelLex.ts', () => {
               ],
             },
           ],
-          inputTypes: [
+          entityTypes: [
             {
               name: 'Cuisine',
               values: [
@@ -237,6 +238,7 @@ describe('JovoModelLex.ts', () => {
           ],
         },
         result: {
+          version: '4.0',
           invocation: '',
           intents: [
             {
@@ -246,7 +248,7 @@ describe('JovoModelLex.ts', () => {
             {
               name: 'MyNameIsIntent',
               phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
-              inputs: [
+              entities: [
                 {
                   name: 'name',
                   type: {
@@ -256,7 +258,7 @@ describe('JovoModelLex.ts', () => {
               ],
             },
           ],
-          inputTypes: [],
+          entityTypes: [],
         },
       },
     ];
@@ -276,10 +278,11 @@ describe('JovoModelLex.ts', () => {
   describe('exportNative (fromJovoModel)', () => {
     const testsData = [
       {
-        description: 'should convert the intents and save the inputTypes as slotTypes',
+        description: 'should convert the intents and save the entityTypes as slotTypes',
         input: {
           locale: 'en-US',
           data: {
+            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -294,7 +297,7 @@ describe('JovoModelLex.ts', () => {
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                inputs: [
+                entities: [
                   {
                     name: 'cuisine',
                     type: 'Cuisine',
@@ -310,7 +313,7 @@ describe('JovoModelLex.ts', () => {
                 ],
               },
             ],
-            inputTypes: [
+            entityTypes: [
               {
                 name: 'Cuisine',
                 values: [
@@ -461,6 +464,7 @@ describe('JovoModelLex.ts', () => {
         input: {
           locale: 'en-US',
           data: {
+            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -470,7 +474,7 @@ describe('JovoModelLex.ts', () => {
               {
                 name: 'MyNameIsIntent',
                 phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
-                inputs: [
+                entities: [
                   {
                     name: 'name',
                     type: {

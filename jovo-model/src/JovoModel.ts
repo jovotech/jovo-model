@@ -1,16 +1,16 @@
 import {
-  InputType,
-  InputTypeIndex,
-  InputTypeValue,
+  EntityType,
+  EntityTypeIndex,
+  EntityTypeValue,
   Intent,
   IntentIndex,
-  IntentInput,
+  IntentEntity,
   JovoModelData,
   JovoModelHelper,
-  ModelInputType,
-  ModelInputTypeValue,
+  ModelEntityType,
+  ModelEntityTypeValue,
   ModelIntent,
-  ModelIntentInput,
+  ModelIntentEntity,
   NativeFileInformation,
 } from '.';
 
@@ -191,19 +191,19 @@ export class JovoModel {
    * See [[JovoModelHelper]]
    * @param intent Intent-object or string
    */
-  getInputs(intent: ModelIntent): IntentInput[] {
-    return this.data ? JovoModelHelper.getInputs(this.data, intent) : [];
+  getEntities(intent: ModelIntent): IntentEntity[] {
+    return this.data ? JovoModelHelper.getEntities(this.data, intent) : [];
   }
 
   /**
    * See [[JovoModelHelper]]
    * @param intent Intent-object or string
-   * @param input IntentInput-object or string
+   * @param input IntentEntity-object or string
    * @param checkForDuplicates
    */
-  addInput(intent: ModelIntent, input: ModelIntentInput, checkForDuplicates = true): JovoModel {
+  addEntity(intent: ModelIntent, input: ModelIntentEntity, checkForDuplicates = true): JovoModel {
     if (this.data) {
-      JovoModelHelper.addInput(this.data, intent, input, checkForDuplicates);
+      JovoModelHelper.addEntity(this.data, intent, input, checkForDuplicates);
     }
     return this;
   }
@@ -211,11 +211,11 @@ export class JovoModel {
   /**
    * See [[JovoModelHelper]]
    * @param intent Intent-object or string
-   * @param input IntentInput-object or string
+   * @param input IntentEntity-object or string
    */
-  removeInput(intent: ModelIntent, input: ModelIntentInput): JovoModel {
+  removeEntity(intent: ModelIntent, input: ModelIntentEntity): JovoModel {
     if (this.data) {
-      JovoModelHelper.removeInput(this.data, intent, input);
+      JovoModelHelper.removeEntity(this.data, intent, input);
     }
     return this;
   }
@@ -223,111 +223,111 @@ export class JovoModel {
   /**
    * See [[JovoModelHelper]]
    * @param intent Intent-object or string
-   * @param input IntentInput-object or string
+   * @param input IntentEntity-object or string
    */
-  getInputIndex(intent: ModelIntent, input: ModelIntentInput): IntentIndex {
+  getEntityIndex(intent: ModelIntent, input: ModelIntentEntity): IntentIndex {
     return this.data
-      ? JovoModelHelper.getInputIndex(this.data, intent, input)
+      ? JovoModelHelper.getEntityIndex(this.data, intent, input)
       : { index: -1, intentIndex: -1 };
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param inputType InputType-object or string
+   * @param inputType EntityType-object or string
    */
-  addInputType(inputType: ModelInputType): JovoModel {
+  addEntityType(inputType: ModelEntityType): JovoModel {
     if (this.data) {
-      JovoModelHelper.addInputType(this.data, inputType);
+      JovoModelHelper.addEntityType(this.data, inputType);
     }
     return this;
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param inputType InputType-object or string
+   * @param inputType EntityType-object or string
    */
-  removeInputType(inputType: ModelInputType): JovoModel {
+  removeEntityType(inputType: ModelEntityType): JovoModel {
     if (this.data) {
-      JovoModelHelper.removeInputType(this.data, inputType);
+      JovoModelHelper.removeEntityType(this.data, inputType);
     }
     return this;
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param inputType InputType-object or string to be replaced
-   * @param newInputType InputType-object or string to replace
+   * @param inputType EntityType-object or string to be replaced
+   * @param newEntityType EntityType-object or string to replace
    */
-  updateInputType(inputType: ModelInputType, newInputType: InputType): JovoModel {
+  updateEntityType(inputType: ModelEntityType, newEntityType: EntityType): JovoModel {
     if (this.data) {
-      JovoModelHelper.updateInputType(this.data, inputType, newInputType);
+      JovoModelHelper.updateEntityType(this.data, inputType, newEntityType);
     }
     return this;
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param name InputType-object or string
+   * @param name EntityType-object or string
    */
-  getInputTypeByName(name: string): InputType | undefined {
-    return this.data ? JovoModelHelper.getInputTypeByName(this.data, name) : undefined;
+  getEntityTypeByName(name: string): EntityType | undefined {
+    return this.data ? JovoModelHelper.getEntityTypeByName(this.data, name) : undefined;
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param name InputType-object or string
+   * @param name EntityType-object or string
    */
-  getInputTypeIndexByName(name: string): number {
-    return this.data ? JovoModelHelper.getInputTypeIndexByName(this.data, name) : -1;
+  getEntityTypeIndexByName(name: string): number {
+    return this.data ? JovoModelHelper.getEntityTypeIndexByName(this.data, name) : -1;
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param inputType InputType-object or string
+   * @param inputType EntityType-object or string
    */
-  getInputTypeValues(inputType: ModelInputType): InputTypeValue[] {
-    return this.data ? JovoModelHelper.getInputTypeValues(this.data, inputType) : [];
+  getEntityTypeValues(inputType: ModelEntityType): EntityTypeValue[] {
+    return this.data ? JovoModelHelper.getEntityTypeValues(this.data, inputType) : [];
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param inputType InputType-object or string
-   * @param value InputTypeValue-object or string
+   * @param inputType EntityType-object or string
+   * @param value EntityTypeValue-object or string
    * @param checkForDuplicates
    */
-  addInputTypeValue(
-    inputType: ModelInputType,
-    value: ModelInputTypeValue,
+  addEntityTypeValue(
+    inputType: ModelEntityType,
+    value: ModelEntityTypeValue,
     checkForDuplicates = true,
   ): JovoModel {
     if (this.data) {
-      JovoModelHelper.addInputTypeValue(this.data, inputType, value, checkForDuplicates);
+      JovoModelHelper.addEntityTypeValue(this.data, inputType, value, checkForDuplicates);
     }
     return this;
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param inputType InputType-object or string
-   * @param value InputTypeValue-object or string
+   * @param inputType EntityType-object or string
+   * @param value EntityTypeValue-object or string
    */
-  removeInputTypeValue(inputType: ModelInputType, value: ModelInputTypeValue): JovoModel {
+  removeEntityTypeValue(inputType: ModelEntityType, value: ModelEntityTypeValue): JovoModel {
     if (this.data) {
-      JovoModelHelper.removeInputTypeValue(this.data, inputType, value);
+      JovoModelHelper.removeEntityTypeValue(this.data, inputType, value);
     }
     return this;
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param inputType InputType-object or string
-   * @param value InputTypeValue-object or string
+   * @param inputType EntityType-object or string
+   * @param value EntityTypeValue-object or string
    */
-  getInputTypeValueIndex(inputType: ModelInputType, value: ModelInputTypeValue): InputTypeIndex {
+  getEntityTypeValueIndex(inputType: ModelEntityType, value: ModelEntityTypeValue): EntityTypeIndex {
     return this.data
-      ? JovoModelHelper.getInputTypeValueIndex(this.data, inputType, value)
+      ? JovoModelHelper.getEntityTypeValueIndex(this.data, inputType, value)
       : {
-          inputTypeIndex: -1,
+          entityTypeIndex: -1,
           index: -1,
         };
   }
