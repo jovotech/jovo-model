@@ -1,6 +1,6 @@
 {
-  "name": "jovo-model-snips",
-  "version": "1.0.0",
+  "name": "@jovotech/model-snips",
+  "version": "4.0.0-beta.1",
   "description": "Jovo Model for Snips NLU",
   "main": "dist/src/index",
   "types": "dist/src/index.d.ts",
@@ -24,16 +24,16 @@
     "@types/lodash.startswith": "^4.2.6",
     "@types/node": "^13.1.5",
     "@types/tv4": "^1.2.29",
+    "@jovotech/model-util": "^4.0.0-beta.1",
     "gulp": "^4.0.2",
     "jest": "^24.9.0",
-    "jovo-model-util": "^3.0.1",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.3.0",
     "tslint": "^5.20.1",
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "jovo-model": "^3.0.1",
+    "@jovotech/model": "^4.0.0-beta.1",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "lodash.startswith": "^4.2.1",

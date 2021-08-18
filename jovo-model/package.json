@@ -1,6 +1,6 @@
 {
-  "name": "jovo-model",
-  "version": "3.0.1",
+  "name": "@jovotech/model",
+  "version": "4.0.0-beta.1",
   "description": "Jovo Model",
   "main": "dist/src/index",
   "types": "dist/src/index.d.ts",
