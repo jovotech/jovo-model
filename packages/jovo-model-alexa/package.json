@@ -1,5 +1,6 @@
 {
   "name": "@jovotech/model-alexa",
+  "private": false,
   "version": "4.0.0-beta.1",
   "description": "Jovo Model for Alexa",
   "main": "dist/src/index",
