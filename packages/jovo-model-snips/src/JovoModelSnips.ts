@@ -1,17 +1,13 @@
-import _startsWith from 'lodash.startswith';
-import tv4 from 'tv4';
-import _get from 'lodash.get';
-import _set from 'lodash.set';
 import {
-  InputType,
-  InputTypeValue,
+  EntityType,
+  EntityTypeValue,
   Intent,
-  IntentInput,
+  IntentEntity,
   JovoModel,
   JovoModelData,
   NativeFileInformation,
 } from 'jovo-model';
-
+import tv4 from 'tv4';
 import * as JovoModelSnipsValidator from '../validators/JovoModelSnipsData.json';
 import {
   NativeSnipsInformation,
@@ -42,82 +38,84 @@ export class JovoModelSnips extends JovoModel {
         for (const phrase of intent.phrases || []) {
           const snipsUtterance: SnipsUtterance = { data: [{ text: phrase }] };
 
-          const inputRegex: RegExp = /{([^\s\d]*)}/g;
+          const entityRegex: RegExp = /{([^\s\d]*)}/g;
 
           for (;;) {
-            const match: RegExpExecArray | null = inputRegex.exec(phrase);
+            const match: RegExpExecArray | null = entityRegex.exec(phrase);
 
             if (!match) {
               break;
             }
 
             const matchedString: string = match[0];
-            const matchedInput: string = match[1];
+            const matchedEntity: string = match[1];
 
-            if (!intent.inputs) {
+            if (!intent.entities) {
               throw new Error(
-                `${errorPrefix} No inputs defined for intent "${intent.name}", but "${matchedInput}" found.`,
+                `${errorPrefix} No entities defined for intent "${intent.name}", but "${matchedEntity}" found.`,
               );
             }
 
-            // For built-in entities, no input samples are provided, use the slot name instead
-            let inputSample: string = matchedInput;
-            let intentInputType: string | undefined;
+            // For built-in entities, no entity samples are provided, use the slot name instead
+            let entitySample: string = matchedEntity;
+            let intentEntityType: string | undefined;
 
-            // Try to get the input type for the matched input to insert random samples
-            for (const input of intent.inputs) {
-              if (matchedInput !== input.name) {
+            // Try to get the entity type for the matched entity to insert random samples
+            for (const entity of intent.entities) {
+              if (matchedEntity !== entity.name) {
                 continue;
               }
 
-              if (!input.type) {
-                throw new Error(`${errorPrefix} No input type found for input "${matchedInput}".`);
+              if (!entity.type) {
+                throw new Error(
+                  `${errorPrefix} No entity type found for entity "${matchedEntity}".`,
+                );
               }
 
-              if (typeof input.type === 'object') {
-                intentInputType = input.type.snips;
+              if (typeof entity.type === 'object') {
+                intentEntityType = entity.type.snips;
               } else {
-                intentInputType = input.type;
+                intentEntityType = entity.type;
               }
 
               // Catch built-in entities
-              if (intentInputType.startsWith('snips/')) {
+              if (intentEntityType.startsWith('snips/')) {
                 // Add entity to model and exit
-                snipsModel.entities[intentInputType] = {};
+                snipsModel.entities[intentEntityType] = {};
                 break;
               }
 
-              if (!model.inputTypes) {
-                throw new Error(`${errorPrefix} No inputTypes defined.`);
+              if (!model.entityTypes) {
+                throw new Error(`${errorPrefix} No entityTypes defined.`);
               }
 
-              for (const inputType of model.inputTypes) {
-                if (inputType.name !== intentInputType) {
+              for (const entityType of model.entityTypes) {
+                if (entityType.name !== intentEntityType) {
                   continue;
                 }
 
-                if (!inputType.values) {
+                if (!entityType.values) {
                   throw new Error(
-                    `${errorPrefix} No input values found for inputType "${matchedInput}".`,
+                    `${errorPrefix} No entity values found for entityType "${matchedEntity}".`,
                   );
                 }
 
-                // Get a random sample input value to improve model accuracy
+                // Get a random sample entity value to improve model accuracy
                 const randomIndex: number = Math.round(
-                  Math.random() * (inputType.values.length - 1),
+                  Math.random() * (entityType.values.length - 1),
                 );
-                inputSample = inputType.values[randomIndex]?.value || inputSample;
+                entitySample = entityType.values[randomIndex]?.value || entitySample;
               }
             }
 
-            if (!intentInputType) {
-              throw new Error(`${errorPrefix} No input type found for input "${matchedInput}".`);
+            if (!intentEntityType) {
+              throw new Error(`${errorPrefix} No entity type found for entity "${matchedEntity}".`);
             }
 
-            // For every input defined in an intent phrase, this takes the last data entry,
-            // parses the input and pushes the rest to the end of the array until no more inputs are found.
+            // For every entity defined in an intent phrase, this takes the last data entry,
+            // parses the entity and pushes the rest to the end of the array until no more entities are found.
             const lastUtteranceData: SnipsUtteranceData = snipsUtterance.data.pop()!;
-            // Capture everything before and after the current input
+            // Capture everything before and after the current entity
             const regex: RegExp = new RegExp(`(.*)${matchedString}(.*)`);
             // @ts-ignore
             const [, prefix, suffix] = regex.exec(lastUtteranceData.text);
@@ -128,13 +126,13 @@ export class JovoModelSnips extends JovoModel {
 
             // Parse entity and push it to utterance data
             snipsUtterance.data.push({
-              text: inputSample,
+              text: entitySample,
               // @ts-ignore
-              entity: intentInputType,
-              slot_name: matchedInput,
+              entity: intentEntityType,
+              slot_name: matchedEntity,
             });
 
-            // Add the rest of the phrase to the data array. If another input is found,
+            // Add the rest of the phrase to the data array. If another entity is found,
             // this will be prefix in the next iteration.
             if (suffix && suffix.length) {
               snipsUtterance.data.push({ text: suffix });
@@ -148,8 +146,8 @@ export class JovoModelSnips extends JovoModel {
       }
     }
 
-    if (model.inputTypes) {
-      for (const inputType of model.inputTypes) {
+    if (model.entityTypes) {
+      for (const entityType of model.entityTypes) {
         // TODO: Customize automatically_extensible & matching_strictness?
         const entity: SnipsEntity = {
           data: [],
@@ -158,8 +156,8 @@ export class JovoModelSnips extends JovoModel {
           automatically_extensible: true,
         };
 
-        if (inputType.values) {
-          for (const value of inputType.values) {
+        if (entityType.values) {
+          for (const value of entityType.values) {
             const entityData: SnipsEntityData = { value: value.value, synonyms: [] };
 
             if (value.synonyms) {
@@ -173,7 +171,7 @@ export class JovoModelSnips extends JovoModel {
           }
         }
 
-        snipsModel.entities[inputType.name] = entity;
+        snipsModel.entities[entityType.name] = entity;
       }
     }
 
@@ -186,7 +184,7 @@ export class JovoModelSnips extends JovoModel {
   }
 
   static toJovoModel(inputFiles: NativeSnipsInformation[]): JovoModelData {
-    const jovoModel: JovoModelData = { invocation: '', intents: [], inputTypes: [] };
+    const jovoModel: JovoModelData = { version: 4.0, invocation: '', intents: [], entityTypes: [] };
     const snipsModel: SnipsModel = inputFiles.pop()!.content;
 
     for (const [intentKey, intentData] of Object.entries(snipsModel.intents)) {
@@ -195,17 +193,17 @@ export class JovoModelSnips extends JovoModel {
       for (const utterance of intentData.utterances) {
         const phrase: string = utterance.data.reduce((phrase: string, data: SnipsUtteranceData) => {
           let appended: string = data.text;
-          // Translate entity into Jovo input
+          // Translate entity into Jovo entity
           if (data.slot_name && data.entity) {
             appended = `{${data.slot_name}}`;
 
-            if (!intent.inputs) {
-              intent.inputs = [];
+            if (!intent.entities) {
+              intent.entities = [];
             }
 
-            // Only add input if not present already
-            if (!intent.inputs.find((input: IntentInput) => input.name === data.slot_name)) {
-              intent.inputs.push({ name: data.slot_name, type: { snips: data.entity } });
+            // Only add entity if not present already
+            if (!intent.entities.find((entity: IntentEntity) => entity.name === data.slot_name)) {
+              intent.entities.push({ name: data.slot_name, type: { snips: data.entity } });
             }
           }
 
@@ -221,18 +219,18 @@ export class JovoModelSnips extends JovoModel {
       if (entityKey.startsWith('snips/')) {
         continue;
       }
-      const inputType: InputType = { name: entityKey, values: [] };
+      const entityType: EntityType = { name: entityKey, values: [] };
 
       for (const data of entityData.data!) {
-        const inputValue: InputTypeValue = { value: data.value, synonyms: data.synonyms };
-        inputType.values!.push(inputValue);
+        const entityValue: EntityTypeValue = { value: data.value, synonyms: data.synonyms };
+        entityType.values!.push(entityValue);
       }
 
-      if (!jovoModel.inputTypes) {
-        jovoModel.inputTypes = [];
+      if (!jovoModel.entityTypes) {
+        jovoModel.entityTypes = [];
       }
 
-      jovoModel.inputTypes.push(inputType);
+      jovoModel.entityTypes.push(entityType);
     }
 
     return jovoModel;
