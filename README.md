@@ -1,26 +1,24 @@
 # Jovo Model
 
-> To view this page on the Jovo website, visit https://www.jovo.tech/marketplace/jovo-model
-
 ![Jovo Model: NLU abstraction for Alexa, Dialogflow, Google Actions, Rasa NLU, Microsoft LUIS, and more](./img/jovo-model.png)
 
 The Jovo Model is a language model abstraction layer that works across NLU providers. It allows you to maintain a language model in a single source of truth and then translate it into different platform schemas like Amazon Alexa, Google Assistant, Dialogflow, Rasa NLU, Microsoft LUIS, and more.
 
-* [Introduction](#introduction)
-* [Supported Platforms](#supported-platforms)
-* [Model Structure](#model-structure)
-   * [Invocation](#invocation)
-   * [Intents](#intents)
-   * [Input Types](#input-types)
-   * [Platform-specific Elements](#platform-specific-elements)
-* [Using the Jovo Model with the Jovo CLI](#using-the-jovo-model-with-the-jovo-cli)
-   * [Models Folder](#models-folder)
-   * [Platforms Folder](#platforms-folder)
-   * [Project Configuration](#project-configuration)
-* [Using the Jovo Model npm Packages](#using-the-jovo-model-npm-packages)
-   * [Model Conversions](#model-conversions)
-   * [Updating the Model](#updating-the-model)
-* [Contributing](#contributing)
+- [Introduction](#introduction)
+- [Supported Platforms](#supported-platforms)
+- [Model Structure](#model-structure)
+  - [Invocation](#invocation)
+  - [Intents](#intents)
+  - [Entity Types](#entity-types)
+  - [Platform-specific Elements](#platform-specific-elements)
+- [Using the Jovo Model with the Jovo CLI](#using-the-jovo-model-with-the-jovo-cli)
+  - [Models Folder](#models-folder)
+  - [Platforms Folder](#platforms-folder)
+  - [Project Configuration](#project-configuration)
+- [Using the Jovo Model npm Packages](#using-the-jovo-model-npm-packages)
+  - [Model Conversions](#model-conversions)
+  - [Updating the Model](#updating-the-model)
+- [Contributing](#contributing)
 
 
 ## Introduction
@@ -51,79 +49,29 @@ The Jovo Model supports the following NLU providers (see the [`packages` folder 
 
 Every language you choose to support will have its very own language model (`en-US`, `de-DE`, etc.).
 
-Each locale is represented by its own model. For example, the `en-US.json` in the [Jovo "Hello World" template](https://github.com/jovotech/jovo-templates/blob/master/01_helloworld/javascript/models/en-US.json) looks like this:
+Each locale is represented by its own model. For example, the `en.json` in the [Jovo v4 template](https://github.com/jovotech/jovo-v4-template/blob/master/models/en.json) looks like this:
 
 ```javascript
 {
+    "version": "4.0",
 	"invocation": "my test app",
 	"intents": [
-		{
-			"name": "HelloWorldIntent",
-			"phrases": [
-				"hello",
-				"say hello",
-				"say hello world"
-			]
-		},
-		{
-			"name": "MyNameIsIntent",
-			"phrases": [
-				"{name}",
-				"my name is {name}",
-				"i am {name}",
-				"you can call me {name}"
-			],
-			"inputs": [
-				{
-					"name": "name",
-					"type": {
-						"alexa": "AMAZON.US_FIRST_NAME",
-						"dialogflow": "@sys.given-name"
-					}
-				}
-			]
-		}
-	],
-	"alexa": {
-		"interactionModel": {
-			"languageModel": {
-				"intents": [
-					{
-						"name": "AMAZON.CancelIntent",
-						"samples": []
-					},
-					{
-						"name": "AMAZON.HelpIntent",
-						"samples": []
-					},
-					{
-						"name": "AMAZON.StopIntent",
-						"samples": []
-					}
-				]
-			}
-		}
-	},
-	"dialogflow": {
-		"intents": [
-			{
-				"name": "Default Fallback Intent",
-				"auto": true,
-				"webhookUsed": true,
-				"fallbackIntent": true
-			},
-			{
-				"name": "Default Welcome Intent",
-				"auto": true,
-				"webhookUsed": true,
-				"events": [
-					{
-						"name": "WELCOME"
-					}
-				]
-			}
-		]
-	}
+    {
+      "name": "YesIntent",
+      "phrases": [
+        "yes",
+        "yes please",
+        "sure"
+      ]
+    },
+    {
+      "name": "NoIntent",
+      "phrases": [
+        "no",
+        "no thanks"
+      ]
+    }
+  ]
 }
 ```
 
@@ -133,9 +81,9 @@ The Jovo Model consists of several elements, which we will go through step by st
 * [Intents](#intents)
     * [Intent Name](#intent-name)
     * [Phrases](#phrases)
-    * [Inputs](#inputs)
-* [Input Types](#input-types)
-    * [Input Type Name](#input-type-name)
+    * [Entities](#entities)
+* [Entity Types](#entity-types)
+    * [Input Type Name](#entity-type-name)
     * [Values](#values)
     * [Synonyms](#synonyms)
 * [Platform Specific Elements](#platform-specific-elements)
@@ -180,7 +128,7 @@ This is how the `MyNameIsIntent` from the Jovo "Hello World" sample app looks li
         "i am {name}",
         "you can call me {name}"
     ],
-    "inputs": [  
+    "entities": [  
         {  
             "name": "name",
             "type": {  
@@ -204,23 +152,23 @@ Some providers use different names for these phrases, for example utterances or 
 
 #### Inputs
 
-Often, phrases contain variable input such as slots or entities, as some NLU services call them. In the Jovo Model, they are called `inputs`.
+Often, phrases contain variable input such as slots or entities, as some NLU services call them. In the Jovo Model, they are called `entities`.
 
-Inputs consist of a `name` and a `type` (learn more in the [Input Types](#input-types) section). For example an intent with phrases like `I live in {city}` would come with an input like this:
+Entities consist of a `name` and a `type` (learn more in the [Entity Types](#entity-types) section). For example an intent with phrases like `I live in {city}` would come with an entity like this:
 
 ```javascript
-"inputs": [
+"entities": [
     {
         "name": "city",
-        "type": "myCityInputType"
+        "type": "myCityEntityType"
     }
 ]
 ```
 
-You can also choose to provide different input types for each NLU service:
+You can also choose to provide different entity types for each NLU service:
 
 ```javascript
-"inputs": [
+"entities": [
     {
         "name": "name",
         "type": {
@@ -231,12 +179,12 @@ You can also choose to provide different input types for each NLU service:
 ]
 ```
 
-You can either reference input types defined in the [`inputTypes` array](#input-types) array, or reference built-in input types provided by the respective NLU platforms (like `AMAZON.US_FIRST_NAME` for Alexa).
+You can either reference input types defined in the [`entityTypes` array](#entity-types) array, or reference built-in entity types provided by the respective NLU platforms (like `AMAZON.US_FIRST_NAME` for Alexa).
 
 
-### Input Types
+### Entity Types
 
-The `inputTypes` array lists all the input types that are referenced as `inputs` inside `intents`.
+The `entityTypes` array lists all the entity types that are referenced as `entities` inside `intents`.
 
 Each input type contains:
 * a [`name`](#input-type-name),
@@ -244,9 +192,9 @@ Each input type contains:
 * [`synonyms`](#synonyms) (optional).
 
 ```javascript
-"inputTypes": [
+"entityTypes": [
     {
-        "name": "myCityInputType",
+        "name": "myCityEntityType",
         "values": [
             {
                 "value": "Berlin"
@@ -262,24 +210,21 @@ Each input type contains:
 ],
 ```
 
-#### Input Type Name
+#### Entity Type Name
 
-The `name` specifies how the input type is referenced. Again, we recommend to use a consistent style throughout all input types to keep it organized.
+The `name` specifies how the entity type is referenced. Again, we recommend to use a consistent style throughout all entity types to keep it organized.
 
 #### Values
 
-This is an array of elements that each contain a `value` and optionally `synonyms`. With the values, you can define which inputs you're expecting from the user.
+This is an array of elements that each contain a `value` and optionally `synonyms`. With the values, you can define which entities you're expecting from the user.
 
 #### Synonyms
 
 Sometimes different words have the same meaning. In the example above, we have a main value `New York` and a synonym `New York City`. 
 
-To learn more about how these input values and synonyms can be accessed in your Jovo app, take a look at the Jovo Docs: [Routing > Input](https://www.jovo.tech/docs/routing/input#how-to-access-input).
-
-
 ### Platform-specific Elements
 
-Some intents or input types may be needed for just some platforms. You can define them as additional elements as shown for Alexa in the example below:
+Some intents or entity types may be needed for just some platforms. You can define them as additional elements as shown for Alexa in the example below:
 
 ```javascript
 "alexa": {
@@ -414,8 +359,8 @@ By using this package in your code, you can convert the data from one platform s
 To turn a Jovo Model into a platform model like Alexa, you can do the following:
 
 ```javascript
-import { NativeFileInformation } from 'jovo-model';
-import { JovoModelAlexa } from 'jovo-model-alexa';
+import { NativeFileInformation } from '@jovotech/model';
+import { JovoModelAlexa } from '@jovotech/model-alexa';
 
 const jovoModelInstance = new JovoModelAlexa();
 const jovoModelData = '...';
@@ -429,8 +374,8 @@ const alexaModelFiles = jovoModelInstance.exportNative();
 If you want to turn a platform model like Alexa into the Jovo Model format, do this:
 
 ```javascript
-import { NativeFileInformation } from 'jovo-model';
-import { JovoModelAlexa } from 'jovo-model-alexa';
+import { NativeFileInformation } from '@jovotech/model';
+import { JovoModelAlexa } from '@jovotech/model-alexa';
 
 const jovoModelInstance = new JovoModelAlexa();
 const alexaModelFiles: NativeFileInformation = [
@@ -451,9 +396,9 @@ const jovoModelData = jovoModelInstance.exportJovoModel();
 You can also use the package to turn one platform schema into another, e.g. Alexa into Dialogflow:
 
 ```javascript
-import { NativeFileInformation } from 'jovo-model';
-import { JovoModelAlexa } from 'jovo-model-alexa';
-import { JovoModelDialogflow } from 'jovo-model-dialogflow';
+import { NativeFileInformation } from '@jovotech/model';
+import { JovoModelAlexa } from '@jovotech/model-alexa';
+import { JovoModelDialogflow } from '@jovotech/model-dialogflow';
 
 const locale = 'en-US';
 
@@ -481,8 +426,8 @@ const dialogflowModelFiles = jovoModelInstance.exportNative();
 The Jovo Model also allows to extract, manipulate, and delete data.
 
 ```javascript
-import { NativeFileInformation } from 'jovo-model';
-import { JovoModelDialogflow } from 'jovo-model-dialogflow';
+import { NativeFileInformation } from '@jovotech/model';
+import { JovoModelDialogflow } from '@jovotech/model-dialogflow';
 
 // Load the data into the Jovo-Model
 const jovoModelInstance = new JovoModelDialogflow();
@@ -513,7 +458,7 @@ const dialogflowModelFiles = jovoModelInstance.exportNative();
 
 ## Contributing
 
-Feel free to add more NLU providers via pull requests. Each platform implements the following methods of the `jovo-model` core package:
+Feel free to add more NLU providers via pull requests. Each platform implements the following methods of the `@jovotech/model` core package:
 
 ```javascript
 /**
