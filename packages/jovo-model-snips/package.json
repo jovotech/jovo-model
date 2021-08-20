@@ -1,5 +1,6 @@
 {
   "name": "@jovotech/model-snips",
+  "private": false,
   "version": "4.0.0-beta.1",
   "description": "Jovo Model for Snips NLU",
   "main": "dist/src/index",

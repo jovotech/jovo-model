@@ -1,5 +1,6 @@
 {
     "name": "@jovotech/model-luis",
+    "private": false,
     "version": "4.0.0-beta.1",
     "description": "Jovo Model for Microsoft Luis",
     "main": "dist/src/index",
