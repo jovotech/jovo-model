@@ -149,38 +149,32 @@ describe('JovoModelLuis.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'Welcome',
+          intents: {
+            Welcome: {
               phrases: ['hey', 'howdy'],
             },
-            {
-              name: 'RestaurantSearch',
+            RestaurantSearch: {
               phrases: [
                 "i'm looking for a place to eat",
                 "i'm looking for a place to eat {Plates}",
                 'show me {Cuisine} restaurants',
                 'show me a {Cuisine} place in the {Location}',
               ],
-              entities: [
-                {
-                  name: 'Location',
+              entities: {
+                Location: {
                   type: 'Location',
                 },
-                {
-                  name: 'Cuisine',
+                Cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'Plates',
+                Plates: {
                   type: 'Plates',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Cuisine',
+          },
+          entityTypes: {
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -192,8 +186,7 @@ describe('JovoModelLuis.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Location',
+            Location: {
               values: [
                 {
                   value: 'centre',
@@ -201,8 +194,7 @@ describe('JovoModelLuis.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Plates',
+            Plates: {
               values: [
                 {
                   value: 'beans',
@@ -218,7 +210,7 @@ describe('JovoModelLuis.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
       {
@@ -324,30 +316,27 @@ describe('JovoModelLuis.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'HelloWorldIntent',
+          intents: {
+            HelloWorldIntent: {
               phrases: ['hello', 'say hello', 'say hello world'],
             },
-            {
-              name: 'MyNameIsIntent',
+            MyNameIsIntent: {
               phrases: [
                 '{personName}',
                 'my name is {personName}',
                 'i am {personName}',
                 'you can call me {personName}',
               ],
-              entities: [
-                {
-                  name: 'personName',
+              entities: {
+                personName: {
                   type: {
                     luis: 'builtin.personName',
                   },
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [],
+          },
+          entityTypes: {},
         },
       },
     ];
@@ -374,38 +363,32 @@ describe('JovoModelLuis.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            intents: [
-              {
-                name: 'Welcome',
+            intents: {
+              Welcome: {
                 phrases: ['hey', 'howdy'],
               },
-              {
-                name: 'RestaurantSearch',
+              RestaurantSearch: {
                 phrases: [
                   "i'm looking for a place to eat",
                   "i'm looking for a place to eat {plates}",
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                entities: [
-                  {
-                    name: 'cuisine',
+                entities: {
+                  cuisine: {
                     type: 'Cuisine',
                   },
-                  {
-                    name: 'location',
+                  location: {
                     type: 'Location',
                   },
-                  {
-                    name: 'plates',
+                  plates: {
                     type: 'Plates',
                   },
-                ],
+                },
               },
-            ],
-            entityTypes: [
-              {
-                name: 'Cuisine',
+            },
+            entityTypes: {
+              Cuisine: {
                 values: [
                   {
                     id: 1,
@@ -421,8 +404,7 @@ describe('JovoModelLuis.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Location',
+              Location: {
                 values: [
                   {
                     value: 'centre',
@@ -430,8 +412,7 @@ describe('JovoModelLuis.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Plates',
+              Plates: {
                 values: [
                   {
                     value: 'beans',
@@ -447,7 +428,7 @@ describe('JovoModelLuis.ts', () => {
                   },
                 ],
               },
-            ],
+            },
           },
         },
         result: [
@@ -593,27 +574,23 @@ describe('JovoModelLuis.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            intents: [
-              {
-                name: 'HelloWorldIntent',
+            intents: {
+              HelloWorldIntent: {
                 phrases: ['hello', 'say hello', 'say hello world'],
               },
-              {
-                name: 'MyNameIsIntent',
+              MyNameIsIntent: {
                 phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
-                entities: [
-                  {
-                    name: 'name',
+                entities: {
+                  name: {
                     type: {
                       luis: 'builtin.personName',
                     },
                   },
-                ],
+                },
               },
-            ],
-            entityTypes: [
-              {
-                name: 'builtin.personName',
+            },
+            entityTypes: {
+              'builtin.personName': {
                 values: [
                   {
                     value: 'Alex',
@@ -641,7 +618,7 @@ describe('JovoModelLuis.ts', () => {
                   },
                 ],
               },
-            ],
+            },
           },
         },
         result: [
@@ -744,7 +721,7 @@ describe('JovoModelLuis.ts', () => {
 
     for (const testData of testsData) {
       const jovoModel = new JovoModelLuis(
-        testData.input.data as JovoModelData,
+        (testData.input.data as unknown) as JovoModelData,
         testData.input.locale,
       );
       test(testData.description, () => {

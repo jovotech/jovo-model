@@ -1,9 +1,7 @@
 import {
   EntityType,
-  EntityTypeIndex,
   EntityTypeValue,
   Intent,
-  IntentIndex,
   IntentEntity,
   JovoModelData,
   JovoModelHelper,
@@ -77,9 +75,9 @@ export class JovoModel {
    * See [[JovoModelHelper]]
    * @param intent Intent-object or string to be added
    */
-  addIntent(intent: ModelIntent): JovoModel {
+  addIntent(intent: string, intentData: Intent): JovoModel {
     if (this.data) {
-      JovoModelHelper.addIntent(this.data, intent);
+      JovoModelHelper.addIntent(this.data, intent, intentData);
     }
     return this;
   }
@@ -88,7 +86,7 @@ export class JovoModel {
    * See [[JovoModelHelper]]
    * @param intent Intent-object or string to get removed
    */
-  removeIntent(intent: ModelIntent): JovoModel {
+  removeIntent(intent: string): JovoModel {
     if (this.data) {
       JovoModelHelper.removeIntent(this.data, intent);
     }
@@ -100,9 +98,9 @@ export class JovoModel {
    * @param intent Intent-object or string to get updated
    * @param newIntent Intent-object
    */
-  updateIntent(intent: ModelIntent, newIntent: Intent): JovoModel {
+  updateIntent(intent: string, intentData: Intent): JovoModel {
     if (this.data) {
-      JovoModelHelper.updateIntent(this.data, intent, newIntent);
+      JovoModelHelper.updateIntent(this.data, intent, intentData);
     }
     return this;
   }
@@ -117,17 +115,9 @@ export class JovoModel {
 
   /**
    * See [[JovoModelHelper]]
-   * @param name Intent-name to look for
-   */
-  getIntentIndexByName(name: string): number {
-    return this.data ? JovoModelHelper.getIntentIndexByName(this.data, name) : -1;
-  }
-
-  /**
-   * See [[JovoModelHelper]]
    * @param intent Intent-object or string to get the phrases of
    */
-  getPhrases(intent: ModelIntent): string[] {
+  getPhrases(intent: string): string[] {
     return this.data ? JovoModelHelper.getPhrases(this.data, intent) : [];
   }
 
@@ -136,7 +126,7 @@ export class JovoModel {
    * @param intent Intent-object or string
    * @param phrase Phrase
    */
-  addPhrase(intent: ModelIntent, phrase: string): JovoModel {
+  addPhrase(intent: string, phrase: string): JovoModel {
     if (this.data) {
       JovoModelHelper.addPhrase(this.data, intent, phrase);
     }
@@ -148,7 +138,7 @@ export class JovoModel {
    * @param intent Intent-object or string
    * @param phrase Phrase
    */
-  removePhrase(intent: ModelIntent, phrase: string): JovoModel {
+  removePhrase(intent: string, phrase: string): JovoModel {
     if (this.data) {
       JovoModelHelper.removePhrase(this.data, intent, phrase);
     }
@@ -161,7 +151,7 @@ export class JovoModel {
    * @param oldPhrase Old phrase to be replaced
    * @param newPhrase New phrase to replace
    */
-  updatePhrase(intent: ModelIntent, oldPhrase: string, newPhrase: string): JovoModel {
+  updatePhrase(intent: string, oldPhrase: string, newPhrase: string): JovoModel {
     if (this.data) {
       JovoModelHelper.updatePhrase(this.data, intent, oldPhrase, newPhrase);
     }
@@ -173,10 +163,8 @@ export class JovoModel {
    * @param intent Intent-object or string to be
    * @param phrase Phrase
    */
-  getPhraseIndex(intent: ModelIntent, phrase: string): IntentIndex {
-    return this.data
-      ? JovoModelHelper.getPhraseIndex(this.data, intent, phrase)
-      : { index: -1, intentIndex: -1 };
+  getPhraseIndex(intent: string, phrase: string): number {
+    return this.data ? JovoModelHelper.getPhraseIndex(this.data, intent, phrase) : -1;
   }
 
   /**
@@ -191,8 +179,8 @@ export class JovoModel {
    * See [[JovoModelHelper]]
    * @param intent Intent-object or string
    */
-  getEntities(intent: ModelIntent): IntentEntity[] {
-    return this.data ? JovoModelHelper.getEntities(this.data, intent) : [];
+  getEntities(intent: string): Record<string, IntentEntity> {
+    return this.data ? JovoModelHelper.getEntities(this.data, intent) : {};
   }
 
   /**
@@ -201,135 +189,123 @@ export class JovoModel {
    * @param input IntentEntity-object or string
    * @param checkForDuplicates
    */
-  addEntity(intent: ModelIntent, input: ModelIntentEntity, checkForDuplicates = true): JovoModel {
-    if (this.data) {
-      JovoModelHelper.addEntity(this.data, intent, input, checkForDuplicates);
-    }
-    return this;
-  }
-
-  /**
-   * See [[JovoModelHelper]]
-   * @param intent Intent-object or string
-   * @param input IntentEntity-object or string
-   */
-  removeEntity(intent: ModelIntent, input: ModelIntentEntity): JovoModel {
-    if (this.data) {
-      JovoModelHelper.removeEntity(this.data, intent, input);
-    }
-    return this;
-  }
-
-  /**
-   * See [[JovoModelHelper]]
-   * @param intent Intent-object or string
-   * @param input IntentEntity-object or string
-   */
-  getEntityIndex(intent: ModelIntent, input: ModelIntentEntity): IntentIndex {
-    return this.data
-      ? JovoModelHelper.getEntityIndex(this.data, intent, input)
-      : { index: -1, intentIndex: -1 };
-  }
-
-  /**
-   * See [[JovoModelHelper]]
-   * @param inputType EntityType-object or string
-   */
-  addEntityType(inputType: ModelEntityType): JovoModel {
-    if (this.data) {
-      JovoModelHelper.addEntityType(this.data, inputType);
-    }
-    return this;
-  }
-
-  /**
-   * See [[JovoModelHelper]]
-   * @param inputType EntityType-object or string
-   */
-  removeEntityType(inputType: ModelEntityType): JovoModel {
-    if (this.data) {
-      JovoModelHelper.removeEntityType(this.data, inputType);
-    }
-    return this;
-  }
-
-  /**
-   * See [[JovoModelHelper]]
-   * @param inputType EntityType-object or string to be replaced
-   * @param newEntityType EntityType-object or string to replace
-   */
-  updateEntityType(inputType: ModelEntityType, newEntityType: EntityType): JovoModel {
-    if (this.data) {
-      JovoModelHelper.updateEntityType(this.data, inputType, newEntityType);
-    }
-    return this;
-  }
-
-  /**
-   * See [[JovoModelHelper]]
-   * @param name EntityType-object or string
-   */
-  getEntityTypeByName(name: string): EntityType | undefined {
-    return this.data ? JovoModelHelper.getEntityTypeByName(this.data, name) : undefined;
-  }
-
-  /**
-   * See [[JovoModelHelper]]
-   * @param name EntityType-object or string
-   */
-  getEntityTypeIndexByName(name: string): number {
-    return this.data ? JovoModelHelper.getEntityTypeIndexByName(this.data, name) : -1;
-  }
-
-  /**
-   * See [[JovoModelHelper]]
-   * @param inputType EntityType-object or string
-   */
-  getEntityTypeValues(inputType: ModelEntityType): EntityTypeValue[] {
-    return this.data ? JovoModelHelper.getEntityTypeValues(this.data, inputType) : [];
-  }
-
-  /**
-   * See [[JovoModelHelper]]
-   * @param inputType EntityType-object or string
-   * @param value EntityTypeValue-object or string
-   * @param checkForDuplicates
-   */
-  addEntityTypeValue(
-    inputType: ModelEntityType,
-    value: ModelEntityTypeValue,
+  addEntity(
+    intent: string,
+    entity: string,
+    entityData: IntentEntity,
     checkForDuplicates = true,
   ): JovoModel {
     if (this.data) {
-      JovoModelHelper.addEntityTypeValue(this.data, inputType, value, checkForDuplicates);
+      JovoModelHelper.addEntity(this.data, intent, entity, entityData, checkForDuplicates);
     }
     return this;
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param inputType EntityType-object or string
-   * @param value EntityTypeValue-object or string
+   * @param intent Intent-object or string
+   * @param entity IntentEntity-object or string
    */
-  removeEntityTypeValue(inputType: ModelEntityType, value: ModelEntityTypeValue): JovoModel {
+  removeEntity(intent: string, entity: string): JovoModel {
     if (this.data) {
-      JovoModelHelper.removeEntityTypeValue(this.data, inputType, value);
+      JovoModelHelper.removeEntity(this.data, intent, entity);
     }
     return this;
   }
 
   /**
    * See [[JovoModelHelper]]
-   * @param inputType EntityType-object or string
-   * @param value EntityTypeValue-object or string
+   * @param entityType EntityType-object or string
    */
-  getEntityTypeValueIndex(inputType: ModelEntityType, value: ModelEntityTypeValue): EntityTypeIndex {
+  addEntityType(entityType: string, entityTypeData: EntityType): JovoModel {
+    if (this.data) {
+      JovoModelHelper.addEntityType(this.data, entityType, entityTypeData);
+    }
+    return this;
+  }
+
+  /**
+   * See [[JovoModelHelper]]
+   * @param entityType EntityType-object or string
+   */
+  removeEntityType(entityType: string): JovoModel {
+    if (this.data) {
+      JovoModelHelper.removeEntityType(this.data, entityType);
+    }
+    return this;
+  }
+
+  /**
+   * See [[JovoModelHelper]]
+   * @param entityType EntityType-object or string to be replaced
+   * @param newEntityType EntityType-object or string to replace
+   */
+  updateEntityType(entityType: string, entityTypeData: EntityType): JovoModel {
+    if (this.data) {
+      JovoModelHelper.updateEntityType(this.data, entityType, entityTypeData);
+    }
+    return this;
+  }
+
+  /**
+   * See [[JovoModelHelper]]
+   * @param entityType EntityType-object or string
+   */
+  getEntityTypeByName(entityType: string): EntityType | undefined {
+    return this.data ? JovoModelHelper.getEntityTypeByName(this.data, entityType) : undefined;
+  }
+
+  /**
+   * See [[JovoModelHelper]]
+   * @param entityType EntityType-object or string
+   */
+  getEntityTypeValues(entityType: string): EntityTypeValue[] {
+    return this.data ? JovoModelHelper.getEntityTypeValues(this.data, entityType) : [];
+  }
+
+  /**
+   * See [[JovoModelHelper]]
+   * @param entityType EntityType-object or string
+   * @param entityTypeValue EntityTypeValue-object or string
+   * @param checkForDuplicates
+   */
+  addEntityTypeValue(
+    entityType: string,
+    entityTypeValue: ModelEntityTypeValue,
+    checkForDuplicates = true,
+  ): JovoModel {
+    if (this.data) {
+      JovoModelHelper.addEntityTypeValue(
+        this.data,
+        entityType,
+        entityTypeValue,
+        checkForDuplicates,
+      );
+    }
+    return this;
+  }
+
+  /**
+   * See [[JovoModelHelper]]
+   * @param entityType EntityType-object or string
+   * @param entityTypeValue EntityTypeValue-object or string
+   */
+  removeEntityTypeValue(entityType: string, entityTypeValue: string): JovoModel {
+    if (this.data) {
+      JovoModelHelper.removeEntityTypeValue(this.data, entityType, entityTypeValue);
+    }
+    return this;
+  }
+
+  /**
+   * See [[JovoModelHelper]]
+   * @param entityType EntityType-object or string
+   * @param entityTypeValue EntityTypeValue-object or string
+   */
+  getEntityTypeValueIndex(entityType: string, entityTypeValue: string): number {
     return this.data
-      ? JovoModelHelper.getEntityTypeValueIndex(this.data, inputType, value)
-      : {
-          entityTypeIndex: -1,
-          index: -1,
-        };
+      ? JovoModelHelper.getEntityTypeValueIndex(this.data, entityType, entityTypeValue)
+      : -1;
   }
 
   /**

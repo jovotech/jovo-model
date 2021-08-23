@@ -32,10 +32,10 @@ export class JovoModelSnips extends JovoModel {
     };
 
     if (model.intents) {
-      for (const intent of model.intents) {
+      for (const [intentKey, intentData] of Object.entries(model.intents)) {
         const snipsIntent: SnipsIntent = { utterances: [] };
 
-        for (const phrase of intent.phrases || []) {
+        for (const phrase of intentData.phrases || []) {
           const snipsUtterance: SnipsUtterance = { data: [{ text: phrase }] };
 
           const entityRegex: RegExp = /{([^\s\d]*)}/g;
@@ -50,9 +50,9 @@ export class JovoModelSnips extends JovoModel {
             const matchedString: string = match[0];
             const matchedEntity: string = match[1];
 
-            if (!intent.entities) {
+            if (!intentData.entities) {
               throw new Error(
-                `${errorPrefix} No entities defined for intent "${intent.name}", but "${matchedEntity}" found.`,
+                `${errorPrefix} No entities defined for intent "${intentKey}", but "${matchedEntity}" found.`,
               );
             }
 
@@ -61,21 +61,21 @@ export class JovoModelSnips extends JovoModel {
             let intentEntityType: string | undefined;
 
             // Try to get the entity type for the matched entity to insert random samples
-            for (const entity of intent.entities) {
-              if (matchedEntity !== entity.name) {
+            for (const [entityKey, entityData] of Object.entries(intentData.entities)) {
+              if (matchedEntity !== intentKey) {
                 continue;
               }
 
-              if (!entity.type) {
+              if (!entityData.type) {
                 throw new Error(
                   `${errorPrefix} No entity type found for entity "${matchedEntity}".`,
                 );
               }
 
-              if (typeof entity.type === 'object') {
-                intentEntityType = entity.type.snips;
+              if (typeof entityData.type === 'object') {
+                intentEntityType = entityData.type.snips;
               } else {
-                intentEntityType = entity.type;
+                intentEntityType = entityData.type;
               }
 
               // Catch built-in entities
@@ -89,12 +89,12 @@ export class JovoModelSnips extends JovoModel {
                 throw new Error(`${errorPrefix} No entityTypes defined.`);
               }
 
-              for (const entityType of model.entityTypes) {
-                if (entityType.name !== intentEntityType) {
+              for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes)) {
+                if (entityTypeKey !== intentEntityType) {
                   continue;
                 }
 
-                if (!entityType.values) {
+                if (!entityTypeData.values) {
                   throw new Error(
                     `${errorPrefix} No entity values found for entityType "${matchedEntity}".`,
                   );
@@ -102,9 +102,9 @@ export class JovoModelSnips extends JovoModel {
 
                 // Get a random sample entity value to improve model accuracy
                 const randomIndex: number = Math.round(
-                  Math.random() * (entityType.values.length - 1),
+                  Math.random() * (entityTypeData.values.length - 1),
                 );
-                entitySample = entityType.values[randomIndex]?.value || entitySample;
+                entitySample = entityTypeData.values[randomIndex]?.value || entitySample;
               }
             }
 
@@ -142,12 +142,12 @@ export class JovoModelSnips extends JovoModel {
           snipsIntent.utterances.push(snipsUtterance);
         }
 
-        snipsModel.intents[intent.name] = snipsIntent;
+        snipsModel.intents[intentKey] = snipsIntent;
       }
     }
 
     if (model.entityTypes) {
-      for (const entityType of model.entityTypes) {
+      for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes)) {
         // TODO: Customize automatically_extensible & matching_strictness?
         const entity: SnipsEntity = {
           data: [],
@@ -156,8 +156,8 @@ export class JovoModelSnips extends JovoModel {
           automatically_extensible: true,
         };
 
-        if (entityType.values) {
-          for (const value of entityType.values) {
+        if (entityTypeData.values) {
+          for (const value of entityTypeData.values) {
             const entityData: SnipsEntityData = { value: value.value, synonyms: [] };
 
             if (value.synonyms) {
@@ -171,7 +171,7 @@ export class JovoModelSnips extends JovoModel {
           }
         }
 
-        snipsModel.entities[entityType.name] = entity;
+        snipsModel.entities[entityTypeKey] = entity;
       }
     }
 
@@ -184,11 +184,16 @@ export class JovoModelSnips extends JovoModel {
   }
 
   static toJovoModel(inputFiles: NativeSnipsInformation[]): JovoModelData {
-    const jovoModel: JovoModelData = { version: '4.0', invocation: '', intents: [], entityTypes: [] };
+    const jovoModel: JovoModelData = {
+      version: '4.0',
+      invocation: '',
+      intents: {},
+      entityTypes: {},
+    };
     const snipsModel: SnipsModel = inputFiles.pop()!.content;
 
     for (const [intentKey, intentData] of Object.entries(snipsModel.intents)) {
-      const intent: Intent = { name: intentKey, phrases: [] };
+      const intent: Intent = { phrases: [] };
 
       for (const utterance of intentData.utterances) {
         const phrase: string = utterance.data.reduce((phrase: string, data: SnipsUtteranceData) => {
@@ -198,12 +203,12 @@ export class JovoModelSnips extends JovoModel {
             appended = `{${data.slot_name}}`;
 
             if (!intent.entities) {
-              intent.entities = [];
+              intent.entities = {};
             }
 
             // Only add entity if not present already
-            if (!intent.entities.find((entity: IntentEntity) => entity.name === data.slot_name)) {
-              intent.entities.push({ name: data.slot_name, type: { snips: data.entity } });
+            if (!intent.entities[data.slot_name]) {
+              intent.entities[data.slot_name] = { type: { snips: data.entity } };
             }
           }
 
@@ -211,7 +216,7 @@ export class JovoModelSnips extends JovoModel {
         }, '');
         intent.phrases!.push(phrase);
       }
-      jovoModel.intents!.push(intent);
+      jovoModel.intents![intentKey] = intent;
     }
 
     for (const [entityKey, entityData] of Object.entries(snipsModel.entities)) {
@@ -219,7 +224,7 @@ export class JovoModelSnips extends JovoModel {
       if (entityKey.startsWith('snips/')) {
         continue;
       }
-      const entityType: EntityType = { name: entityKey, values: [] };
+      const entityType: EntityType = { values: [] };
 
       for (const data of entityData.data!) {
         const entityValue: EntityTypeValue = { value: data.value, synonyms: data.synonyms };
@@ -227,10 +232,10 @@ export class JovoModelSnips extends JovoModel {
       }
 
       if (!jovoModel.entityTypes) {
-        jovoModel.entityTypes = [];
+        jovoModel.entityTypes = {};
       }
 
-      jovoModel.entityTypes.push(entityType);
+      jovoModel.entityTypes[entityKey] = entityType;
     }
 
     return jovoModel;

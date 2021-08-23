@@ -112,38 +112,32 @@ describe('JovoModelLex.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'Welcome',
+          intents: {
+            Welcome: {
               phrases: ['hey', 'howdy'],
             },
-            {
-              name: 'RestaurantSearch',
+            RestaurantSearch: {
               phrases: [
                 "i'm looking for a place to eat",
                 "i'm looking for a place to eat {plates}",
                 'show me {cuisine} restaurants',
                 'show me a {cuisine} place in the {location}',
               ],
-              entities: [
-                {
-                  name: 'cuisine',
+              entities: {
+                cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'location',
+                location: {
                   type: 'Location',
                 },
-                {
-                  name: 'plates',
+                plates: {
                   type: 'Plates',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Cuisine',
+          },
+          entityTypes: {
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -155,8 +149,7 @@ describe('JovoModelLex.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Location',
+            Location: {
               values: [
                 {
                   value: 'centre',
@@ -164,8 +157,7 @@ describe('JovoModelLex.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Plates',
+            Plates: {
               values: [
                 {
                   value: 'beans',
@@ -181,7 +173,7 @@ describe('JovoModelLex.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
       {
@@ -240,25 +232,22 @@ describe('JovoModelLex.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'HelloWorldIntent',
+          intents: {
+            HelloWorldIntent: {
               phrases: ['hello', 'say hello', 'say hello world'],
             },
-            {
-              name: 'MyNameIsIntent',
+            MyNameIsIntent: {
               phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
-              entities: [
-                {
-                  name: 'name',
+              entities: {
+                name: {
                   type: {
                     alexa: 'AMAZON.US_FIRST_NAME',
                   },
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [],
+          },
+          entityTypes: {},
         },
       },
     ];
@@ -284,38 +273,32 @@ describe('JovoModelLex.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            intents: [
-              {
-                name: 'Welcome',
+            intents: {
+              Welcome: {
                 phrases: ['hey', 'howdy'],
               },
-              {
-                name: 'RestaurantSearch',
+              RestaurantSearch: {
                 phrases: [
                   "i'm looking for a place to eat",
                   "i'm looking for a place to eat {plates}",
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                entities: [
-                  {
-                    name: 'cuisine',
+                entities: {
+                  cuisine: {
                     type: 'Cuisine',
                   },
-                  {
-                    name: 'location',
+                  location: {
                     type: 'Location',
                   },
-                  {
-                    name: 'plates',
+                  plates: {
                     type: 'Plates',
                   },
-                ],
+                },
               },
-            ],
-            entityTypes: [
-              {
-                name: 'Cuisine',
+            },
+            entityTypes: {
+              Cuisine: {
                 values: [
                   {
                     id: 1,
@@ -331,8 +314,7 @@ describe('JovoModelLex.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Location',
+              Location: {
                 values: [
                   {
                     value: 'centre',
@@ -340,8 +322,7 @@ describe('JovoModelLex.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Plates',
+              Plates: {
                 values: [
                   {
                     value: 'beans',
@@ -357,7 +338,7 @@ describe('JovoModelLex.ts', () => {
                   },
                 ],
               },
-            ],
+            },
           },
         },
         result: [
@@ -466,24 +447,21 @@ describe('JovoModelLex.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            intents: [
-              {
-                name: 'HelloWorldIntent',
+            intents: {
+              HelloWorldIntent: {
                 phrases: ['hello', 'say hello', 'say hello world'],
               },
-              {
-                name: 'MyNameIsIntent',
+              MyNameIsIntent: {
                 phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
-                entities: [
-                  {
-                    name: 'name',
+                entities: {
+                  name: {
                     type: {
                       alexa: 'AMAZON.US_FIRST_NAME',
                     },
                   },
-                ],
+                },
               },
-            ],
+            },
           },
         },
         result: [
@@ -539,7 +517,7 @@ describe('JovoModelLex.ts', () => {
 
     for (const testData of testsData) {
       const jovoModel = new JovoModelLex(
-        testData.input.data as JovoModelData,
+        testData.input.data as unknown as JovoModelData,
         testData.input.locale,
       );
       test(testData.description, () => {

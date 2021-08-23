@@ -1,5 +1,4 @@
 export interface EntityType {
-  name: string;
   values?: EntityTypeValue[];
 }
 
@@ -11,14 +10,12 @@ export interface EntityTypeValue {
 }
 
 export interface Intent {
-  name: string;
   phrases?: string[];
   samples?: string[];
-  entities?: IntentEntity[];
+  entities?: Record<string, IntentEntity>;
 }
 
 export interface IntentEntity {
-  name: string;
   text?: string;
   type?: IntentEntityType;
 }
@@ -32,8 +29,8 @@ export interface InvocationObject {
 
 export interface JovoModelData {
   version: `${number}.${number}`;
-  entityTypes?: EntityType[];
-  intents?: Intent[];
+  entityTypes?: Record<string, EntityType>;
+  intents?: Record<string, Intent>;
   invocation: string | InvocationObject;
 }
 
