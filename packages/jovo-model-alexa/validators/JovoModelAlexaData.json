@@ -4,17 +4,23 @@
     "alexa": {
       "$ref": "#/definitions/AlexaModel"
     },
-    "inputTypes": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/InputType"
-      }
+    "entityTypes": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/EntityType"
+        }
+      },
+      "additionalProperties": false
     },
     "intents": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Intent"
-      }
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/Intent"
+        }
+      },
+      "additionalProperties": false
     },
     "invocation": {
       "anyOf": [
@@ -148,22 +154,18 @@
       },
       "required": ["id", "name"]
     },
-    "InputType": {
+    "EntityType": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
         "values": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/InputTypeValue"
+            "$ref": "#/definitions/EntityTypeValue"
           }
         }
-      },
-      "required": ["name"]
+      }
     },
-    "InputTypeValue": {
+    "EntityTypeValue": {
       "type": "object",
       "properties": {
         "value": {
@@ -187,9 +189,6 @@
     "Intent": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
         "phrases": {
           "type": "array",
           "items": {
@@ -202,21 +201,20 @@
             "type": "string"
           }
         },
-        "inputs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/IntentInput"
-          }
+        "entities": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/IntentEntity"
+            }
+          },
+          "additionalProperties": false
         }
-      },
-      "required": ["name"]
+      }
     },
-    "IntentInput": {
+    "IntentEntity": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
         "text": {
           "type": "string"
         },
@@ -230,8 +228,7 @@
             }
           ]
         }
-      },
-      "required": ["name"]
+      }
     },
     "Record<string,string>": {
       "type": "object"
