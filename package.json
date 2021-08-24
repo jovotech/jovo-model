@@ -17,9 +17,11 @@
     "setup": "npm run init && npm run tsc"
   },
   "devDependencies": {
+    "@lerna/project": "^4.0.0",
     "@types/jest": "^24.0.25",
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.1.5",
+    "auto-changelog": "^2.3.0",
     "jest": "^24.9.0",
     "lerna": "^3.20.2",
     "prettier": "^1.19.1",
