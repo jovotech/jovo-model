@@ -5,7 +5,7 @@
       "type": "object",
       "patternProperties": {
         ".*": {
-          "$ref": "#/definitions/DialogflowEntityType"
+          "$ref": "#/definitions/EntityType"
         }
       },
       "additionalProperties": false
@@ -35,7 +35,7 @@
   },
   "required": ["invocation"],
   "definitions": {
-    "DialogflowEntityType": {
+    "EntityType": {
       "type": "object",
       "properties": {
         "dialogflow": {
@@ -50,17 +50,13 @@
             }
           ]
         },
-        "name": {
-          "type": "string"
-        },
         "values": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/EntityTypeValue"
           }
         }
-      },
-      "required": ["name"]
+      }
     },
     "EntityTypeValue": {
       "type": "object",
