@@ -5,6 +5,7 @@ import {
   IntentEntity,
   JovoModel,
   JovoModelData,
+  JovoModelDataV3,
   JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
@@ -115,7 +116,7 @@ export class JovoModelAlexa extends JovoModel {
     return jovoModel;
   }
 
-  static fromJovoModel(model: JovoModelData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(model: JovoModelData | JovoModelDataV3, locale: string): NativeFileInformation[] {
     const errorPrefix = '/models/' + locale + '.json - ';
 
     const alexaModel: AlexaModel = {
@@ -326,8 +327,9 @@ export class JovoModelAlexa extends JovoModel {
     }
 
     // types
-    if (_get(model, 'entityTypes')) {
-      for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes!)) {
+    if (JovoModelHelper.hasEntityTypes(model)) {
+      const entityTypes = JovoModelHelper.getEntityTypes(model);
+      for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
         let findings: AlexaLMTypeObject[] = [];
 
         // skip entity types that are already in alexa types
