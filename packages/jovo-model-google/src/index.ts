@@ -2,7 +2,7 @@ import {GoogleActionLanguageModelProperty} from './Interfaces';
 
 export * from './JovoModelGoogle';
 
-declare module '@jovotech/model/dist/src/Interfaces' {
+declare module '@jovotech/model' {
   interface JovoModelData {
     googleAssistant?: {
       custom?: {

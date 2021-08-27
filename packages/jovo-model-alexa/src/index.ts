@@ -3,7 +3,7 @@ import { AlexaLMIntent, AlexaModel } from './Interfaces';
 export * from './Interfaces';
 export * from './JovoModelAlexa';
 
-declare module '@jovotech/model/dist/src/Interfaces' {
+declare module '@jovotech/model' {
   interface IntentEntity {
     alexa?: {
       samples: string[];
