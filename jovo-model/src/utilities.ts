@@ -1,3 +1,4 @@
+// tslint:disable-next-line:no-any
 export function reduceToMap<T extends Record<string, any>>(
   key: string,
   arr: T[],
