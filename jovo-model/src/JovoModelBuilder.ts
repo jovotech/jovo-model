@@ -1,11 +1,15 @@
-import { EntityType, EntityTypeValue, Intent, IntentEntity, JovoModelData } from './Interfaces';
 import {
-  JovoModelHelper,
-  ModelEntityType,
-  ModelEntityTypeValue,
-  ModelIntent,
-  ModelIntentEntity,
-} from './JovoModelHelper';
+  EntityType,
+  EntityTypeValue,
+  InputType,
+  Intent,
+  IntentEntity,
+  IntentInput,
+  IntentV3,
+  JovoModelData,
+  JovoModelDataV3,
+} from './Interfaces';
+import { JovoModelHelper, ModelEntityType, ModelEntityTypeValue } from './JovoModelHelper';
 
 type JovoModelHelperKeys = keyof typeof JovoModelHelper;
 type Keys = Exclude<JovoModelHelperKeys, 'prototype' | 'new'>;
@@ -51,6 +55,10 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   addIntent!: (intent: string, intentData?: Intent) => JovoModelBuilder;
 
+  hasIntents!: () => boolean;
+
+  getIntents!: () => Record<string, Intent | IntentV3>;
+
   addPhrase!: (intent: string, phrase: string) => JovoModelBuilder;
 
   getEntityTypeByName!: (entityType: string) => EntityType | undefined;
@@ -58,6 +66,10 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
   getEntityTypeValueIndex!: (entityType: string, entityTypeValue: string) => number;
 
   getEntityTypeValues!: (inputType: ModelEntityType) => EntityTypeValue[];
+
+  hasEntities!: (intent: string) => boolean;
+
+  getEntityByName!: (intent: string, entity: string) => IntentEntity | IntentInput | undefined;
 
   getEntities!: (intent: string) => Record<string, IntentEntity>;
 
@@ -80,6 +92,10 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
   removeIntent!: (intent: string) => JovoModelBuilder;
 
   removePhrase!: (intent: string, phrase: string) => JovoModelBuilder;
+
+  hasEntityTypes!: () => boolean;
+
+  getEntityTypes!: () => Record<string, EntityType | InputType>;
 
   updateEntityType!: (entityType: string, entityTypeData: EntityType) => JovoModelBuilder;
 
@@ -114,6 +130,10 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
     oldSynonym: string,
     newSynonym: string,
   ) => JovoModelBuilder;
+
+  isJovoModelV3!: () => boolean;
+
+  isIntentV3!: () => boolean;
 
   private readonly $model: JovoModelData;
 

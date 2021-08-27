@@ -1,4 +1,4 @@
-import {NativeFileInformation} from "@jovotech/model";
+import { NativeFileInformation } from '@jovotech/model';
 
 export interface SnipsModel {
   language: string;

@@ -2,8 +2,10 @@ import {
   EntityType,
   EntityTypeValue,
   Intent,
+  IntentEntity,
   JovoModel,
   JovoModelData,
+  JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
 import _assign from 'lodash.assign';
@@ -17,19 +19,15 @@ import {
   AlexaLMTypeObject,
   AlexaLMTypeValue,
   AlexaModel,
-  EntityTypeAlexa,
-  IntentEntityAlexa,
-  JovoModelAlexaData,
 } from '.';
 import * as JovoModelAlexaValidator from '../validators/JovoModelAlexaData.json';
-import { IntentAlexa } from './Interfaces';
 
 const BUILTIN_PREFIX = 'AMAZON.';
 
 export class JovoModelAlexa extends JovoModel {
   static MODEL_KEY = 'alexa';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelAlexaData {
+  static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
     const inputData = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
@@ -62,10 +60,10 @@ export class JovoModelAlexa extends JovoModel {
         const jovoIntent: Intent = {
           phrases: intent.samples,
         };
-        const entities: Record<string, IntentEntityAlexa> = {};
+        const entities: Record<string, IntentEntity> = {};
         if (intent.slots) {
           for (const slot of intent.slots) {
-            const entity: IntentEntityAlexa = {
+            const entity: IntentEntity = {
               type: slot.type,
             };
             if (_startsWith(slot.type, BUILTIN_PREFIX)) {
@@ -114,10 +112,10 @@ export class JovoModelAlexa extends JovoModel {
 
     _set(jovoModel, 'alexa.interactionModel.languageModel.intents', alexaIntents);
 
-    return jovoModel as JovoModelAlexaData;
+    return jovoModel;
   }
 
-  static fromJovoModel(model: JovoModelAlexaData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(model: JovoModelData, locale: string): NativeFileInformation[] {
     const errorPrefix = '/models/' + locale + '.json - ';
 
     const alexaModel: AlexaModel = {
@@ -166,7 +164,8 @@ export class JovoModelAlexa extends JovoModel {
     const alexaIntents: AlexaLMIntent[] = [];
     // convert generic intents
     if (model.intents) {
-      for (const [intentKey, intentData] of Object.entries(model.intents)) {
+      const intents = JovoModelHelper.getIntents(model);
+      for (const [intentKey, intentData] of Object.entries(intents)) {
         const alexaIntentObj: AlexaLMIntent = {
           name: intentKey,
           samples: intentData.phrases,
@@ -181,10 +180,12 @@ export class JovoModelAlexa extends JovoModel {
         }
 
         // handle intent entities
-        if (intentData.entities) {
+        if (JovoModelHelper.hasEntities(model, intentKey)) {
           alexaIntentObj.slots = [];
 
-          for (const [entityKey, entityData] of Object.entries(intentData.entities)) {
+          // TODO: Typings!
+          const entities = JovoModelHelper.getEntities(model, intentKey);
+          for (const [entityKey, entityData] of Object.entries(entities)) {
             const alexaInputObj: AlexaLMInputObject = {
               name: entityKey,
               type: '',
@@ -203,7 +204,7 @@ export class JovoModelAlexa extends JovoModel {
               }
             }
 
-            // handle custom entity types
+            // Handle custom entity types
             if (!alexaInputObj.type) {
               if (!entityData.type) {
                 throw new Error(`${errorPrefix} Invalid entity type in intent "${intentKey}"`);
@@ -211,21 +212,22 @@ export class JovoModelAlexa extends JovoModel {
 
               alexaInputObj.type = entityData.type;
 
-              // throw error when no entityTypes object defined
-              if (!model.entityTypes) {
-                throw new Error(
-                  `${errorPrefix} Entity type "${alexaInputObj.type}" must be defined in entityTypes`,
-                );
-              }
+              // Find type in global entityTypes array
+              const matchedEntityType = JovoModelHelper.getEntityTypeByName(
+                model,
+                alexaInputObj.type as string,
+              );
 
-              const matchedEntityType: EntityTypeAlexa =
-                model.entityTypes?.[alexaInputObj.type as string];
-
-              // find type in global entityTypes array
               if (!matchedEntityType) {
-                throw new Error(
-                  `${errorPrefix} Entity type "${alexaInputObj.type}" must be defined in entityTypes`,
-                );
+                if (JovoModelHelper.isJovoModelV3(model)) {
+                  throw new Error(
+                    `${errorPrefix} Input type "${alexaInputObj.type}" must be defined in inputTypes`,
+                  );
+                } else {
+                  throw new Error(
+                    `${errorPrefix} Entity type "${alexaInputObj.type}" must be defined in entityTypes`,
+                  );
+                }
               }
 
               if (!alexaModel.interactionModel.languageModel.types) {
@@ -272,15 +274,15 @@ export class JovoModelAlexa extends JovoModel {
               }
             }
 
-            if ((entityData as IntentEntityAlexa).alexa) {
-              _merge(alexaInputObj, (entityData as IntentEntityAlexa).alexa);
+            if (entityData.alexa) {
+              _merge(alexaInputObj, entityData.alexa);
             }
             alexaIntentObj.slots.push(alexaInputObj);
           }
         }
 
         if (_get(intentData, 'alexa')) {
-          _assign(alexaIntentObj, (intentData as IntentAlexa).alexa);
+          _assign(alexaIntentObj, intentData.alexa);
         }
 
         alexaIntents.push(alexaIntentObj);

@@ -1,5 +1,16 @@
 import _has = require('lodash.has');
-import { EntityType, EntityTypeValue, Intent, IntentEntity, JovoModelData } from './Interfaces';
+import {
+  EntityType,
+  EntityTypeValue,
+  InputType,
+  Intent,
+  IntentEntity,
+  IntentInput,
+  IntentV3,
+  JovoModelData,
+  JovoModelDataV3,
+} from './Interfaces';
+import { reduceToMap } from './utilities';
 
 export type ModelIntent = Intent | string;
 export type ModelIntentEntity = IntentEntity | string;
@@ -64,6 +75,16 @@ export class JovoModelHelper {
     return model;
   }
 
+  static hasIntents(model: JovoModelData | JovoModelDataV3): boolean {
+    if (!model.intents) {
+      return false;
+    }
+
+    return this.isJovoModelV3(model)
+      ? model.intents.length >= 0
+      : Object.keys(model.intents).length >= 0;
+  }
+
   static addIntent(
     model: JovoModelData,
     intent: string,
@@ -90,15 +111,39 @@ export class JovoModelHelper {
     }
   }
 
-  static getIntentByName(model: JovoModelData, intent: string): Intent | undefined {
+  static isJovoModelV3(model: JovoModelData | JovoModelDataV3): model is JovoModelDataV3 {
+    return !(model as JovoModelData).version;
+  }
+
+  static isIntentV3(intent: Intent | IntentV3): intent is IntentV3 {
+    return !!(intent as IntentV3).name;
+  }
+
+  static getIntents(model: JovoModelData | JovoModelDataV3): Record<string, Intent | IntentV3> {
+    if (this.isJovoModelV3(model)) {
+      if (!model.intents) {
+        return {};
+      }
+
+      const intents = reduceToMap('name', model.intents);
+      return intents;
+    } else {
+      return model.intents || {};
+    }
+  }
+
+  static getIntentByName(
+    model: JovoModelData | JovoModelDataV3,
+    intent: string,
+  ): Intent | undefined {
     if (!model.intents) {
       return;
     }
 
-    return model.intents[intent];
+    return this.getIntents(model)[intent];
   }
 
-  static getPhrases(model: JovoModelData, intent: string): string[] {
+  static getPhrases(model: JovoModelData | JovoModelDataV3, intent: string): string[] {
     const foundIntent: Intent | undefined = this.getIntentByName(model, intent);
     return foundIntent?.phrases || [];
   }
@@ -145,9 +190,39 @@ export class JovoModelHelper {
     });
   }
 
-  static getEntities(model: JovoModelData, intent: string): Record<string, IntentEntity> {
-    const foundIntent: Intent | undefined = this.getIntentByName(model, intent);
-    return foundIntent?.entities || {};
+  static hasEntities(model: JovoModelData | JovoModelDataV3, intent: string) {
+    const foundIntent: Intent | IntentV3 | undefined = this.getIntentByName(model, intent);
+    return foundIntent
+      ? this.isIntentV3(foundIntent)
+        ? !!foundIntent.inputs
+        : !!foundIntent.entities
+      : false;
+  }
+
+  static getEntities(
+    model: JovoModelData | JovoModelDataV3,
+    intent: string,
+  ): Record<string, IntentEntity | IntentInput> {
+    const foundIntent: Intent | IntentV3 | undefined = this.getIntentByName(model, intent);
+    if (!foundIntent) {
+      return {};
+    }
+
+    if (this.isIntentV3(foundIntent)) {
+      if (!foundIntent.inputs) {
+        return {};
+      }
+
+      return reduceToMap('name', foundIntent.inputs);
+    } else {
+      return foundIntent.entities || {};
+    }
+  }
+
+  static getEntityByName(model: JovoModelData | JovoModelDataV3, intent: string, entity: string): IntentEntity | IntentInput | undefined {
+    const entities = this.getEntities(model, intent);
+
+    return entities[entity];
   }
 
   static addEntity(
@@ -188,17 +263,29 @@ export class JovoModelHelper {
     }
   }
 
+  static hasEntityTypes(model: JovoModelData | JovoModelDataV3): boolean {
+    return this.isJovoModelV3(model) ? !!model.inputTypes : !!model.entityTypes;
+  }
+
   static addEntityType(
-    model: JovoModelData,
+    model: JovoModelData | JovoModelDataV3,
     entityType: string,
-    entityTypeData: EntityType = { values: [] },
+    entityTypeData: EntityType | InputType = { values: [] },
   ) {
-    if (!model.entityTypes) {
-      model.entityTypes = {};
+    if (!this.hasEntityTypes(model)) {
+      if (this.isJovoModelV3(model)) {
+        model.inputTypes = [];
+      } else {
+        model.entityTypes = {};
+      }
     }
 
     if (!this.getEntityTypeByName(model, entityType)) {
-      model.entityTypes[entityType] = entityTypeData;
+      if (this.isJovoModelV3(model)) {
+        model.inputTypes!.push({ name: entityType, ...entityTypeData });
+      } else {
+        model.entityTypes![entityType] = entityTypeData;
+      }
     }
   }
 
@@ -214,11 +301,26 @@ export class JovoModelHelper {
     }
   }
 
-  static getEntityTypeByName(model: JovoModelData, entityType: string): EntityType | undefined {
-    if (!model.entityTypes) {
-      return;
+  static getEntityTypes(
+    model: JovoModelData | JovoModelDataV3,
+  ): Record<string, EntityType | InputType> {
+    if (this.isJovoModelV3(model)) {
+      if (!model.inputTypes) {
+        return {};
+      }
+
+      return reduceToMap('name', model.inputTypes);
+    } else {
+      return model.entityTypes || {};
     }
-    return model.entityTypes[entityType];
+  }
+
+  static getEntityTypeByName(
+    model: JovoModelData | JovoModelDataV3,
+    entityType: string,
+  ): EntityType | InputType | undefined {
+    const entityTypes = this.getEntityTypes(model);
+    return entityTypes[entityType];
   }
 
   static getEntityTypeValues(model: JovoModelData, entityType: string): EntityTypeValue[] {
@@ -281,7 +383,11 @@ export class JovoModelHelper {
     }
   }
 
-  static getEntityTypeValueIndex(model: JovoModelData, entityType: string, entityTypeValue: string): number {
+  static getEntityTypeValueIndex(
+    model: JovoModelData,
+    entityType: string,
+    entityTypeValue: string,
+  ): number {
     if (_has(model, `entityTypes[${entityType}].values`)) {
       return model.entityTypes![entityType].values!.findIndex(
         (el: EntityTypeValue) => el.value === entityTypeValue,
@@ -317,7 +423,11 @@ export class JovoModelHelper {
     entityTypeValue: string,
     synonym: string,
   ) {
-    const entityTypeValueIndex: number = this.getEntityTypeValueIndex(model, entityType, entityTypeValue);
+    const entityTypeValueIndex: number = this.getEntityTypeValueIndex(
+      model,
+      entityType,
+      entityTypeValue,
+    );
 
     if (_has(model, `entityTypes[${entityType}].values[${entityTypeValueIndex}].synonyms`)) {
       const synonymIndex: number = model.entityTypes![entityType].values![

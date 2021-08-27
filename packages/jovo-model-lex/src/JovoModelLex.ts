@@ -5,10 +5,11 @@ import {
   IntentEntity,
   JovoModel,
   JovoModelData,
+  JovoModelDataV3,
+  JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
 import {
-  JovoModelLexData,
   LexModelEnumerationValue,
   LexModelFile,
   LexModelFileResource,
@@ -96,7 +97,10 @@ export class JovoModelLex extends JovoModel {
     return jovoModel;
   }
 
-  static fromJovoModel(model: JovoModelLexData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(
+    model: JovoModelData | JovoModelDataV3,
+    locale: string,
+  ): NativeFileInformation[] {
     const lexModel: LexModelFileResource = {
       name: 'JovoApp',
       locale,
@@ -105,11 +109,12 @@ export class JovoModelLex extends JovoModel {
       childDirected: false,
     };
 
-    if (model.intents !== undefined && model.intents.length !== 0) {
+    if (JovoModelHelper.hasIntents(model)) {
       let lexIntent: LexModelIntentResource;
       let entityTypeName: string;
+      const intents = JovoModelHelper.getIntents(model);
 
-      for (const [intentKey, intentData] of Object.entries(model.intents)) {
+      for (const [intentKey, intentData] of Object.entries(intents)) {
         lexIntent = {
           name: intentKey,
           version: '$LATEST',
@@ -122,9 +127,10 @@ export class JovoModelLex extends JovoModel {
           lexIntent.sampleUtterances = intentData.phrases;
         }
 
-        if (intentData.entities !== undefined && intentData.entities.length !== 0) {
+        if (JovoModelHelper.hasEntities(model, intentKey)) {
           lexIntent.slots = [];
-          for (const [intentEntityKey, intentEntityData] of Object.entries(intentData.entities)) {
+          const entities = JovoModelHelper.getEntities(model, intentKey);
+          for (const [intentEntityKey, intentEntityData] of Object.entries(entities)) {
             if (typeof intentEntityData.type === 'object') {
               if (intentEntityData.type.alexa === undefined) {
                 throw new Error(
@@ -149,11 +155,12 @@ export class JovoModelLex extends JovoModel {
       }
     }
 
-    if (model.entityTypes !== undefined && model.entityTypes.length !== 0) {
+    if (JovoModelHelper.hasEntityTypes(model)) {
       let lexSlot: LexModelSlotTypeResource;
       let lexEnumerationValue: LexModelEnumerationValue;
+      const entityTypes = JovoModelHelper.getEntityTypes(model);
 
-      for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes)) {
+      for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
         lexSlot = { name: entityTypeKey };
 
         if (entityTypeData.values) {

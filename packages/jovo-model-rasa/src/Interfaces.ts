@@ -1,9 +1,3 @@
-import { JovoModelData } from '@jovotech/model';
-
-// Jovo Model Rasa Format
-
-export interface JovoModelRasaData extends JovoModelData {}
-
 // Native Rasa JSON Format
 
 export interface RasaCommonExample {

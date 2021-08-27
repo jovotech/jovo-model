@@ -7,10 +7,9 @@ import {
   JovoModelHelper,
   ModelEntityType,
   ModelEntityTypeValue,
-  ModelIntent,
-  ModelIntentEntity,
   NativeFileInformation,
 } from '.';
+import { InputType, IntentInput, IntentV3 } from './Interfaces';
 
 export class JovoModel {
   static MODEL_KEY = '';
@@ -80,6 +79,10 @@ export class JovoModel {
       JovoModelHelper.addIntent(this.data, intent, intentData);
     }
     return this;
+  }
+
+  getIntents(): Record<string, Intent | IntentV3> {
+    return this.data ? JovoModelHelper.getIntents(this.data) : {};
   }
 
   /**
@@ -175,11 +178,15 @@ export class JovoModel {
     return this.data ? JovoModelHelper.hasPhrase(this.data, phrase) : false;
   }
 
+  hasEntities(intent: string): boolean {
+    return this.data ? JovoModelHelper.hasEntities(this.data, intent) : false;
+  }
+
   /**
    * See [[JovoModelHelper]]
    * @param intent Intent-object or string
    */
-  getEntities(intent: string): Record<string, IntentEntity> {
+  getEntities(intent: string): Record<string, IntentEntity | IntentInput> {
     return this.data ? JovoModelHelper.getEntities(this.data, intent) : {};
   }
 
