@@ -1,5 +1,3 @@
-import { JovoModelData } from '@jovotech/model';
-
 export interface GoogleActionParameter {
   name: string;
   type: {
@@ -22,17 +20,6 @@ export interface GoogleActionInput {
   synonym: {
     entities: GoogleActionEntities;
     matchType?: string;
-  };
-}
-
-export interface JovoModelGoogleActionData extends JovoModelData {
-  googleAssistant?: {
-    custom?: {
-      global?: GoogleActionLanguageModelProperty;
-      intents?: GoogleActionLanguageModelProperty;
-      scenes?: GoogleActionLanguageModelProperty;
-      types?: GoogleActionLanguageModelProperty;
-    };
   };
 }
 

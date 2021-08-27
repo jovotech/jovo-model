@@ -5,6 +5,9 @@ import {
   Intent,
   IntentEntity,
   JovoModel,
+  JovoModelData,
+  JovoModelDataV3,
+  JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
 import _get from 'lodash.get';
@@ -17,7 +20,6 @@ import {
   GoogleActionInput,
   GoogleActionIntent,
   GoogleActionLanguageModelProperty,
-  JovoModelGoogleActionData,
 } from './Interfaces';
 
 // Configure yaml to always use double quotes on properties.
@@ -28,12 +30,12 @@ export class JovoModelGoogle extends JovoModel {
   static MODEL_KEY = 'google';
   static defaultLocale?: string;
 
-  constructor(data?: JovoModelGoogleActionData, locale?: string, defaultLocale?: string) {
+  constructor(data?: JovoModelData, locale?: string, defaultLocale?: string) {
     super(data, locale);
     JovoModelGoogle.defaultLocale = defaultLocale;
   }
 
-  static fromJovoModel(model: JovoModelGoogleActionData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(model: JovoModelData | JovoModelDataV3, locale: string): NativeFileInformation[] {
     const errorPrefix = `/models/${locale}.json - `;
     const returnFiles: NativeFileInformation[] = [];
 
@@ -49,7 +51,8 @@ export class JovoModelGoogle extends JovoModel {
       return [];
     }
 
-    for (const [intentKey, intentData] of Object.entries(model.intents)) {
+    const intents = JovoModelHelper.getIntents(model);
+    for (const [intentKey, intentData] of Object.entries(intents)) {
       const gaIntent: GoogleActionIntent = {
         trainingPhrases: [],
       };
@@ -77,7 +80,8 @@ export class JovoModelGoogle extends JovoModel {
           let type: string | undefined;
 
           // Get entity type for current entity
-          for (const [entityKey, entityData] of Object.entries(intentData.entities || {})) {
+          const entities = JovoModelHelper.getEntities(model, intentKey);
+          for (const [entityKey, entityData] of Object.entries(entities)) {
             if (entity === entityKey) {
               if (typeof entityData.type === 'object') {
                 if (!entityData.type.googleAssistant) {
@@ -101,7 +105,8 @@ export class JovoModelGoogle extends JovoModel {
 
           // For entity type, get an example value to work with.
           let sampleValue = '';
-          for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes || {})) {
+          const entityTypes = JovoModelHelper.getEntityTypes(model);
+          for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
             if (entityTypeKey !== type) {
               continue;
             }
@@ -120,12 +125,12 @@ export class JovoModelGoogle extends JovoModel {
           // Check for freeText entity type.
           if (type === 'actions.type.FreeText') {
             // Create InputType with content freeText: {}.
-            model.entityTypes!['FreeTextType'] = {};
+            JovoModelHelper.addEntityType(model, 'FreeTextType', {});
             // Change type to that InputType.
             type = 'FreeTextType';
           }
 
-          if (locale === this.defaultLocale && intentData.entities) {
+          if (locale === this.defaultLocale && JovoModelHelper.hasEntities(model, intentKey)) {
             if (!gaIntent.parameters) {
               gaIntent.parameters = [];
             }
@@ -155,7 +160,8 @@ export class JovoModelGoogle extends JovoModel {
       globalIntents[intentKey] = { handler: { webhookHandler: 'Jovo' } };
     }
 
-    for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes || {})) {
+    const entityTypes = JovoModelHelper.getEntityTypes(model);
+    for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
       const gaInput: GoogleActionInput = {
         synonym: {
           entities: {},
@@ -219,8 +225,8 @@ export class JovoModelGoogle extends JovoModel {
     return returnFiles;
   }
 
-  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelGoogleActionData {
-    const jovoModel: JovoModelGoogleActionData = {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelData {
+    const jovoModel: JovoModelData = {
       version: '4.0',
       invocation: '',
       intents: {},
