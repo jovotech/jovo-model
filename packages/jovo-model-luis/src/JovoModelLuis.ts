@@ -1,14 +1,17 @@
 import {
   EntityType,
   EntityTypeValue,
+  InputType,
   Intent,
   IntentEntity,
+  IntentV3,
   JovoModel,
   JovoModelData,
+  JovoModelDataV3,
+  JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
 import {
-  JovoModelLuisData,
   LuisModelClosedList,
   LuisModelClosedSubList,
   LuisModelEntity,
@@ -128,7 +131,10 @@ export class JovoModelLuis extends JovoModel {
     return jovoModel;
   }
 
-  static fromJovoModel(model: JovoModelLuisData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(
+    model: JovoModelData | JovoModelDataV3,
+    locale: string,
+  ): NativeFileInformation[] {
     const entityTypeNameUsedCounter: EntityTypeNameUsedCounter = {};
 
     const luisIntents: LuisModelIntent[] = [];
@@ -137,15 +143,17 @@ export class JovoModelLuis extends JovoModel {
     let intentInformation: IntentInformation;
     const entityNames: string[] = [];
 
-    if (model.intents !== undefined) {
+    if (JovoModelHelper.hasIntents(model)) {
+      const intents = JovoModelHelper.getIntents(model);
       // Get all the utterances and entities
-      for (const [intentKey, intentData] of Object.entries(model.intents)) {
+      for (const [intentKey, intentData] of Object.entries(intents)) {
         luisIntents.push({ name: intentKey });
 
         intentInformation = this.getIntentInformation(
+          model,
           intentKey,
           intentData,
-          model.entityTypes,
+          JovoModelHelper.getEntityTypes(model),
           entityTypeNameUsedCounter,
         );
         luisUtterances.push.apply(luisUtterances, intentInformation.utterances);
@@ -169,8 +177,9 @@ export class JovoModelLuis extends JovoModel {
     // Convert the entityTypes to closedLists
     let tempSubLists: LuisModelClosedSubList[];
     let tempSubList: LuisModelClosedSubList;
-    if (model.entityTypes !== undefined) {
-      for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes)) {
+    if (JovoModelHelper.hasEntityTypes(model)) {
+      const entityTypes = JovoModelHelper.getEntityTypes(model);
+      for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
         if (entityTypeKey.startsWith('builtin.')) {
           // Skip the builtin types
           continue;
@@ -232,9 +241,10 @@ export class JovoModelLuis extends JovoModel {
   }
 
   static getIntentInformation(
+    model: JovoModelData | JovoModelDataV3,
     intent: string,
-    intentData: Intent,
-    entityTypes: Record<string, EntityType> | undefined,
+    intentData: Intent | IntentV3,
+    entityTypes: Record<string, EntityType | InputType> | undefined,
     entityTypeNameUsedCounter: EntityTypeNameUsedCounter,
   ): IntentInformation {
     const returnData: IntentInformation = {
@@ -271,22 +281,28 @@ export class JovoModelLuis extends JovoModel {
             // Cut the curly braces away
             entityName = entityName.slice(1, -1);
 
-            if (intentData.entities === undefined) {
+            if (!JovoModelHelper.hasEntities(model, intent)) {
               // No entities are defined so the value is not an entity
               continue;
             }
 
             // Check if the value is really an entity
-            intentEntity = intentData.entities[entityName];
-            if (intentEntity === undefined) {
+            intentEntity = JovoModelHelper.getEntityByName(model, intent, entityName);
+            if (!intentEntity) {
               // No entity exists with that name so it is not an entity
               continue;
             }
 
-            if (intentEntity.type === undefined) {
-              throw new Error(
-                `No type is defined for entity "${entityName}" which is used in phrase "${phrase}"!`,
-              );
+            if (!intentEntity.type) {
+              if (JovoModelHelper.isJovoModelV3(model)) {
+                throw new Error(
+                  `No type is defined for input "${entityName}" which is used in phrase "${phrase}"!`,
+                );
+              } else {
+                throw new Error(
+                  `No type is defined for entity "${entityName}" which is used in phrase "${phrase}"!`,
+                );
+              }
             }
 
             // Get the EntityType data to get an example value to replace the placeholder with
