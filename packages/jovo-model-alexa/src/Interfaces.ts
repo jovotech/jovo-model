@@ -1,5 +1,3 @@
-import { EntityType, Intent, IntentEntity, JovoModelData } from '@jovotech/model';
-
 export interface AlexaLMTypeObject {
   name: string;
   values: AlexaLMTypeValue[];
@@ -37,23 +35,4 @@ export interface AlexaModel {
       types?: AlexaLMTypeObject[];
     };
   };
-}
-
-export interface IntentEntityAlexa extends IntentEntity {
-  alexa?: {
-    samples: string[];
-  };
-}
-
-export interface EntityTypeAlexa extends EntityType {
-  alexa?: string;
-}
-
-export interface IntentAlexa extends Intent {
-  alexa?: AlexaLMIntent;
-}
-
-export interface JovoModelAlexaData extends JovoModelData {
-  invocation: string | { alexaSkill: string };
-  alexa?: AlexaModel;
 }
