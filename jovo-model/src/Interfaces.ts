@@ -9,15 +9,40 @@ export interface EntityTypeValue {
   synonyms?: string[];
 }
 
+export interface InputType {
+  name: string;
+  values?: InputTypeValue[];
+}
+
+export interface InputTypeValue {
+  value: string;
+  id?: string;
+  key?: string;
+  synonyms?: string[];
+}
+
 export interface Intent {
   phrases?: string[];
   samples?: string[];
   entities?: Record<string, IntentEntity>;
 }
 
+export interface IntentV3 {
+  name: string;
+  phrases?: string[];
+  samples?: string[];
+  inputs?: IntentInput[];
+}
+
 export interface IntentEntity {
   text?: string;
   type?: IntentEntityType;
+}
+
+export interface IntentInput {
+  name: string;
+  text?: string;
+  type?: string | Record<string, string>;
 }
 
 export type IntentEntityType = string | IntentEntityTypeObject;
@@ -28,9 +53,15 @@ export interface InvocationObject {
 }
 
 export interface JovoModelData {
-  version: `${number}.${number}`;
+  version?: `${number}.${number}`;
   entityTypes?: Record<string, EntityType>;
   intents?: Record<string, Intent>;
+  invocation: string | InvocationObject;
+}
+
+export interface JovoModelDataV3 {
+  inputTypes?: InputType[];
+  intents?: IntentV3[];
   invocation: string | InvocationObject;
 }
 
