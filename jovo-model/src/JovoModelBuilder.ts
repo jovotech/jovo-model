@@ -54,6 +54,8 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   addIntent!: (intent: string, intentData?: Intent) => JovoModelBuilder;
 
+  hasIntents!: () => boolean;
+
   getIntents!: () => Record<string, Intent | IntentV3>;
 
   addPhrase!: (intent: string, phrase: string) => JovoModelBuilder;

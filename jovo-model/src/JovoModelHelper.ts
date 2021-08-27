@@ -75,6 +75,16 @@ export class JovoModelHelper {
     return model;
   }
 
+  static hasIntents(model: JovoModelData | JovoModelDataV3): boolean {
+    if (!model.intents) {
+      return false;
+    }
+
+    return this.isJovoModelV3(model)
+      ? model.intents.length >= 0
+      : Object.keys(model.intents).length >= 0;
+  }
+
   static addIntent(
     model: JovoModelData,
     intent: string,
