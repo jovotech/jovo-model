@@ -7,14 +7,9 @@ The Jovo Model is a language model abstraction layer that works across NLU provi
 - [Introduction](#introduction)
 - [Supported Platforms](#supported-platforms)
 - [Model Structure](#model-structure)
-  - [Invocation](#invocation)
-  - [Intents](#intents)
-  - [Entity Types](#entity-types)
-  - [Platform-specific Elements](#platform-specific-elements)
 - [Using the Jovo Model with the Jovo CLI](#using-the-jovo-model-with-the-jovo-cli)
   - [Models Folder](#models-folder)
-  - [Platforms Folder](#platforms-folder)
-  - [Project Configuration](#project-configuration)
+  - [Build Folder](#build-folder)
 - [Using the Jovo Model npm Packages](#using-the-jovo-model-npm-packages)
   - [Model Conversions](#model-conversions)
   - [Updating the Model](#updating-the-model)
@@ -36,313 +31,52 @@ We chose to open source this repository to provide more flexibility to Jovo user
 
 ## Supported Platforms
 
-The Jovo Model supports the following NLU providers (see the [`packages` folder in the `jovo-model` repository](https://github.com/jovotech/jovo-model/tree/master/packages)):
-* [Amazon Alexa](./docs/amazon-alexa.md)
-* [Amazon Lex](./docs/amazon-lex.md)
-* [Google Dialogflow](./docs/dialogflow.md)
-* [Google Assistant Conversational Actions](./docs/google-assistant.md) (alpha)
-* [Microsoft LUIS](./docs/microsoft-luis.md)
-* [Rasa NLU](./docs/rasa.md) (alpha)
-* [NLP.js](./docs/nlpjs.md) (alpha)
+The Jovo Model supports the following NLU providers):
+
+* [Amazon Alexa](./packages/jovo-model-alexa)
+* [Amazon Lex](./packages/jovo-model-lex)
+* [Google Dialogflow](./packages/jovo-modeldialogflow)
+* [Google Assistant Conversational Actions](./packages/jovo-model-googleassistant)
+* [Microsoft LUIS](./packages/jovo-model-luis)
+* [Rasa NLU](./packages/jovo-model-rasa)
+* [NLP.js](./packages/jovo-model-nlpjs)
+* [Snips NLU](./packages/jovo-model-snips)
 
 ## Model Structure
 
-Every language you choose to support will have its very own language model (`en-US`, `de-DE`, etc.).
-
-Each locale is represented by its own model. For example, the `en.json` in the [Jovo v4 template](https://github.com/jovotech/jovo-v4-template/blob/master/models/en.json) looks like this:
-
-```javascript
-{
-    "version": "4.0",
-	"invocation": "my test app",
-	"intents": [
-    {
-      "name": "YesIntent",
-      "phrases": [
-        "yes",
-        "yes please",
-        "sure"
-      ]
-    },
-    {
-      "name": "NoIntent",
-      "phrases": [
-        "no",
-        "no thanks"
-      ]
-    }
-  ]
-}
-```
-
-The Jovo Model consists of several elements, which we will go through step by step in this section.
-
-* [Invocation](#invocation)
-* [Intents](#intents)
-    * [Intent Name](#intent-name)
-    * [Phrases](#phrases)
-    * [Entities](#entities)
-* [Entity Types](#entity-types)
-    * [Input Type Name](#entity-type-name)
-    * [Values](#values)
-    * [Synonyms](#synonyms)
-* [Platform Specific Elements](#platform-specific-elements)
-
-
-### Invocation
-
-The `invocation` is used by some voice assistant platforms as the "app name" to access the app (see [Voice App Basics](https://www.jovo.tech/docs/voice-app-basics) in the Jovo Docs).
-
-```javascript
-"invocation": "my test app",
-```
-
-It is possible to add platform-specific invocations like this:
-
-```javascript
-"invocation": {
-    "alexaSkill": "my test skill",
-    "googleAction": "my test action"
-},
-```
-
-Currently, this element is supported by [Alexa Skills](./docs/amazon-alexa.md) and [Google Assistant Conversational Actions](./docs/google-assistant.md). If you use Google Assistant with [Dialogflow](./docs/dialogflow.md), you need to set the invocation name manually in the Actions on Google console.  
-
-
-### Intents
-
-Intents can be added to the JSON as objects that include:
-
-* a [`name`](#intent-name),
-* sample [`phrases`](#phrases), and 
-* [`inputs`](#inputs) (optional)
-
-This is how the `MyNameIsIntent` from the Jovo "Hello World" sample app looks like:
-
-```javascript
-{  
-    "name": "MyNameIsIntent",
-    "phrases": [  
-        "{name}",
-        "my name is {name}",
-        "i am {name}",
-        "you can call me {name}"
-    ],
-    "entities": [  
-        {  
-            "name": "name",
-            "type": {  
-                "alexa": "AMAZON.US_FIRST_NAME",
-                "dialogflow": "@sys.given-name"
-            }
-        }
-    ]
-}
-```
-
-#### Intent Name
-
-The `name` specifies how the intent is called on the platforms. We recommend using a consistent standard. In our examples, we add `Intent` to each name, like `MyNameIsIntent`.
-
-#### Phrases
-
-This is an array of example `phrases` that will be used to train the language model on the respective NLU platforms.
-
-Some providers use different names for these phrases, for example utterances or "user says."
-
-#### Inputs
-
-Often, phrases contain variable input such as slots or entities, as some NLU services call them. In the Jovo Model, they are called `entities`.
-
-Entities consist of a `name` and a `type` (learn more in the [Entity Types](#entity-types) section). For example an intent with phrases like `I live in {city}` would come with an entity like this:
-
-```javascript
-"entities": [
-    {
-        "name": "city",
-        "type": "myCityEntityType"
-    }
-]
-```
-
-You can also choose to provide different entity types for each NLU service:
-
-```javascript
-"entities": [
-    {
-        "name": "name",
-        "type": {
-            "alexa": "AMAZON.US_FIRST_NAME", 
-            "dialogflow": "@sys.given-name"
-        }
-    }
-]
-```
-
-You can either reference input types defined in the [`entityTypes` array](#entity-types) array, or reference built-in entity types provided by the respective NLU platforms (like `AMAZON.US_FIRST_NAME` for Alexa).
-
-
-### Entity Types
-
-The `entityTypes` array lists all the entity types that are referenced as `entities` inside `intents`.
-
-Each input type contains:
-* a [`name`](#input-type-name),
-* [`values`](#values), and
-* [`synonyms`](#synonyms) (optional).
-
-```javascript
-"entityTypes": [
-    {
-        "name": "myCityEntityType",
-        "values": [
-            {
-                "value": "Berlin"
-            },
-            {
-                "value": "New York",
-                "synonyms": [
-                    "New York City"
-                ]
-            }
-        ]
-    }
-],
-```
-
-#### Entity Type Name
-
-The `name` specifies how the entity type is referenced. Again, we recommend to use a consistent style throughout all entity types to keep it organized.
-
-#### Values
-
-This is an array of elements that each contain a `value` and optionally `synonyms`. With the values, you can define which entities you're expecting from the user.
-
-#### Synonyms
-
-Sometimes different words have the same meaning. In the example above, we have a main value `New York` and a synonym `New York City`. 
-
-### Platform-specific Elements
-
-Some intents or entity types may be needed for just some platforms. You can define them as additional elements as shown for Alexa in the example below:
-
-```javascript
-"alexa": {
-    "interactionModel": {
-        "languageModel": {
-            "intents": [
-                {
-                    "name": "AMAZON.CancelIntent",
-                    "samples": []
-                },
-                {
-                    "name": "AMAZON.HelpIntent",
-                    "samples": []
-                },
-                {
-                    "name": "AMAZON.StopIntent",
-                    "samples": []
-                }
-            ]
-        }
-    }
-},
-```
-
-The format of the elements inside the `alexa` object from above is the original structure of the Alexa Interaction Model. For example, `phrases` (Jovo Model naming) are called `samples`.
-
-For more information, see the respective platform docs [referenced here](#supported-platforms).
-
+[Learn more about the model schema here](./docs/model-schema.md).
 
 ## Using the Jovo Model with the Jovo CLI
-
-> [Learn more about the Jovo project lifecycle in our docs](https://www.jovo.tech/docs/project-lifecycle).
 
 In regular Jovo projects, the Jovo Model is translated into different NLU formats and then deployed by using the [Jovo CLI](https://www.jovo.tech/marketplace/jovo-cli).
 
 The workflow consists of three elements:
 
 * [`models` folder](#models-folder) that stores the Jovo Model files
-* [`platforms` folder](#platforms-folder) that consists all generated files
-* [`project.js` file](#project-configuration) that contains all project configuration
+* [`build` folder](#build-folder) that consists all generated files
+* [`jovo.project.js` file](#project-configuration) that contains all project configuration
 
 
 ### Models Folder
 
 The `models` folder contains all the language models. Each locale (like `en-US`, `de-DE`) has its own JSON file.
 
-![Models Folder in a Jovo Project](./img/folder-structure-models.png "Models Folder in a Jovo Project" )
 
+### Build Folder
 
-### Platforms Folder
-
-The `platforms` folder includes all the information you need to deploy the project to the respective developer platforms like Amazon Alexa and Google Assistant.
-
-![Platforms Folder in a Jovo Project](./img/folder-structure-platforms.png "Platforms Folder in a Jovo Project" )
+The `build` folder includes all the information you need to deploy the project to the respective developer platforms like Amazon Alexa and Google Assistant.
 
 At the beginning of a new project, the folder doesn't exist until you either import an existing platform project with [`jovo get`](https://www.jovo.tech/marketplace/jovo-cli/get), or create the files from the Jovo Model with [`jovo build`](https://www.jovo.tech/marketplace/jovo-cli/build).
 
-We recommend to use the `project.js` file (see next section) as the single source of truth and add the `platforms` folder to the `.gitignore` to avoid conflicts (like Alexa Skill IDs) if you're working on a project with a team.
+We recommend to use the `jovo.project.js` file ([see the project configuration documentation here](https://github.com/jovotech/jovo-framework/blob/v4dev/docs/project-config.md)) as the single source of truth and add the `build` folder to the `.gitignore` to avoid conflicts (like Alexa Skill IDs) if you're working on a project with a team.
 
-
-### Project Configuration
-
-The `project.js` file contains all the project specific information that is used by the Jovo CLI to generate the `platforms` folder with the [`build` command](https://www.jovo.tech/marketplace/jovo-cli/build).
-
-> [Learn everything about Jovo project configuration in the `project.js` docs](https://www.jovo.tech/docs/project-js).
-
-The file specifies which NLU service should be used by for which platform:
-
-```javascript
-module.exports = {
-	alexaSkill: {
-		nlu: 'alexa',
-	},
-	googleAction: {
-		nlu:  'dialogflow',
-	},
-	// ...
-}
-```
-
-If you want to add more configurations, you can turn the `nlu` element into an object, like this for Alexa:
-
-```javascript
-module.exports = {
-	alexaSkill: {
-		nlu: {
-            name: 'alexa',
-        },
-	},
-	// ...
-}
-```
-
-You can also add more transformations. For example, if you have a default `en.json` file in your `models` folder and wish for it to be duplicated into `en-US` and `en-CA` interaction models for Alexa, you can do it like this:
-
-```javascript
-module.exports = {
-	alexaSkill: {
-		nlu: {
-            name: 'alexa',
-            lang: {
-                en: [
-                    'en-US',
-                    'en-CA'
-                ]
-            }
-        },
-	},
-	// ...
-}
-```
 
 ## Using the Jovo Model npm Packages
 
 You can download the package like this:
 
 ```sh
-$ npm install jovo-model --save
+$ npm install @jovotech/model
 ```
 
 
