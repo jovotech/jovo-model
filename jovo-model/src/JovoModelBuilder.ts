@@ -4,6 +4,7 @@ import {
   InputType,
   Intent,
   IntentEntity,
+  IntentInput,
   IntentV3,
   JovoModelData,
   JovoModelDataV3,
@@ -67,6 +68,8 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
   getEntityTypeValues!: (inputType: ModelEntityType) => EntityTypeValue[];
 
   hasEntities!: (intent: string) => boolean;
+
+  getEntityByName!: (intent: string, entity: string) => IntentEntity | IntentInput | undefined;
 
   getEntities!: (intent: string) => Record<string, IntentEntity>;
 
