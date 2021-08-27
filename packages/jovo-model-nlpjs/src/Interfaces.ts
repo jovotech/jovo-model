@@ -1,9 +1,3 @@
-import { JovoModelData } from '@jovotech/model';
-
-// Jovo Model Rasa Format
-
-export interface JovoModelNlpjsData extends JovoModelData {}
-
 export interface NlpjsData {
   id?: number;
   intent: string;

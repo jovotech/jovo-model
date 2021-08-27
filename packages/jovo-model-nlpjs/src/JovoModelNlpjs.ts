@@ -1,15 +1,12 @@
-import { JovoModelNlpjsData, NlpjsData, NlpjsModelFile } from '.';
-
 import {
-  EntityType,
   EntityTypeValue,
-  Intent,
-  IntentEntity,
   JovoModel,
   JovoModelData,
+  JovoModelDataV3,
+  JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
-
+import { NlpjsData, NlpjsModelFile } from '.';
 import * as JovoModelNlpjsValidator from '../validators/JovoModelNlpjsData.json';
 
 export class JovoModelNlpjs extends JovoModel {
@@ -36,7 +33,10 @@ export class JovoModelNlpjs extends JovoModel {
     return jovoModel;
   }
 
-  static fromJovoModel(model: JovoModelNlpjsData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(
+    model: JovoModelData | JovoModelDataV3,
+    locale: string,
+  ): NativeFileInformation[] {
     const returnData: NlpjsModelFile = {
       data: [],
       name: '',
@@ -44,17 +44,19 @@ export class JovoModelNlpjs extends JovoModel {
     };
     const entitiesMap: Record<string, string> = {};
 
-    if (model.intents) {
-      for (const [intentKey, intentData] of Object.entries(model.intents)) {
+    if (JovoModelHelper.hasIntents(model)) {
+      const intents = JovoModelHelper.getIntents(model);
+      for (const [intentKey, intentData] of Object.entries(intents)) {
         const intentObj = {
           intent: intentKey,
           utterances: [],
         };
 
-        if (intentData.entities) {
+        if (JovoModelHelper.hasEntities(model, intentKey)) {
+          const entities = JovoModelHelper.getEntities(model, intentKey);
           returnData.entities = {};
 
-          for (const [entityKey, entityData] of Object.entries(intentData.entities)) {
+          for (const [entityKey, entityData] of Object.entries(entities)) {
             if (entityData.type && typeof entityData.type === 'string') {
               // inputsMap[input.name] = input.type;
               entitiesMap[entityData.type] = entityKey;
@@ -91,10 +93,11 @@ export class JovoModelNlpjs extends JovoModel {
       }
     }
 
-    if (model.entityTypes) {
+    if (JovoModelHelper.hasEntityTypes(model)) {
+      const entityTypes = JovoModelHelper.getEntityTypes(model);
       returnData.entities = {};
 
-      for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes)) {
+      for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
         const options: Record<string, string[]> = {};
 
         entityTypeData.values!.forEach((entityTypeValue: EntityTypeValue) => {
