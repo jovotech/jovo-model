@@ -115,7 +115,7 @@ export class JovoModelHelper {
         return {};
       }
 
-      const intents =  reduceToMap('name', model.intents);
+      const intents = reduceToMap('name', model.intents);
       return intents;
     } else {
       return model.intents || {};
@@ -247,17 +247,29 @@ export class JovoModelHelper {
     }
   }
 
+  static hasEntityTypes(model: JovoModelData | JovoModelDataV3): boolean {
+    return this.isJovoModelV3(model) ? !!model.inputTypes : !!model.entityTypes;
+  }
+
   static addEntityType(
-    model: JovoModelData,
+    model: JovoModelData | JovoModelDataV3,
     entityType: string,
-    entityTypeData: EntityType = { values: [] },
+    entityTypeData: EntityType | InputType = { values: [] },
   ) {
-    if (!model.entityTypes) {
-      model.entityTypes = {};
+    if (!this.hasEntityTypes(model)) {
+      if (this.isJovoModelV3(model)) {
+        model.inputTypes = [];
+      } else {
+        model.entityTypes = {};
+      }
     }
 
     if (!this.getEntityTypeByName(model, entityType)) {
-      model.entityTypes[entityType] = entityTypeData;
+      if (this.isJovoModelV3(model)) {
+        model.inputTypes!.push({ name: entityType, ...entityTypeData });
+      } else {
+        model.entityTypes![entityType] = entityTypeData;
+      }
     }
   }
 

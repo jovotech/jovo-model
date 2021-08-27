@@ -88,6 +88,8 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   removePhrase!: (intent: string, phrase: string) => JovoModelBuilder;
 
+  hasEntityTypes!: () => boolean;
+
   getEntityTypes!: () => Record<string, EntityType | InputType>;
 
   updateEntityType!: (entityType: string, entityTypeData: EntityType) => JovoModelBuilder;
