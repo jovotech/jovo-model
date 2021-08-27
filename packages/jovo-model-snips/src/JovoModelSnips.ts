@@ -62,7 +62,7 @@ export class JovoModelSnips extends JovoModel {
 
             // Try to get the entity type for the matched entity to insert random samples
             for (const [entityKey, entityData] of Object.entries(intentData.entities)) {
-              if (matchedEntity !== intentKey) {
+              if (matchedEntity !== entityKey) {
                 continue;
               }
 
@@ -109,7 +109,9 @@ export class JovoModelSnips extends JovoModel {
             }
 
             if (!intentEntityType) {
-              throw new Error(`${errorPrefix} No entity type found for entity "${matchedEntity}".`);
+              throw new Error(
+                `${errorPrefix} Please add a "snips" property for entity "${matchedEntity}"`,
+              );
             }
 
             // For every entity defined in an intent phrase, this takes the last data entry,
