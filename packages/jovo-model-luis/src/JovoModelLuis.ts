@@ -36,17 +36,14 @@ export class JovoModelLuis extends JovoModel {
     const jovoModel: JovoModelData = {
       version: '4.0',
       invocation: '',
-      intents: [],
-      entityTypes: [],
+      intents: {},
+      entityTypes: {},
     };
 
     let entityType: EntityType;
     let entityTypeValue: EntityTypeValue;
     for (const closedList of inputData.closedLists) {
-      entityType = {
-        name: closedList.name,
-        values: [],
-      };
+      entityType = { values: [] };
 
       if (closedList.subLists === undefined) {
         continue;
@@ -63,21 +60,17 @@ export class JovoModelLuis extends JovoModel {
         entityType.values!.push(entityTypeValue);
       }
 
-      jovoModel.entityTypes!.push(entityType);
+      jovoModel.entityTypes![closedList.name] = entityType;
     }
 
-    const tempIntents: {
-      [key: string]: Intent;
-    } = {};
+    const tempIntents: Record<string, Intent> = {};
 
-    const entityNamesByIntent: {
-      [key: string]: string[];
-    } = {};
+    const entityNamesByIntent: Record<string, string[]> = {};
+
     for (const utterance of inputData.utterances) {
       let phraseText = utterance.text;
       if (tempIntents[utterance.intent] === undefined) {
         tempIntents[utterance.intent] = {
-          name: utterance.intent,
           phrases: [],
         };
       }
@@ -112,27 +105,25 @@ export class JovoModelLuis extends JovoModel {
 
     // Now that we did itterate over all utterances we can add all the found intents
     for (const intentName of Object.keys(entityNamesByIntent)) {
-      tempIntents[intentName].entities = [];
+      tempIntents[intentName].entities = {};
       for (const entityName of entityNamesByIntent[intentName]) {
         if (entityName.startsWith('builtin.')) {
           // Is a built-in luis type
-          tempIntents[intentName].entities!.unshift({
-            name: entityName.slice(8),
+          tempIntents[intentName].entities![entityName.slice(8)] = {
             type: {
               luis: entityName,
             },
-          });
+          };
         } else {
           // Is a regular type
-          tempIntents[intentName].entities!.unshift({
-            name: entityName,
+          tempIntents[intentName].entities![entityName] = {
             type: entityName,
-          });
+          };
         }
       }
     }
 
-    jovoModel.intents = Object.values(tempIntents);
+    jovoModel.intents = tempIntents;
 
     return jovoModel;
   }
@@ -148,13 +139,12 @@ export class JovoModelLuis extends JovoModel {
 
     if (model.intents !== undefined) {
       // Get all the utterances and entities
-      for (const intent of model.intents) {
-        luisIntents.push({
-          name: intent.name,
-        });
+      for (const [intentKey, intentData] of Object.entries(model.intents)) {
+        luisIntents.push({ name: intentKey });
 
         intentInformation = this.getIntentInformation(
-          intent,
+          intentKey,
+          intentData,
           model.entityTypes,
           entityTypeNameUsedCounter,
         );
@@ -180,21 +170,21 @@ export class JovoModelLuis extends JovoModel {
     let tempSubLists: LuisModelClosedSubList[];
     let tempSubList: LuisModelClosedSubList;
     if (model.entityTypes !== undefined) {
-      for (const entityType of model.entityTypes) {
-        if (entityType.name.startsWith('builtin.')) {
+      for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes)) {
+        if (entityTypeKey.startsWith('builtin.')) {
           // Skip the builtin types
           continue;
         }
 
         tempSubLists = [];
 
-        if (entityType.values === undefined) {
+        if (entityTypeData.values === undefined) {
           // If an EntityType does not have any values defined
           // for some reason, skip it.
           continue;
         }
 
-        for (const typeValue of entityType.values) {
+        for (const typeValue of entityTypeData.values) {
           tempSubList = {
             canonicalForm: typeValue.value,
           };
@@ -207,7 +197,7 @@ export class JovoModelLuis extends JovoModel {
         }
 
         luisClosedLists.push({
-          name: entityType.name,
+          name: entityTypeKey,
           subLists: tempSubLists,
         });
       }
@@ -242,8 +232,9 @@ export class JovoModelLuis extends JovoModel {
   }
 
   static getIntentInformation(
-    intent: Intent,
-    entityTypes: EntityType[] | undefined,
+    intent: string,
+    intentData: Intent,
+    entityTypes: Record<string, EntityType> | undefined,
     entityTypeNameUsedCounter: EntityTypeNameUsedCounter,
   ): IntentInformation {
     const returnData: IntentInformation = {
@@ -263,11 +254,11 @@ export class JovoModelLuis extends JovoModel {
           [key: string]: string;
         };
 
-    if (intent.phrases) {
-      for (const phrase of intent.phrases) {
+    if (intentData.phrases) {
+      for (const phrase of intentData.phrases) {
         tempUtterance = {
           text: phrase,
-          intent: intent.name,
+          intent,
           entities: [],
         };
 
@@ -280,13 +271,13 @@ export class JovoModelLuis extends JovoModel {
             // Cut the curly braces away
             entityName = entityName.slice(1, -1);
 
-            if (intent.entities === undefined) {
+            if (intentData.entities === undefined) {
               // No entities are defined so the value is not an entity
               continue;
             }
 
             // Check if the value is really an entity
-            intentEntity = intent.entities.find((data) => data.name === entityName);
+            intentEntity = intentData.entities[entityName];
             if (intentEntity === undefined) {
               // No entity exists with that name so it is not an entity
               continue;
@@ -318,7 +309,7 @@ export class JovoModelLuis extends JovoModel {
               entityTypeName = entityTypeName as string;
             }
 
-            entityType = entityTypes.find((data) => data.name === entityTypeName);
+            entityType = entityTypes[entityTypeName];
             if (entityType === undefined) {
               throw new Error(
                 `EntityType "${entityTypeName}" is not defined but is used in phrase "${phrase}"!`,

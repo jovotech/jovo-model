@@ -30,12 +30,12 @@ export interface DialogflowLMIntent {
 }
 
 export interface IntentDialogflow extends Intent {
-  entities?: DialogflowIntentEntity[];
-  dialogflow?: IntentDialogflow;
+  entities?: Record<string, DialogflowIntentEntity>;
+  dialogflow?: DialogflowLMInputObject;
 }
 
 export interface DialogflowModel {
-  intents?: [DialogflowLMInputObject];
+  intents?: DialogflowLMInputObject[];
 }
 
 export interface DialogflowLMInputParameterObject {
@@ -69,7 +69,8 @@ export interface DialogflowEntityType extends EntityType {
 }
 
 export interface JovoModelDialogflowData extends JovoModelData {
-  entityTypes?: DialogflowEntityType[];
+  intents?: Record<string, IntentDialogflow>;
+  entityTypes?: Record<string, DialogflowEntityType>;
   dialogflow?: DialogflowModel;
 }
 

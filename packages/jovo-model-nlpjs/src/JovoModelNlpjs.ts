@@ -21,16 +21,15 @@ export class JovoModelNlpjs extends JovoModel {
     const jovoModel: JovoModelData = {
       version: '4.0',
       invocation: '',
-      intents: [],
-      entityTypes: [],
+      intents: {},
+      entityTypes: {},
     };
 
     if (inputData.data) {
       inputData.data.forEach((data: NlpjsData) => {
-        jovoModel.intents!.push({
-          name: data.intent,
+        jovoModel.intents![data.intent] = {
           phrases: data.utterances,
-        });
+        };
       });
     }
 
@@ -46,27 +45,31 @@ export class JovoModelNlpjs extends JovoModel {
     const entitiesMap: Record<string, string> = {};
 
     if (model.intents) {
-      model.intents.forEach((intent: Intent) => {
+      for (const [intentKey, intentData] of Object.entries(model.intents)) {
         const intentObj = {
-          intent: intent.name,
+          intent: intentKey,
           utterances: [],
         };
 
-        if (intent.entities) {
+        if (intentData.entities) {
           returnData.entities = {};
 
-          intent.entities.forEach((entity: IntentEntity) => {
-            if (entity.type && typeof entity.type === 'string') {
+          for (const [entityKey, entityData] of Object.entries(intentData.entities)) {
+            if (entityData.type && typeof entityData.type === 'string') {
               // inputsMap[input.name] = input.type;
-              entitiesMap[entity.type] = entity.name;
-            } else if (entity.type && typeof entity.type === 'object' && entity.type.nlpjs) {
+              entitiesMap[entityData.type] = entityKey;
+            } else if (
+              entityData.type &&
+              typeof entityData.type === 'object' &&
+              entityData.type.nlpjs
+            ) {
               // inputsMap[input.name] = input.type.nlpjs;
-              entitiesMap[entity.type.nlpjs] = entity.name;
+              entitiesMap[entityData.type.nlpjs] = entityKey;
             }
-          });
+          }
         }
-        if (intent.phrases) {
-          intent.phrases.forEach((phrase: string) => {
+        if (intentData.phrases) {
+          intentData.phrases.forEach((phrase: string) => {
             const matches = phrase.match(/\{([^}]+)\}/g);
 
             if (matches) {
@@ -85,25 +88,26 @@ export class JovoModelNlpjs extends JovoModel {
           });
         }
         returnData.data.push(intentObj);
-      });
+      }
     }
 
     if (model.entityTypes) {
       returnData.entities = {};
-      model.entityTypes.forEach((entityType: EntityType) => {
+
+      for (const [entityTypeKey, entityTypeData] of Object.entries(model.entityTypes)) {
         const options: Record<string, string[]> = {};
 
-        entityType.values!.forEach((entityTypeValue: EntityTypeValue) => {
+        entityTypeData.values!.forEach((entityTypeValue: EntityTypeValue) => {
           const key = entityTypeValue.value;
           options[key] = [entityTypeValue.value];
           if (entityTypeValue.synonyms) {
             options[key] = options[key].concat(entityTypeValue.synonyms);
           }
         });
-        returnData.entities![entitiesMap[entityType.name]] = {
+        returnData.entities![entitiesMap[entityTypeKey]] = {
           options,
         };
-      });
+      }
     }
 
     return [

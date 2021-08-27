@@ -259,16 +259,14 @@ describe('JovoModelDialogflow.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'Welcome',
+          intents: {
+            Welcome: {
               dialogflow: {
                 webhookUsed: true,
               },
               phrases: ['hey', 'howdy'],
             },
-            {
-              name: 'RestaurantSearch',
+            RestaurantSearch: {
               dialogflow: {
                 webhookUsed: true,
               },
@@ -278,25 +276,21 @@ describe('JovoModelDialogflow.ts', () => {
                 'show me {cuisine} restaurants',
                 'show me a {cuisine} place in the {location}',
               ],
-              entities: [
-                {
-                  name: 'cuisine',
+              entities: {
+                cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'location',
+                location: {
                   type: 'Location',
                 },
-                {
-                  name: 'plates',
+                plates: {
                   type: 'Plates',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Cuisine',
+          },
+          entityTypes: {
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -308,8 +302,7 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Location',
+            Location: {
               values: [
                 {
                   value: 'centre',
@@ -317,8 +310,7 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Plates',
+            Plates: {
               values: [
                 {
                   value: 'beans',
@@ -334,8 +326,7 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
-            {
-              name: 'OrderCode',
+            OrderCode: {
               dialogflow: {
                 isRegexp: true,
               },
@@ -345,7 +336,7 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
     ];
@@ -371,42 +362,35 @@ describe('JovoModelDialogflow.ts', () => {
           data: {
             version: '4.0',
             invocation: 'my test app',
-            intents: [
-              {
-                name: 'Welcome',
+            intents: {
+              Welcome: {
                 phrases: ['hey', 'howdy'],
               },
-              {
-                name: 'RestaurantSearch',
+              RestaurantSearch: {
                 phrases: [
                   "i'm looking for a place to eat",
                   "i'm looking for a place to eat {plates}",
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                entities: [
-                  {
-                    name: 'cuisine',
+                entities: {
+                  cuisine: {
                     type: 'Cuisine',
                   },
-                  {
-                    name: 'location',
+                  location: {
                     type: 'Location',
                   },
-                  {
-                    name: 'plates',
+                  plates: {
                     type: 'Plates',
                   },
-                  {
-                    name: 'ordercode',
+                  ordercode: {
                     type: 'OrderCode',
                   },
-                ],
+                },
               },
-            ],
-            entityTypes: [
-              {
-                name: 'Cuisine',
+            },
+            entityTypes: {
+              Cuisine: {
                 values: [
                   {
                     id: 1,
@@ -422,8 +406,7 @@ describe('JovoModelDialogflow.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Location',
+              Location: {
                 values: [
                   {
                     value: 'centre',
@@ -431,8 +414,7 @@ describe('JovoModelDialogflow.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Plates',
+              Plates: {
                 values: [
                   {
                     value: 'beans',
@@ -448,8 +430,7 @@ describe('JovoModelDialogflow.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'OrderCode',
+              OrderCode: {
                 dialogflow: {
                   isRegexp: true,
                 },
@@ -459,7 +440,7 @@ describe('JovoModelDialogflow.ts', () => {
                   },
                 ],
               },
-            ],
+            },
           },
         },
         result: [
@@ -718,7 +699,7 @@ describe('JovoModelDialogflow.ts', () => {
 
     for (const testData of testsData) {
       const jovoModel = new JovoModelDialogflow(
-        testData.input.data as JovoModelData,
+        testData.input.data as unknown as JovoModelData,
         testData.input.locale,
       );
       test(testData.description, () => {

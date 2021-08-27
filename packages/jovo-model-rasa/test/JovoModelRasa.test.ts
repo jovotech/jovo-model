@@ -36,13 +36,12 @@ describe('JovoModelRasa.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          entityTypes: [],
-          intents: [
-            {
-              name: 'greet',
+          entityTypes: {},
+          intents: {
+            greet: {
               phrases: ['hey', 'howdy'],
             },
-          ],
+          },
         },
       },
       {
@@ -115,29 +114,25 @@ describe('JovoModelRasa.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'restaurant_search',
+          intents: {
+            restaurant_search: {
               phrases: [
                 "i'm looking for a place to eat",
                 'show me {Cuisine} restaurants',
                 'show me a {Cuisine} place in the {Location}',
               ],
-              entities: [
-                {
-                  name: 'Cuisine',
+              entities: {
+                Cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'Location',
+                Location: {
                   type: 'Location',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Cuisine',
+          },
+          entityTypes: {
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -149,8 +144,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Location',
+            Location: {
               values: [
                 {
                   value: 'centre',
@@ -158,7 +152,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
       {
@@ -210,25 +204,21 @@ describe('JovoModelRasa.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'restaurant_search',
+          intents: {
+            restaurant_search: {
               phrases: ['show me a {Cuisine} place which sells {Plates}'],
-              entities: [
-                {
-                  name: 'Cuisine',
+              entities: {
+                Cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'Plates',
+                Plates: {
                   type: 'Plates',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Plates',
+          },
+          entityTypes: {
+            Plates: {
               values: [
                 {
                   value: 'beans',
@@ -244,8 +234,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Cuisine',
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -253,7 +242,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
       {
@@ -352,38 +341,32 @@ describe('JovoModelRasa.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'greet',
+          intents: {
+            greet: {
               phrases: ['hey', 'howdy'],
             },
-            {
-              name: 'restaurant_search',
+            restaurant_search: {
               phrases: [
                 "i'm looking for a place to eat",
                 "i'm looking for a place to eat {Plates}",
                 'show me {Cuisine} restaurants',
                 'show me a {Cuisine} place in the {Location}',
               ],
-              entities: [
-                {
-                  name: 'Plates',
+              entities: {
+                Plates: {
                   type: 'Plates',
                 },
-                {
-                  name: 'Cuisine',
+                Cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'Location',
+                Location: {
                   type: 'Location',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Plates',
+          },
+          entityTypes: {
+            Plates: {
               values: [
                 {
                   value: 'beans',
@@ -399,8 +382,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Cuisine',
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -408,8 +390,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Location',
+            Location: {
               values: [
                 {
                   value: 'centre',
@@ -417,7 +398,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
     ];
@@ -443,12 +424,11 @@ describe('JovoModelRasa.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            intents: [
-              {
-                name: 'greet',
+            intents: {
+              greet: {
                 phrases: ['hey', 'howdy'],
               },
-            ],
+            },
           },
         },
         result: [
@@ -483,29 +463,25 @@ describe('JovoModelRasa.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            intents: [
-              {
-                name: 'restaurant_search',
+            intents: {
+              restaurant_search: {
                 phrases: [
                   "i'm looking for a place to eat",
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                entities: [
-                  {
-                    name: 'cuisine',
+                entities: {
+                  cuisine: {
                     type: 'Cuisine',
                   },
-                  {
-                    name: 'location',
+                  location: {
                     type: 'Location',
                   },
-                ],
+                },
               },
-            ],
-            entityTypes: [
-              {
-                name: 'Cuisine',
+            },
+            entityTypes: {
+              Cuisine: {
                 values: [
                   {
                     id: 1,
@@ -521,8 +497,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Location',
+              Location: {
                 values: [
                   {
                     value: 'centre',
@@ -530,7 +505,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-            ],
+            },
           },
         },
         result: [
@@ -603,27 +578,23 @@ describe('JovoModelRasa.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            intents: [
-              {
-                name: 'HelloWorldIntent',
+            intents: {
+              HelloWorldIntent: {
                 phrases: ['hello', 'say hello', 'say hello world'],
               },
-              {
-                name: 'MyNameIsIntent',
+              MyNameIsIntent: {
                 phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
-                entities: [
-                  {
-                    name: 'name',
+                entities: {
+                  name: {
                     type: {
                       rasa: 'PERSON',
                     },
                   },
-                ],
+                },
               },
-            ],
-            entityTypes: [
-              {
-                name: 'PERSON',
+            },
+            entityTypes: {
+              PERSON: {
                 values: [
                   {
                     value: 'Alex',
@@ -651,7 +622,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-            ],
+            },
           },
         },
         result: [
@@ -744,9 +715,8 @@ describe('JovoModelRasa.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            entityTypes: [
-              {
-                name: 'Cuisine',
+            entityTypes: {
+              Cuisine: {
                 values: [
                   {
                     id: 1,
@@ -756,8 +726,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Plates',
+              Plates: {
                 values: [
                   {
                     value: 'beans',
@@ -773,7 +742,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-            ],
+            },
           },
         },
         result: [
@@ -806,38 +775,32 @@ describe('JovoModelRasa.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            intents: [
-              {
-                name: 'greet',
+            intents: {
+              greet: {
                 phrases: ['hey', 'howdy'],
               },
-              {
-                name: 'restaurant_search',
+              restaurant_search: {
                 phrases: [
                   "i'm looking for a place to eat",
                   "i'm looking for a place to eat {plates}",
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                entities: [
-                  {
-                    name: 'cuisine',
+                entities: {
+                  cuisine: {
                     type: 'Cuisine',
                   },
-                  {
-                    name: 'location',
+                  location: {
                     type: 'Location',
                   },
-                  {
-                    name: 'plates',
+                  plates: {
                     type: 'Plates',
                   },
-                ],
+                },
               },
-            ],
-            entityTypes: [
-              {
-                name: 'Cuisine',
+            },
+            entityTypes: {
+              Cuisine: {
                 values: [
                   {
                     id: 1,
@@ -853,8 +816,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Location',
+              Location: {
                 values: [
                   {
                     value: 'centre',
@@ -862,8 +824,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Plates',
+              Plates: {
                 values: [
                   {
                     value: 'beans',
@@ -879,7 +840,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-            ],
+            },
           },
         },
         result: [
@@ -975,7 +936,7 @@ describe('JovoModelRasa.ts', () => {
 
     for (const testData of testsData) {
       const jovoModel = new JovoModelRasa(
-        testData.input.data as JovoModelData,
+        testData.input.data as unknown as JovoModelData,
         testData.input.locale,
       );
       test(testData.description, () => {
