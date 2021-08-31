@@ -1,135 +1,185 @@
 {
-	"type": "object",
-	"properties": {
-		"inputTypes": {
-			"type": "array",
-			"items": {
-				"$ref": "#/definitions/InputType"
-			}
-		},
-		"intents": {
-			"type": "array",
-			"items": {
-				"$ref": "#/definitions/Intent"
-			}
-		},
-		"invocation": {
-			"anyOf": [
-				{
-					"$ref": "#/definitions/InvocationObject"
-				},
-				{
-					"type": "string"
-				}
-			]
-		}
-	},
-	"required": [
-		"invocation"
-	],
-	"definitions": {
-		"InputType": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"values": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/InputTypeValue"
-					}
-				}
-			},
-			"required": [
-				"name"
-			]
-		},
-		"InputTypeValue": {
-			"type": "object",
-			"properties": {
-				"value": {
-					"type": "string"
-				},
-				"id": {
-					"type": "string"
-				},
-				"key": {
-					"type": "string"
-				},
-				"synonyms": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				}
-			},
-			"required": [
-				"value"
-			]
-		},
-		"Intent": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"phrases": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"samples": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"inputs": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/IntentInput"
-					}
-				}
-			},
-			"required": [
-				"name"
-			]
-		},
-		"IntentInput": {
-			"type": "object",
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"text": {
-					"type": "string"
-				},
-				"type": {
-					"anyOf": [
-						{
-							"$ref": "#/definitions/Record<string,string>"
-						},
-						{
-							"type": "string"
-						}
-					]
-				}
-			},
-			"required": [
-				"name"
-			]
-		},
-		"Record<string,string>": {
-			"type": "object"
-		},
-		"InvocationObject": {
-			"type": "object",
-			"additionalProperties": {
-				"type": "string"
-			}
-		}
-	},
-	"$schema": "http://json-schema.org/draft-07/schema#"
+  "type": "object",
+  "properties": {
+    "inputTypes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/InputType"
+      }
+    },
+    "entityTypes": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/EntityType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "intents": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Intent"
+          }
+        },
+        {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/Intent"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "invocation": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/InvocationObject"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "required": ["invocation"],
+  "definitions": {
+    "EntityType": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityTypeValue"
+          }
+        }
+      }
+    },
+    "InputType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityTypeValue"
+          }
+        }
+      },
+      "required": ["name"]
+    },
+    "EntityTypeValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["value"]
+    },
+    "Intent": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phrases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IntentInput"
+          }
+        },
+        "entities": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/IntentEntity"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "IntentInput": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Record<string,string>"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": ["name"]
+    },
+    "IntentEntity": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Record<string,string>"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "Record<string,string>": {
+      "type": "object"
+    },
+    "InvocationObject": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
 }
+

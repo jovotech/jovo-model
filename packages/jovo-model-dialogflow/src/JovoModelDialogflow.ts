@@ -1,8 +1,12 @@
 import {
   EntityType,
   EntityTypeValue,
+  Intent,
   IntentEntity,
   JovoModel,
+  JovoModelData,
+  JovoModelDataV3,
+  JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
 import _difference from 'lodash.difference';
@@ -17,8 +21,6 @@ import {
   DialogflowLMInputParameterObject,
   DialogflowLMIntent,
   DialogflowLMIntentData,
-  IntentDialogflow,
-  JovoModelDialogflowData,
 } from '.';
 import * as JovoModelDialogflowValidator from '../validators/JovoModelDialogflowData.json';
 import { DIALOGFLOW_LM_ENTITY } from './utils';
@@ -56,12 +58,12 @@ const DEFAULT_ENTITY = {
 export class JovoModelDialogflow extends JovoModel {
   static MODEL_KEY = 'dialogflow';
 
-  static toJovoModel(inputData: NativeFileInformation[], locale: string): JovoModelDialogflowData {
-    const jovoModel: JovoModelDialogflowData = {
+  static toJovoModel(inputData: NativeFileInformation[], locale: string): JovoModelData {
+    const jovoModel: JovoModelData = {
       version: '4.0',
       invocation: '',
-      intents: [],
-      entityTypes: [],
+      intents: {},
+      entityTypes: {},
     };
 
     const intentFiles = inputData.filter((file) => {
@@ -88,42 +90,36 @@ export class JovoModelDialogflow extends JovoModel {
 
       const dialogFlowIntent = fileInformation.content;
 
-      const jovoIntent: IntentDialogflow = {
-        name: dialogFlowIntent.name,
-        phrases: [],
-      };
+      const jovoIntent: Intent = { phrases: [] };
       // skip default intent properties
       JovoModelDialogflow.skipDefaultIntentProps(jovoIntent, dialogFlowIntent, locale);
 
       // is fallback intent?
       if (dialogFlowIntent.fallbackIntent === true) {
-        const fallbackIntent = jovoIntent.dialogflow;
-        fallbackIntent!.name = dialogFlowIntent.name;
+        const fallbackIntent: DialogflowLMInputObject = jovoIntent.dialogflow!;
+        fallbackIntent.name = dialogFlowIntent.name;
         _set(jovoModel, 'dialogflow.intents', [fallbackIntent]);
         continue;
       }
 
       // is welcome intent?
       if (_get(dialogFlowIntent, 'events[0].name') === 'WELCOME') {
-        const welcomeIntent = jovoIntent.dialogflow;
-        welcomeIntent!.name = dialogFlowIntent.name;
+        const welcomeIntent: DialogflowLMInputObject = jovoIntent.dialogflow!;
+        welcomeIntent.name = dialogFlowIntent.name;
 
         if (!_get(jovoModel, 'dialogflow.intents')) {
           _set(jovoModel, 'dialogflow.intents', [welcomeIntent]);
         } else {
-          // @ts-ignore
-          jovoModel.dialogflow.intents.push(welcomeIntent);
+          jovoModel.dialogflow!.intents!.push(welcomeIntent);
         }
         continue;
       }
 
-      const entities: IntentEntity[] = [];
+      const entities: Record<string, IntentEntity> = {};
       if (dialogFlowIntent.responses) {
         for (const response of dialogFlowIntent.responses) {
           for (const parameter of _get(response, 'parameters', [])) {
-            const entity: IntentEntity = {
-              name: parameter.name,
-            };
+            const entity: IntentEntity = {};
             if (parameter.dataType) {
               if (parameter.dataType.startsWith('@sys.')) {
                 entity.type = {
@@ -132,13 +128,13 @@ export class JovoModelDialogflow extends JovoModel {
               } else {
                 entity.type = parameter.dataType.substr(1);
               }
-              entities.push(entity);
+              entities[parameter.name] = entity;
             }
           }
         }
       }
 
-      if (entities.length > 0) {
+      if (Object.keys(entities).length > 0) {
         jovoIntent.entities = entities;
       }
 
@@ -159,9 +155,9 @@ export class JovoModelDialogflow extends JovoModel {
             // add sample text to entity type
             if (data.text !== data.alias) {
               if (jovoIntent.entities) {
-                for (const entity of jovoIntent.entities) {
-                  if (entity.name === data.alias) {
-                    entity.text = data.text;
+                for (const [entityKey, entityData] of Object.entries(jovoIntent.entities)) {
+                  if (entityKey === data.alias) {
+                    entityData.text = data.text;
                   }
                 }
               }
@@ -171,7 +167,7 @@ export class JovoModelDialogflow extends JovoModel {
         }
       }
 
-      jovoModel.intents!.push(jovoIntent);
+      jovoModel.intents![dialogFlowIntent.name] = jovoIntent;
     }
 
     const entityFiles = inputData.filter((file) => {
@@ -193,9 +189,7 @@ export class JovoModelDialogflow extends JovoModel {
         continue;
       }
       const dialogFlowEntity = fileInformation.content;
-      const jovoInput: EntityType = {
-        name: dialogFlowEntity.name,
-      };
+      const jovoInput: EntityType = {};
       // skip default intent properties
       JovoModelDialogflow.skipDefaultEntityProps(jovoInput, dialogFlowEntity);
 
@@ -236,7 +230,7 @@ export class JovoModelDialogflow extends JovoModel {
         }
       }
 
-      jovoModel.entityTypes!.push(jovoInput);
+      jovoModel.entityTypes![dialogFlowEntity.name] = jovoInput;
     }
 
     if (jovoModel.entityTypes!.length === 0) {
@@ -246,119 +240,131 @@ export class JovoModelDialogflow extends JovoModel {
     return jovoModel;
   }
 
-  static fromJovoModel(model: JovoModelDialogflowData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(
+    model: JovoModelData | JovoModelDataV3,
+    locale: string,
+  ): NativeFileInformation[] {
     const returnFiles: NativeFileInformation[] = [];
 
-    for (const intent of (model.intents || []) as IntentDialogflow[]) {
+    const intents = JovoModelHelper.getIntents(model);
+    for (const [intentKey, intentData] of Object.entries(intents)) {
       const dfIntentObj: DialogflowLMInputObject = {
         id: uuidv4(),
-        name: intent.name,
+        name: intentKey,
         auto: true,
         webhookUsed: true,
       };
 
       // handle intent entities
-      if (intent.entities) {
+      if (JovoModelHelper.hasEntities(model, intentKey)) {
         dfIntentObj.responses = [
           {
             parameters: [],
           },
         ];
 
-        for (const entity of intent.entities) {
+        const entities = JovoModelHelper.getEntities(model, intentKey);
+        for (const [entityKey, entityData] of Object.entries(entities)) {
           let parameterObj: DialogflowLMInputParameterObject = {
             isList: false,
-            name: entity.name,
-            value: '$' + entity.name,
+            name: entityKey,
+            value: `\$${entityKey}`,
             dataType: '',
           };
-          if (typeof entity.type === 'object') {
-            if (entity.type.dialogflow) {
-              if (entity.type.dialogflow.startsWith(BUILTIN_PREFIX)) {
-                parameterObj.dataType = entity.type.dialogflow;
+
+          if (typeof entityData.type === 'object') {
+            if (entityData.type.dialogflow) {
+              if (entityData.type.dialogflow.startsWith(BUILTIN_PREFIX)) {
+                parameterObj.dataType = entityData.type.dialogflow;
               } else {
-                entity.type = entity.type.dialogflow;
+                entityData.type = entityData.type.dialogflow;
               }
             } else {
-              throw new Error('Please add a dialogflow property for entity "' + entity.name + '"');
+              throw new Error(`Please add a dialogflow property for entity "${entityKey}"`);
             }
           }
 
           // handle custom entity types
           if (parameterObj.dataType === '') {
-            if (!entity.type) {
-              throw new Error('Invalid entity type in intent "' + intent.name + '"');
+            if (!entityData.type) {
+              throw new Error(`Invalid entity type in intent "${intentKey}"`);
             }
-            parameterObj.dataType = entity.type as string;
+            parameterObj.dataType = entityData.type as string;
             // throw error when no entityTypes object defined
-            if (!model.entityTypes) {
+            if (!JovoModelHelper.hasEntityTypes(model)) {
               throw new Error(
-                'Input type "' + parameterObj.dataType + '" must be defined in entityTypes',
+                `Input type "${parameterObj.dataType}" must be defined in entityTypes`,
               );
             }
 
             // find type in global entityTypes array
-            const matchedInputTypes = model.entityTypes.filter((item: EntityType) => {
-              return item.name === parameterObj.dataType;
-            });
+            const matchedEntityTypeName: string = parameterObj.dataType;
+            const matchedEntityType = JovoModelHelper.getEntityTypeByName(
+              model,
+              matchedEntityTypeName,
+            );
 
             parameterObj.dataType = '@' + parameterObj.dataType;
 
-            if (matchedInputTypes.length === 0) {
-              throw new Error(
-                'Input type "' + parameterObj.dataType + '" must be defined in entityTypes',
-              );
+            if (!matchedEntityType) {
+              if (JovoModelHelper.isJovoModelV3(model)) {
+                throw new Error(
+                  `Input type "${matchedEntityTypeName}" must be defined in inputTypes`,
+                );
+              } else {
+                throw new Error(
+                  `Entity type "${matchedEntityTypeName}" must be defined in entityTypes`,
+                );
+              }
             }
 
             // create alexaTypeObj from matched entity types
-            for (const matchedInputType of matchedInputTypes) {
-              let dfEntityObj: DialogflowLMEntity = {
-                ...DIALOGFLOW_LM_ENTITY,
-                id: uuidv4(),
-                name: matchedInputType.name,
-              };
+            let dfEntityObj: DialogflowLMEntity = {
+              ...DIALOGFLOW_LM_ENTITY,
+              id: uuidv4(),
+              name: matchedEntityTypeName,
+            };
 
-              if (matchedInputType.dialogflow) {
-                if (typeof matchedInputType.dialogflow === 'string') {
-                  dfEntityObj.name = matchedInputType.dialogflow;
-                } else {
-                  dfEntityObj = _merge(dfEntityObj, matchedInputType.dialogflow);
+            if (matchedEntityType.dialogflow) {
+              if (typeof matchedEntityType.dialogflow === 'string') {
+                dfEntityObj.name = matchedEntityType.dialogflow;
+              } else {
+                dfEntityObj = _merge(dfEntityObj, matchedEntityType.dialogflow);
+              }
+            }
+
+            returnFiles.push({
+              path: ['entities', `${matchedEntityTypeName}.json`],
+              content: dfEntityObj,
+            });
+
+            // create entries if matched entity type has values
+            if (matchedEntityType.values && matchedEntityType.values.length > 0) {
+              const entityValues = [];
+              // create dfEntityValueObj
+              for (const value of matchedEntityType.values) {
+                const dfEntityValueObj: DialogflowLMEntries = {
+                  value: value.value,
+                };
+
+                // save synonyms, if defined
+                if (!dfEntityObj.isEnum && !dfEntityObj.isRegexp) {
+                  dfEntityValueObj.synonyms = [value.value.replace(/[^0-9A-Za-zÀ-ÿ-_' ]/gi, '')];
+                  if (value.synonyms) {
+                    for (let i = 0; i < value.synonyms.length; i++) {
+                      value.synonyms[i] = value.synonyms[i].replace(/[^0-9A-Za-zÀ-ÿ-_' ]/gi, '');
+                    }
+
+                    dfEntityValueObj.synonyms = dfEntityValueObj.synonyms.concat(value.synonyms);
+                  }
                 }
+                entityValues.push(dfEntityValueObj);
               }
 
               returnFiles.push({
-                path: ['entities', matchedInputType.name + '.json'],
-                content: dfEntityObj,
+                path: ['entities', `${matchedEntityTypeName}_entries_${locale}.json`],
+                content: entityValues,
               });
-
-              // create entries if matched entity type has values
-              if (matchedInputType.values && matchedInputType.values.length > 0) {
-                const entityValues = [];
-                // create dfEntityValueObj
-                for (const value of matchedInputType.values) {
-                  const dfEntityValueObj: DialogflowLMEntries = {
-                    value: value.value,
-                  };
-
-                  // save synonyms, if defined
-                  if (!dfEntityObj.isEnum && !dfEntityObj.isRegexp) {
-                    dfEntityValueObj.synonyms = [value.value.replace(/[^0-9A-Za-zÀ-ÿ-_' ]/gi, '')];
-                    if (value.synonyms) {
-                      for (let i = 0; i < value.synonyms.length; i++) {
-                        value.synonyms[i] = value.synonyms[i].replace(/[^0-9A-Za-zÀ-ÿ-_' ]/gi, '');
-                      }
-
-                      dfEntityValueObj.synonyms = dfEntityValueObj.synonyms.concat(value.synonyms);
-                    }
-                  }
-                  entityValues.push(dfEntityValueObj);
-                }
-
-                returnFiles.push({
-                  path: ['entities', matchedInputType.name + '_entries_' + locale + '.json'],
-                  content: entityValues,
-                });
-              }
             }
           } else {
             // Parse system entities with default values for validation.
@@ -375,8 +381,8 @@ export class JovoModelDialogflow extends JovoModel {
 
             const dfEntityValueObj: DialogflowLMEntries[] = [
               {
-                value: entity.name,
-                synonyms: [entity.name],
+                value: entityKey,
+                synonyms: [entityKey],
               },
             ];
 
@@ -387,20 +393,20 @@ export class JovoModelDialogflow extends JovoModel {
           }
 
           // merges dialogflow specific data
-          if (entity.dialogflow) {
-            parameterObj = _merge(parameterObj, entity.dialogflow);
+          if (entityData.dialogflow) {
+            parameterObj = _merge(parameterObj, entityData.dialogflow);
           }
 
           dfIntentObj.responses[0].parameters.push(parameterObj);
         }
       }
 
-      if (_get(intent, 'dialogflow')) {
-        _merge(dfIntentObj, intent.dialogflow);
+      if (_get(intentData, 'dialogflow')) {
+        _merge(dfIntentObj, intentData.dialogflow);
       }
 
       returnFiles.push({
-        path: ['intents', intent.name + '.json'],
+        path: ['intents', `${intentKey}.json`],
         content: dfIntentObj,
       });
 
@@ -409,7 +415,7 @@ export class JovoModelDialogflow extends JovoModel {
       const dialogFlowIntentUserSays: DialogflowLMIntent[] = [];
       const re = /{(.*?)}/g;
 
-      const phrases = intent.phrases || [];
+      const phrases = intentData.phrases || [];
       // iterate through phrases and intent user says data objects
       for (const phrase of phrases) {
         let m;
@@ -446,10 +452,11 @@ export class JovoModelDialogflow extends JovoModel {
           };
 
           // add enityt sample text if available
-          if (intent.entities) {
-            for (const entities of intent.entities) {
-              if (entities.name === entity && entities.text) {
-                dataEntityObj.text = entities.text;
+          if (JovoModelHelper.hasEntities(model, intentKey)) {
+            const entities = JovoModelHelper.getEntities(model, intentKey);
+            for (const [entityKey, entityData] of Object.entries(entities)) {
+              if (entityKey === entity && entityData.text) {
+                dataEntityObj.text = entityData.text;
               }
             }
           }
@@ -494,7 +501,7 @@ export class JovoModelDialogflow extends JovoModel {
       }
       if (dialogFlowIntentUserSays.length > 0) {
         returnFiles.push({
-          path: ['intents', intent.name + '_usersays_' + locale + '.json'],
+          path: ['intents', `${intentKey}_usersays_${locale}.json`],
           content: dialogFlowIntentUserSays,
         });
       }
@@ -546,7 +553,7 @@ export class JovoModelDialogflow extends JovoModel {
   }
 
   static skipDefaultIntentProps(
-    jovoIntent: IntentDialogflow,
+    jovoIntent: Intent,
     dialogFlowIntent: DialogflowLMInputObject,
     locale: string,
   ) {
@@ -698,4 +705,3 @@ export class JovoModelDialogflow extends JovoModel {
     return jovoInput;
   }
 }
-

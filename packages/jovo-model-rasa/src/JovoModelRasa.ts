@@ -3,17 +3,15 @@ import {
   EntityTypeValue,
   Intent,
   IntentEntity,
+  IntentV3,
   JovoModel,
   JovoModelData,
+  JovoModelDataV3,
+  JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
-import {
-  JovoModelRasaData,
-  RasaCommonExample,
-  RasaEntitySynonym,
-  RasaLookupTable,
-  RasaNluData,
-} from '.';
+import { InputType } from 'zlib';
+import { RasaCommonExample, RasaEntitySynonym, RasaLookupTable, RasaNluData } from '.';
 import * as JovoModelRasaValidator from '../validators/JovoModelRasaData.json';
 
 export interface EntityTypeNameUsedCounter {
@@ -29,8 +27,8 @@ export class JovoModelRasa extends JovoModel {
     const jovoModel: JovoModelData = {
       version: '4.0',
       invocation: '',
-      intents: [],
-      entityTypes: [],
+      intents: {},
+      entityTypes: {},
     };
 
     const intentDirectory: {
@@ -66,10 +64,7 @@ export class JovoModelRasa extends JovoModel {
         }
 
         if (intentDirectory[example.intent] === undefined) {
-          intentDirectory[example.intent] = {
-            name: example.intent,
-            phrases: [],
-          };
+          intentDirectory[example.intent] = { phrases: [] };
         }
 
         // Make sure that the entities later in the text come first
@@ -104,7 +99,7 @@ export class JovoModelRasa extends JovoModel {
           // which gets added in the end to the model once everything
           // got processed.
           if (intentDirectory[example.intent].entities === undefined) {
-            intentDirectory[example.intent].entities = [];
+            intentDirectory[example.intent].entities = {};
           }
 
           // Prepare the directory for the entities for each intent
@@ -121,10 +116,7 @@ export class JovoModelRasa extends JovoModel {
 
             existingIntentEntitiesDirectory[example.intent].push(entityName);
 
-            intentDirectory[example.intent].entities!.push({
-              name: entityName,
-              type: entityName,
-            });
+            intentDirectory[example.intent].entities![entityName] = { type: entityName };
           }
         }
 
@@ -164,7 +156,6 @@ export class JovoModelRasa extends JovoModel {
         }
 
         entityType = {
-          name: entityTypeName,
           values: values.map((value) => {
             // Add all the entityType values with the synonyms
             // which got found
@@ -183,16 +174,19 @@ export class JovoModelRasa extends JovoModel {
           }),
         };
 
-        jovoModel.entityTypes!.push(entityType);
+        jovoModel.entityTypes![entityTypeName] = entityType;
       }
     }
 
-    jovoModel.intents = Object.values(intentDirectory);
+    jovoModel.intents = intentDirectory;
 
     return jovoModel;
   }
 
-  static fromJovoModel(model: JovoModelRasaData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(
+    model: JovoModelData | JovoModelDataV3,
+    locale: string,
+  ): NativeFileInformation[] {
     const returnData: RasaNluData = {
       common_examples: [],
       entity_synonyms: [],
@@ -202,14 +196,17 @@ export class JovoModelRasa extends JovoModel {
     const entityTypeNameUsedCounter: EntityTypeNameUsedCounter = {};
 
     let rasaExample: RasaCommonExample | undefined;
-    if (model.intents !== undefined) {
-      for (const intent of model.intents) {
-        if (intent.phrases) {
-          for (const phrase of intent.phrases) {
+    if (JovoModelHelper.hasIntents(model)) {
+      const intents = JovoModelHelper.getIntents(model);
+      for (const [intentKey, intentData] of Object.entries(intents)) {
+        if (intentData.phrases) {
+          for (const phrase of intentData.phrases) {
             rasaExample = this.getRasaExampleFromPhrase(
+              model,
               phrase,
-              intent,
-              model.entityTypes,
+              intentKey,
+              intentData,
+              JovoModelHelper.getEntityTypes(model),
               entityTypeNameUsedCounter,
             );
             returnData.common_examples.push(rasaExample);
@@ -220,11 +217,12 @@ export class JovoModelRasa extends JovoModel {
 
     let saveAsLookupTable: boolean;
     let rasaSynonym: RasaEntitySynonym;
-    if (model.entityTypes !== undefined) {
-      for (const entityType of model.entityTypes) {
+    if (JovoModelHelper.hasEntityTypes(model)) {
+      const entityTypes = JovoModelHelper.getEntityTypes(model);
+      for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
         saveAsLookupTable = true;
 
-        if (entityType.values === undefined) {
+        if (entityTypeData.values === undefined) {
           // If an EntityType does not have any values defined
           // for some reason skip it.
           continue;
@@ -232,7 +230,7 @@ export class JovoModelRasa extends JovoModel {
 
         // Check it it should be saved under synonyms or lookupTable
 
-        for (const typeValue of entityType.values) {
+        for (const typeValue of entityTypeData.values) {
           if (Object.keys(typeValue).length !== 1 || typeValue.value === undefined) {
             // It can only be saved as lookupTable if it does not
             // have any other properties than "value"
@@ -244,13 +242,13 @@ export class JovoModelRasa extends JovoModel {
         if (saveAsLookupTable === true) {
           // Save a lookupTable
           returnData.lookup_tables!.push({
-            name: entityType.name,
+            name: entityTypeKey,
             // TODO: remove the !
-            elements: entityType.values.map((data) => data.value),
+            elements: entityTypeData.values.map((data) => data.value),
           });
         } else {
           // Save as synonyms
-          for (const typeValue of entityType.values) {
+          for (const typeValue of entityTypeData.values) {
             rasaSynonym = {
               value: typeValue.value,
               synonyms: [],
@@ -277,14 +275,16 @@ export class JovoModelRasa extends JovoModel {
   }
 
   static getRasaExampleFromPhrase(
+    model: JovoModelData | JovoModelDataV3,
     phrase: string,
-    intent: Intent,
-    entityTypes: EntityType[] | undefined,
+    intent: string,
+    intentData: Intent | IntentV3,
+    entityTypes: Record<string, EntityType | InputType>,
     entityTypeNameUsedCounter: EntityTypeNameUsedCounter,
   ): RasaCommonExample {
     const returnData: RasaCommonExample = {
       text: phrase,
-      intent: intent.name,
+      intent,
       entities: [],
     };
 
@@ -307,31 +307,31 @@ export class JovoModelRasa extends JovoModel {
         // Cut the curly braces away
         entityName = entityName.slice(1, -1);
 
-        if (intent.entities === undefined) {
+        if (!JovoModelHelper.hasEntities(model, intent)) {
           // No entities are defined so the value is not an entity
           continue;
         }
 
         // Check if the value is really an entity
-        intentEntity = intent.entities.find((data) => data.name === entityName);
-        if (intentEntity === undefined) {
+        intentEntity = JovoModelHelper.getEntityByName(model, intent, entityName);
+        if (!intentEntity) {
           // No entity exists with that name so it is not an entity
           continue;
         }
 
-        if (intentEntity.type === undefined) {
-          throw new Error(
-            `No type is defined for entity "${entityName}" which is used in phrase "${phrase}"!`,
-          );
+        if (!intentEntity.type) {
+          if (JovoModelHelper.isJovoModelV3(model)) {
+            throw new Error(
+              `No type is defined for input "${entityName}" which is used in phrase "${phrase}"!`,
+            );
+          } else {
+            throw new Error(
+              `No type is defined for entity "${entityName}" which is used in phrase "${phrase}"!`,
+            );
+          }
         }
 
         // Get the EntityType data to get an example value to replace the placeholder with
-        if (entityTypes === undefined) {
-          throw new Error(
-            `No EntityTypes are defined but type "${entityName}" is used in phrase "${phrase}"!`,
-          );
-        }
-
         entityTypeName = intentEntity.type;
         if (typeof intentEntity.type === 'object') {
           if (intentEntity.type.rasa === undefined) {
@@ -345,8 +345,8 @@ export class JovoModelRasa extends JovoModel {
           entityTypeName = entityTypeName as string;
         }
 
-        entityType = entityTypes.find((data) => data.name === entityTypeName);
-        if (entityType === undefined) {
+        entityType = JovoModelHelper.getEntityTypeByName(model, entityTypeName);
+        if (!entityType) {
           throw new Error(
             `EntityType "${entityTypeName}" is not defined but is used in phrase "${phrase}"!`,
           );

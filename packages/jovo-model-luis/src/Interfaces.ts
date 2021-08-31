@@ -1,9 +1,3 @@
-import { JovoModelData } from '@jovotech/model';
-
-// Jovo Model Luis Format
-
-export interface JovoModelLuisData extends JovoModelData {}
-
 // Native Luis JSON Format
 
 export interface LuisModelIntent {

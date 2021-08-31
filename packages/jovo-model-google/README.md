@@ -4,6 +4,9 @@ Learn how to turn the Jovo Model into a Conversational Actions model for Google 
 
 - [Introduction](#introduction)
 - [Google Assistant-specific Elements in the Jovo Model](#google-assistant-specific-elements-in-the-jovo-model)
+  - [Invocation](#invocation)
+  - [Built-in Types](#built-in-types)
+  - [Google Assistant-only Elements](#google-assistant-only-elements)
 - [Using the Google Assistant Jovo Model with the Jovo CLI](#using-the-google-assistant-jovo-model-with-the-jovo-cli)
 - [Using the Google Assistant Jovo Model npm Package](#using-the-google-assistant-jovo-model-npm-package)
 
@@ -23,7 +26,7 @@ You can define a Google Assistant-specific invocation name like this:
 
 ```js
 "invocation": {
-  "googleAction": "my test action"
+  "googleAssistant": "my test action"
   // Other platforms
 },
 ```
@@ -32,10 +35,10 @@ You can define a Google Assistant-specific invocation name like this:
 
 > Find all built-in types in the official [Conversational Action System Types Reference](https://developers.google.com/assistant/conversational/types#system_types).
 
-If your intent uses an input ([see how they are added to the Jovo Model](http://jovo.tech/marketplace/jovo-model#intents)) that requires a Google Assistant system type, you can add it like this:
+If your intent uses an entity ([see how they are added to the Jovo Model](http://jovo.tech/marketplace/jovo-model#intents)) that requires a Google Assistant system type, you can add it like this:
 
 ```js
-"inputs": [
+"entities": [
   {
     "name": "number",
     "type": {
@@ -76,28 +79,15 @@ This object follows the structure of the Google Assistant Model .yaml files in J
 
 By using the [`jovo build` command](https://www.jovo.tech/marketplace/jovo-cli/build), you can turn your Jovo Model files in the `models` folder in your Jovo project into Conversational Action specific files.
 
-Make sure that you remove the `dialogflow` part in your `project.js` file. There is no need to specify an `nlu` as the built-in service is used.
+[Learn more in the Google Assistant platform documentation](https://github.com/jovotech/jovo-framework/tree/v4dev/platforms/platform-googleassistant).
 
-```javascript
-// Before
-googleAction: {
-  nlu: 'dialogflow',
-},
-
-// After
-googleAction: {
-
-},
-```
-
-After successfully running `jovo build`, you can find the files inside the `platforms/googleAction` folder.
 
 ## Using the Google Assistant Jovo Model npm Package
 
 Install the package like this:
 
 ```sh
-$ npm install jovo-model-google --save
+$ npm install @jovotech/model-googleassistant
 ```
 
 You can learn more about all the Jovo Model features here: [Using the Jovo Model npm Packages](http://jovo.tech/marketplace/jovo-model#using-the-jovo-model-npm-packages).

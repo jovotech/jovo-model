@@ -1,5 +1,3 @@
-import { EntityType, Intent, IntentEntity, JovoModelData } from '@jovotech/model';
-
 export interface DialogflowLMInputObject {
   id: string;
   name: string;
@@ -29,13 +27,8 @@ export interface DialogflowLMIntent {
   lang: string;
 }
 
-export interface IntentDialogflow extends Intent {
-  entities?: DialogflowIntentEntity[];
-  dialogflow?: IntentDialogflow;
-}
-
 export interface DialogflowModel {
-  intents?: [DialogflowLMInputObject];
+  intents?: DialogflowLMInputObject[];
 }
 
 export interface DialogflowLMInputParameterObject {
@@ -62,17 +55,4 @@ export interface DialogflowLMEntity {
 export interface DialogflowLMEntries {
   value: string;
   synonyms?: string[];
-}
-
-export interface DialogflowEntityType extends EntityType {
-  dialogflow?: string | object;
-}
-
-export interface JovoModelDialogflowData extends JovoModelData {
-  entityTypes?: DialogflowEntityType[];
-  dialogflow?: DialogflowModel;
-}
-
-export interface DialogflowIntentEntity extends IntentEntity {
-  dialogflow?: string | object;
 }

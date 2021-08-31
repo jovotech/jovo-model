@@ -1,13 +1,15 @@
-import { EntityType, EntityTypeValue, Intent, IntentEntity, JovoModelData } from './Interfaces';
 import {
-  EntityTypeIndex,
-  IntentIndex,
-  JovoModelHelper,
-  ModelEntityType,
-  ModelEntityTypeValue,
-  ModelIntent,
-  ModelIntentEntity,
-} from './JovoModelHelper';
+  EntityType,
+  EntityTypeValue,
+  InputType,
+  Intent,
+  IntentEntity,
+  IntentInput,
+  IntentV3,
+  JovoModelData,
+  JovoModelDataV3,
+} from './Interfaces';
+import { JovoModelHelper, ModelEntityType, ModelEntityTypeValue } from './JovoModelHelper';
 
 type JovoModelHelperKeys = keyof typeof JovoModelHelper;
 type Keys = Exclude<JovoModelHelperKeys, 'prototype' | 'new'>;
@@ -37,100 +39,101 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
   private static $initialized = false;
 
   addEntity!: (
-    intent: ModelIntent,
-    input: ModelIntentEntity,
+    intent: string,
+    entity: string,
+    entityData?: IntentEntity,
     checkForDuplicates?: boolean,
   ) => JovoModelBuilder;
 
-  addEntityType!: (inputType: ModelEntityType) => JovoModelBuilder;
+  addEntityType!: (entityType: string) => JovoModelBuilder;
 
   addEntityTypeValue!: (
-    inputType: ModelEntityType,
-    value: ModelEntityTypeValue,
+    entityType: string,
+    entityTypeValue: ModelEntityTypeValue,
     checkForDuplicates?: boolean,
   ) => JovoModelBuilder;
 
-  addIntent!: (intent: ModelIntent) => JovoModelBuilder;
+  addIntent!: (intent: string, intentData?: Intent) => JovoModelBuilder;
 
-  addPhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilder;
+  hasIntents!: () => boolean;
 
-  getEntityIndex!: (intent: ModelIntent, input: ModelIntentEntity) => IntentIndex;
+  getIntents!: () => Record<string, Intent | IntentV3>;
 
-  getEntityTypeByName!: (name: string) => EntityType | undefined;
+  addPhrase!: (intent: string, phrase: string) => JovoModelBuilder;
 
-  getEntityTypeIndexByName!: (name: string) => number;
+  getEntityTypeByName!: (entityType: string) => EntityType | undefined;
 
-  getEntityTypeValueIndex!: (
-    inputType: ModelEntityType,
-    value: ModelEntityTypeValue,
-  ) => EntityTypeIndex;
+  getEntityTypeValueIndex!: (entityType: string, entityTypeValue: string) => number;
 
   getEntityTypeValues!: (inputType: ModelEntityType) => EntityTypeValue[];
 
-  getEntities!: (intent: ModelIntent) => IntentEntity[];
+  hasEntities!: (intent: string) => boolean;
 
-  getIntentByName!: (name: string) => Intent | undefined;
+  getEntityByName!: (intent: string, entity: string) => IntentEntity | IntentInput | undefined;
 
-  getIntentIndexByName!: (name: string) => number;
+  getEntities!: (intent: string) => Record<string, IntentEntity>;
 
-  getPhraseIndex!: (intent: ModelIntent, phrase: string) => IntentIndex;
+  getIntentByName!: (intent: string) => Intent | undefined;
 
-  getPhrases!: (intent: ModelIntent) => string[];
+  getPhraseIndex!: (intent: string, phrase: string) => number;
+
+  getPhrases!: (intent: string) => string[];
 
   hasPhrase!: (phrase: string) => boolean;
 
   prepareModel!: () => JovoModelBuilder;
 
-  removeEntity!: (intent: ModelIntent, input: ModelIntentEntity) => JovoModelBuilder;
+  removeEntity!: (intent: string, entity: string) => JovoModelBuilder;
 
-  removeEntityType!: (inputType: ModelEntityType) => JovoModelBuilder;
+  removeEntityType!: (entityType: string) => JovoModelBuilder;
 
-  removeEntityTypeValue!: (
-    inputType: ModelEntityType,
-    value: ModelEntityTypeValue,
-  ) => JovoModelBuilder;
+  removeEntityTypeValue!: (entityType: string, entityTypeValue: string) => JovoModelBuilder;
 
-  removeIntent!: (intent: ModelIntent) => JovoModelBuilder;
+  removeIntent!: (intent: string) => JovoModelBuilder;
 
-  removePhrase!: (intent: ModelIntent, phrase: string) => JovoModelBuilder;
+  removePhrase!: (intent: string, phrase: string) => JovoModelBuilder;
 
-  updateEntityType!: (inputType: ModelEntityType, newEntityType: EntityType) => JovoModelBuilder;
+  hasEntityTypes!: () => boolean;
 
-  updateIntent!: (intent: ModelIntent, newIntent: Intent) => JovoModelBuilder;
+  getEntityTypes!: () => Record<string, EntityType | InputType>;
 
-  updateEntity!: (
-    intent: ModelIntent,
-    oldEntity: ModelIntentEntity,
-    newEntity: IntentEntity,
-  ) => JovoModelBuilder;
+  updateEntityType!: (entityType: string, entityTypeData: EntityType) => JovoModelBuilder;
+
+  updateIntent!: (intent: string, intentData: Intent) => JovoModelBuilder;
+
+  updateEntity!: (intent: string, entity: string, entityData: IntentEntity) => JovoModelBuilder;
 
   updateEntityTypeValue!: (
-    inputType: ModelEntityType,
-    value: ModelEntityTypeValue,
-    newValue: EntityTypeValue,
+    entityType: string,
+    entityTypeValue: string,
+    entityTypeValueData: EntityTypeValue,
   ) => JovoModelBuilder;
 
-  updatePhrase!: (intent: ModelIntent, oldPhrase: string, newPhrase: string) => JovoModelBuilder;
+  updatePhrase!: (intent: string, oldPhrase: string, newPhrase: string) => JovoModelBuilder;
 
   addEntityTypeValueSynonym!: (
-    inputType: ModelEntityType,
-    value: ModelEntityTypeValue,
+    entityType: string,
+    entityTypeValue: string,
     synonym: string,
     checkForDuplicates?: boolean,
   ) => JovoModelBuilder;
 
   removeEntityTypeValueSynonym!: (
-    inputType: ModelEntityType,
-    value: ModelEntityTypeValue,
+    entityType: string,
+    entityTypeValue: string,
     synonym: string,
   ) => JovoModelBuilder;
 
   updateEntityTypeValueSynonym!: (
-    inputType: ModelEntityType,
-    value: ModelEntityTypeValue,
-    synonym: string,
+    entityType: string,
+    entityTypeValue: string,
+    oldSynonym: string,
     newSynonym: string,
   ) => JovoModelBuilder;
+
+  isJovoModelV3!: () => boolean;
+
+  isIntentV3!: () => boolean;
 
   private readonly $model: JovoModelData;
 

@@ -1,9 +1,3 @@
-import { JovoModelData } from '@jovotech/model';
-
-// Jovo Model Luis Format
-
-export interface JovoModelLexData extends JovoModelData {}
-
 // Native Lex JSON Format
 
 export interface LexModelEnumerationValue {

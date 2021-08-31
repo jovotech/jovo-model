@@ -10,11 +10,33 @@
         "$ref": "#/definitions/InputType"
       }
     },
+    "entityTypes": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/EntityType"
+        }
+      },
+      "additionalProperties": false
+    },
     "intents": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Intent"
-      }
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Intent"
+          }
+        },
+        {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/Intent"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
     },
     "invocation": {
       "anyOf": [
@@ -157,13 +179,24 @@
         "values": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/InputTypeValue"
+            "$ref": "#/definitions/EntityTypeValue"
           }
         }
       },
       "required": ["name"]
     },
-    "InputTypeValue": {
+    "EntityType": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityTypeValue"
+          }
+        }
+      }
+    },
+    "EntityTypeValue": {
       "type": "object",
       "properties": {
         "value": {
@@ -207,9 +240,17 @@
           "items": {
             "$ref": "#/definitions/IntentInput"
           }
+        },
+        "entities": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/IntentEntity"
+            }
+          },
+          "additionalProperties": false
         }
-      },
-      "required": ["name"]
+      }
     },
     "IntentInput": {
       "type": "object",
@@ -232,6 +273,24 @@
         }
       },
       "required": ["name"]
+    },
+    "IntentEntity": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Record<string,string>"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
     },
     "Record<string,string>": {
       "type": "object"

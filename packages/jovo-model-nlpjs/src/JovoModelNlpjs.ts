@@ -1,15 +1,12 @@
-import { JovoModelNlpjsData, NlpjsData, NlpjsModelFile } from '.';
-
 import {
-  EntityType,
   EntityTypeValue,
-  Intent,
-  IntentEntity,
   JovoModel,
   JovoModelData,
+  JovoModelDataV3,
+  JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
-
+import { NlpjsData, NlpjsModelFile } from '.';
 import * as JovoModelNlpjsValidator from '../validators/JovoModelNlpjsData.json';
 
 export class JovoModelNlpjs extends JovoModel {
@@ -21,23 +18,25 @@ export class JovoModelNlpjs extends JovoModel {
     const jovoModel: JovoModelData = {
       version: '4.0',
       invocation: '',
-      intents: [],
-      entityTypes: [],
+      intents: {},
+      entityTypes: {},
     };
 
     if (inputData.data) {
       inputData.data.forEach((data: NlpjsData) => {
-        jovoModel.intents!.push({
-          name: data.intent,
+        jovoModel.intents![data.intent] = {
           phrases: data.utterances,
-        });
+        };
       });
     }
 
     return jovoModel;
   }
 
-  static fromJovoModel(model: JovoModelNlpjsData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(
+    model: JovoModelData | JovoModelDataV3,
+    locale: string,
+  ): NativeFileInformation[] {
     const returnData: NlpjsModelFile = {
       data: [],
       name: '',
@@ -45,28 +44,34 @@ export class JovoModelNlpjs extends JovoModel {
     };
     const entitiesMap: Record<string, string> = {};
 
-    if (model.intents) {
-      model.intents.forEach((intent: Intent) => {
+    if (JovoModelHelper.hasIntents(model)) {
+      const intents = JovoModelHelper.getIntents(model);
+      for (const [intentKey, intentData] of Object.entries(intents)) {
         const intentObj = {
-          intent: intent.name,
+          intent: intentKey,
           utterances: [],
         };
 
-        if (intent.entities) {
+        if (JovoModelHelper.hasEntities(model, intentKey)) {
+          const entities = JovoModelHelper.getEntities(model, intentKey);
           returnData.entities = {};
 
-          intent.entities.forEach((entity: IntentEntity) => {
-            if (entity.type && typeof entity.type === 'string') {
+          for (const [entityKey, entityData] of Object.entries(entities)) {
+            if (entityData.type && typeof entityData.type === 'string') {
               // inputsMap[input.name] = input.type;
-              entitiesMap[entity.type] = entity.name;
-            } else if (entity.type && typeof entity.type === 'object' && entity.type.nlpjs) {
+              entitiesMap[entityData.type] = entityKey;
+            } else if (
+              entityData.type &&
+              typeof entityData.type === 'object' &&
+              entityData.type.nlpjs
+            ) {
               // inputsMap[input.name] = input.type.nlpjs;
-              entitiesMap[entity.type.nlpjs] = entity.name;
+              entitiesMap[entityData.type.nlpjs] = entityKey;
             }
-          });
+          }
         }
-        if (intent.phrases) {
-          intent.phrases.forEach((phrase: string) => {
+        if (intentData.phrases) {
+          intentData.phrases.forEach((phrase: string) => {
             const matches = phrase.match(/\{([^}]+)\}/g);
 
             if (matches) {
@@ -85,25 +90,27 @@ export class JovoModelNlpjs extends JovoModel {
           });
         }
         returnData.data.push(intentObj);
-      });
+      }
     }
 
-    if (model.entityTypes) {
+    if (JovoModelHelper.hasEntityTypes(model)) {
+      const entityTypes = JovoModelHelper.getEntityTypes(model);
       returnData.entities = {};
-      model.entityTypes.forEach((entityType: EntityType) => {
+
+      for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
         const options: Record<string, string[]> = {};
 
-        entityType.values!.forEach((entityTypeValue: EntityTypeValue) => {
+        entityTypeData.values!.forEach((entityTypeValue: EntityTypeValue) => {
           const key = entityTypeValue.value;
           options[key] = [entityTypeValue.value];
           if (entityTypeValue.synonyms) {
             options[key] = options[key].concat(entityTypeValue.synonyms);
           }
         });
-        returnData.entities![entitiesMap[entityType.name]] = {
+        returnData.entities![entitiesMap[entityTypeKey]] = {
           options,
         };
-      });
+      }
     }
 
     return [

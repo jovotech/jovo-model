@@ -259,16 +259,14 @@ describe('JovoModelDialogflow.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'Welcome',
+          intents: {
+            Welcome: {
               dialogflow: {
                 webhookUsed: true,
               },
               phrases: ['hey', 'howdy'],
             },
-            {
-              name: 'RestaurantSearch',
+            RestaurantSearch: {
               dialogflow: {
                 webhookUsed: true,
               },
@@ -278,25 +276,21 @@ describe('JovoModelDialogflow.ts', () => {
                 'show me {cuisine} restaurants',
                 'show me a {cuisine} place in the {location}',
               ],
-              entities: [
-                {
-                  name: 'cuisine',
+              entities: {
+                cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'location',
+                location: {
                   type: 'Location',
                 },
-                {
-                  name: 'plates',
+                plates: {
                   type: 'Plates',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Cuisine',
+          },
+          entityTypes: {
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -308,8 +302,7 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Location',
+            Location: {
               values: [
                 {
                   value: 'centre',
@@ -317,8 +310,7 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Plates',
+            Plates: {
               values: [
                 {
                   value: 'beans',
@@ -334,8 +326,7 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
-            {
-              name: 'OrderCode',
+            OrderCode: {
               dialogflow: {
                 isRegexp: true,
               },
@@ -345,7 +336,7 @@ describe('JovoModelDialogflow.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
     ];
@@ -365,17 +356,13 @@ describe('JovoModelDialogflow.ts', () => {
   describe('exportNative (fromJovoModel)', () => {
     const testsData = [
       {
-        description: 'should convert JovoModel to Dialogflow model',
+        description: 'should convert JovoModel@v3 to Dialogflow model',
         input: {
           locale: 'en',
           data: {
-            version: '4.0',
             invocation: 'my test app',
             intents: [
-              {
-                name: 'Welcome',
-                phrases: ['hey', 'howdy'],
-              },
+              { name: 'Welcome', phrases: ['hey', 'howdy'] },
               {
                 name: 'RestaurantSearch',
                 phrases: [
@@ -384,7 +371,7 @@ describe('JovoModelDialogflow.ts', () => {
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                entities: [
+                inputs: [
                   {
                     name: 'cuisine',
                     type: 'Cuisine',
@@ -404,7 +391,7 @@ describe('JovoModelDialogflow.ts', () => {
                 ],
               },
             ],
-            entityTypes: [
+            inputTypes: [
               {
                 name: 'Cuisine',
                 values: [
@@ -714,11 +701,352 @@ describe('JovoModelDialogflow.ts', () => {
           },
         ],
       },
+
+      {
+        description: 'should convert JovoModel@v4 to Dialogflow model',
+        input: {
+          locale: 'en',
+          data: {
+            version: '4.0',
+            invocation: 'my test app',
+            intents: {
+              Welcome: {
+                phrases: ['hey', 'howdy'],
+              },
+              RestaurantSearch: {
+                phrases: [
+                  "i'm looking for a place to eat",
+                  "i'm looking for a place to eat {plates}",
+                  'show me {cuisine} restaurants',
+                  'show me a {cuisine} place in the {location}',
+                ],
+                entities: {
+                  cuisine: {
+                    type: 'Cuisine',
+                  },
+                  location: {
+                    type: 'Location',
+                  },
+                  plates: {
+                    type: 'Plates',
+                  },
+                  ordercode: {
+                    type: 'OrderCode',
+                  },
+                },
+              },
+            },
+            entityTypes: {
+              Cuisine: {
+                values: [
+                  {
+                    id: 1,
+                    key: 'chinese',
+                    value: 'chinese',
+                    synonyms: ['Chinese', 'Chines', 'chines'],
+                  },
+                  {
+                    id: 2,
+                    key: 'vegetarian',
+                    value: 'vegetarian',
+                    synonyms: ['veggie', 'vegg'],
+                  },
+                ],
+              },
+              Location: {
+                values: [
+                  {
+                    value: 'centre',
+                    synonyms: ['center'],
+                  },
+                ],
+              },
+              Plates: {
+                values: [
+                  {
+                    value: 'beans',
+                  },
+                  {
+                    value: 'cheese',
+                  },
+                  {
+                    value: 'rice',
+                  },
+                  {
+                    value: 'tacos',
+                  },
+                ],
+              },
+              OrderCode: {
+                dialogflow: {
+                  isRegexp: true,
+                },
+                values: [
+                  {
+                    value: 'w{4}',
+                  },
+                ],
+              },
+            },
+          },
+        },
+        result: [
+          {
+            path: ['intents', 'Welcome.json'],
+            content: {
+              name: 'Welcome',
+              auto: true,
+              webhookUsed: true,
+            },
+          },
+          {
+            path: ['intents', 'Welcome_usersays_en.json'],
+            content: [
+              {
+                data: [
+                  {
+                    text: 'hey',
+                    userDefined: false,
+                  },
+                ],
+                isTemplate: false,
+                count: 0,
+                lang: 'en',
+              },
+              {
+                data: [
+                  {
+                    text: 'howdy',
+                    userDefined: false,
+                  },
+                ],
+                isTemplate: false,
+                count: 0,
+                lang: 'en',
+              },
+            ],
+          },
+          {
+            path: ['entities', 'Cuisine.json'],
+            content: {
+              name: 'Cuisine',
+              isOverridable: true,
+              isEnum: false,
+              automatedExpansion: false,
+              allowFuzzyExtraction: false,
+              isRegexp: false,
+            },
+          },
+          {
+            path: ['entities', 'Cuisine_entries_en.json'],
+            content: [
+              {
+                value: 'chinese',
+                synonyms: ['chinese', 'Chinese', 'Chines', 'chines'],
+              },
+              {
+                value: 'vegetarian',
+                synonyms: ['vegetarian', 'veggie', 'vegg'],
+              },
+            ],
+          },
+          {
+            path: ['entities', 'Location.json'],
+            content: {
+              name: 'Location',
+              isOverridable: true,
+              isEnum: false,
+              automatedExpansion: false,
+              allowFuzzyExtraction: false,
+              isRegexp: false,
+            },
+          },
+          {
+            path: ['entities', 'Location_entries_en.json'],
+            content: [
+              {
+                value: 'centre',
+                synonyms: ['centre', 'center'],
+              },
+            ],
+          },
+          {
+            path: ['entities', 'Plates.json'],
+            content: {
+              name: 'Plates',
+              isOverridable: true,
+              isEnum: false,
+              automatedExpansion: false,
+              allowFuzzyExtraction: false,
+              isRegexp: false,
+            },
+          },
+          {
+            path: ['entities', 'Plates_entries_en.json'],
+            content: [
+              {
+                value: 'beans',
+                synonyms: ['beans'],
+              },
+              {
+                value: 'cheese',
+                synonyms: ['cheese'],
+              },
+              {
+                value: 'rice',
+                synonyms: ['rice'],
+              },
+              {
+                value: 'tacos',
+                synonyms: ['tacos'],
+              },
+            ],
+          },
+          {
+            path: ['entities', 'OrderCode.json'],
+            content: {
+              name: 'OrderCode',
+              isOverridable: true,
+              automatedExpansion: false,
+              isEnum: false,
+              isRegexp: true,
+              allowFuzzyExtraction: false,
+            },
+          },
+          {
+            path: ['entities', 'OrderCode_entries_en.json'],
+            content: [
+              {
+                value: 'w{4}',
+              },
+            ],
+          },
+          {
+            path: ['intents', 'RestaurantSearch.json'],
+            content: {
+              name: 'RestaurantSearch',
+              auto: true,
+              webhookUsed: true,
+              responses: [
+                {
+                  parameters: [
+                    {
+                      isList: false,
+                      name: 'cuisine',
+                      value: '$cuisine',
+                      dataType: '@Cuisine',
+                    },
+                    {
+                      isList: false,
+                      name: 'location',
+                      value: '$location',
+                      dataType: '@Location',
+                    },
+                    {
+                      isList: false,
+                      name: 'plates',
+                      value: '$plates',
+                      dataType: '@Plates',
+                    },
+                    {
+                      isList: false,
+                      name: 'ordercode',
+                      value: '$ordercode',
+                      dataType: '@OrderCode',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+          {
+            path: ['intents', 'RestaurantSearch_usersays_en.json'],
+            content: [
+              {
+                data: [
+                  {
+                    text: "i'm looking for a place to eat",
+                    userDefined: false,
+                  },
+                ],
+                isTemplate: false,
+                count: 0,
+                lang: 'en',
+              },
+              {
+                data: [
+                  {
+                    text: "i'm looking for a place to eat ",
+                    userDefined: false,
+                  },
+                  {
+                    text: 'plates',
+                    userDefined: true,
+                    alias: 'plates',
+                    meta: '@Plates',
+                  },
+                ],
+                isTemplate: false,
+                count: 0,
+                lang: 'en',
+              },
+              {
+                data: [
+                  {
+                    text: 'show me ',
+                    userDefined: false,
+                  },
+                  {
+                    text: 'cuisine',
+                    userDefined: true,
+                    alias: 'cuisine',
+                    meta: '@Cuisine',
+                  },
+                  {
+                    text: ' restaurants',
+                    userDefined: false,
+                  },
+                ],
+                isTemplate: false,
+                count: 0,
+                lang: 'en',
+              },
+              {
+                data: [
+                  {
+                    text: 'show me a ',
+                    userDefined: false,
+                  },
+                  {
+                    text: 'cuisine',
+                    userDefined: true,
+                    alias: 'cuisine',
+                    meta: '@Cuisine',
+                  },
+                  {
+                    text: ' place in the ',
+                    userDefined: false,
+                  },
+                  {
+                    text: 'location',
+                    userDefined: true,
+                    alias: 'location',
+                    meta: '@Location',
+                  },
+                ],
+                isTemplate: false,
+                count: 0,
+                lang: 'en',
+              },
+            ],
+          },
+        ],
+      },
     ];
 
     for (const testData of testsData) {
       const jovoModel = new JovoModelDialogflow(
-        testData.input.data as JovoModelData,
+        (testData.input.data as unknown) as JovoModelData,
         testData.input.locale,
       );
       test(testData.description, () => {

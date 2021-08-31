@@ -5,6 +5,9 @@ import {
   Intent,
   IntentEntity,
   JovoModel,
+  JovoModelData,
+  JovoModelDataV3,
+  JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
 import _get from 'lodash.get';
@@ -17,7 +20,6 @@ import {
   GoogleActionInput,
   GoogleActionIntent,
   GoogleActionLanguageModelProperty,
-  JovoModelGoogleActionData,
 } from './Interfaces';
 
 // Configure yaml to always use double quotes on properties.
@@ -28,12 +30,12 @@ export class JovoModelGoogle extends JovoModel {
   static MODEL_KEY = 'google';
   static defaultLocale?: string;
 
-  constructor(data?: JovoModelGoogleActionData, locale?: string, defaultLocale?: string) {
+  constructor(data?: JovoModelData, locale?: string, defaultLocale?: string) {
     super(data, locale);
     JovoModelGoogle.defaultLocale = defaultLocale;
   }
 
-  static fromJovoModel(model: JovoModelGoogleActionData, locale: string): NativeFileInformation[] {
+  static fromJovoModel(model: JovoModelData | JovoModelDataV3, locale: string): NativeFileInformation[] {
     const errorPrefix = `/models/${locale}.json - `;
     const returnFiles: NativeFileInformation[] = [];
 
@@ -45,7 +47,12 @@ export class JovoModelGoogle extends JovoModel {
       },
     };
 
-    for (const intent of (model.intents || []) as Intent[]) {
+    if (!model.intents) {
+      return [];
+    }
+
+    const intents = JovoModelHelper.getIntents(model);
+    for (const [intentKey, intentData] of Object.entries(intents)) {
       const gaIntent: GoogleActionIntent = {
         trainingPhrases: [],
       };
@@ -55,9 +62,9 @@ export class JovoModelGoogle extends JovoModel {
         path.push(locale);
       }
 
-      path.push(`${intent.name}.yaml`);
+      path.push(`${intentKey}.yaml`);
 
-      for (let phrase of intent.phrases || []) {
+      for (let phrase of intentData.phrases || []) {
         const entityRegex: RegExp = /{(.*?)}/g;
 
         // Check if phrase contains any entities and parse them, if necessary.
@@ -73,37 +80,38 @@ export class JovoModelGoogle extends JovoModel {
           let type: string | undefined;
 
           // Get entity type for current entity
-          for (const i of intent.entities || []) {
-            if (entity === i.name) {
-              if (typeof i.type === 'object') {
-                if (!i.type.googleAssistant) {
+          const entities = JovoModelHelper.getEntities(model, intentKey);
+          for (const [entityKey, entityData] of Object.entries(entities)) {
+            if (entity === entityKey) {
+              if (typeof entityData.type === 'object') {
+                if (!entityData.type.googleAssistant) {
                   throw new Error(
-                    `${errorPrefix}Please add a "googleAssistant" property for entity "${i.name}"`,
+                    `${errorPrefix}Please add a "googleAssistant" property for entity "${entityKey}"`,
                   );
                 }
-                type = i.type.googleAssistant;
+                type = entityData.type.googleAssistant;
                 continue;
               }
 
-              // @ts-ignore
-              type = i.type;
+              type = entityData.type;
             }
           }
 
           if (!type) {
             throw new Error(
-              `Couldn't find entity type for entity ${entity} for intent ${intent.name}.`,
+              `Couldn't find entity type for entity ${entity} for intent ${intentKey}.`,
             );
           }
 
           // For entity type, get an example value to work with.
           let sampleValue = '';
-          for (const entityType of model.entityTypes || []) {
-            if (entityType.name !== type) {
+          const entityTypes = JovoModelHelper.getEntityTypes(model);
+          for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
+            if (entityTypeKey !== type) {
               continue;
             }
 
-            sampleValue = entityType.values![0].value;
+            sampleValue = entityTypeData.values![0].value;
             break;
           }
 
@@ -117,13 +125,12 @@ export class JovoModelGoogle extends JovoModel {
           // Check for freeText entity type.
           if (type === 'actions.type.FreeText') {
             // Create InputType with content freeText: {}.
-            const entityType: EntityType = { name: 'FreeTextType' };
-            model.entityTypes?.push(entityType);
+            JovoModelHelper.addEntityType(model, 'FreeTextType', {});
             // Change type to that InputType.
-            type = entityType.name;
+            type = 'FreeTextType';
           }
 
-          if (locale === this.defaultLocale && intent.entities) {
+          if (locale === this.defaultLocale && JovoModelHelper.hasEntities(model, intentKey)) {
             if (!gaIntent.parameters) {
               gaIntent.parameters = [];
             }
@@ -150,10 +157,11 @@ export class JovoModelGoogle extends JovoModel {
       });
 
       // Set global intent.
-      globalIntents[intent.name] = { handler: { webhookHandler: 'Jovo' } };
+      globalIntents[intentKey] = { handler: { webhookHandler: 'Jovo' } };
     }
 
-    for (const entityType of (model.entityTypes || []) as EntityType[]) {
+    const entityTypes = JovoModelHelper.getEntityTypes(model);
+    for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
       const gaInput: GoogleActionInput = {
         synonym: {
           entities: {},
@@ -166,10 +174,10 @@ export class JovoModelGoogle extends JovoModel {
         path.push(locale);
       }
 
-      path.push(`${entityType.name}.yaml`);
+      path.push(`${entityTypeKey}.yaml`);
 
       // prettier-ignore
-      for (const entityTypeValue of (entityType.values || []) as EntityTypeValue[]) {
+      for (const entityTypeValue of (entityTypeData.values || []) as EntityTypeValue[]) {
         gaInput.synonym.entities[entityTypeValue.key || entityTypeValue.value] = {
           synonyms: [
             entityTypeValue.value,
@@ -179,7 +187,7 @@ export class JovoModelGoogle extends JovoModel {
       }
 
       // If InputType is FreeText, don't include any entity values.
-      if (entityType.name === 'FreeTextType') {
+      if (entityTypeKey === 'FreeTextType') {
         returnFiles.push({
           path,
           content: yaml.stringify({ freeText: {} }),
@@ -217,12 +225,12 @@ export class JovoModelGoogle extends JovoModel {
     return returnFiles;
   }
 
-  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelGoogleActionData {
-    const jovoModel: JovoModelGoogleActionData = {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelData {
+    const jovoModel: JovoModelData = {
       version: '4.0',
       invocation: '',
-      intents: [],
-      entityTypes: [],
+      intents: {},
+      entityTypes: {},
     };
 
     for (const inputFile of inputFiles) {
@@ -235,7 +243,7 @@ export class JovoModelGoogle extends JovoModel {
         // Create regex to match entity patterns such as ($entity 'test' auto=true).
         const entityRegex: RegExp = /\(\$([a-z]*).*?\)/gi;
         const phrases: string[] = [];
-        const entities: IntentEntity[] = [];
+        const entities: Record<string, IntentEntity> = {};
 
         for (let phrase of intent.trainingPhrases) {
           for (;;) {
@@ -274,23 +282,21 @@ export class JovoModelGoogle extends JovoModel {
             const entityParameter = model.parameters!.find((el) => el.name === entityName)!;
 
             // Check for duplicated inputs.
-            const hasInput = entities.find((el) => el.name === entityParameter.name);
+            const hasInput: boolean = !!entities[entityParameter.name];
 
             // If the current input already has been registered, skip.
             if (!hasInput) {
               // Check for freeText.
               if (entityParameter.type.name === 'FreeTextType') {
-                entities.push({
-                  name: entityParameter.name,
+                entities[entityParameter.name] = {
                   type: {
                     googleAssistant: 'actions.type.FreeText',
                   },
-                });
+                };
               } else {
-                entities.push({
-                  name: entityParameter.name,
+                entities[entityParameter.name] = {
                   type: entityParameter.type.name,
-                });
+                };
               }
             }
           }
@@ -298,16 +304,13 @@ export class JovoModelGoogle extends JovoModel {
           phrases.push(phrase);
         }
 
-        const jovoIntent: Intent = {
-          name: modelName,
-          phrases,
-        };
+        const jovoIntent: Intent = { phrases };
 
         if (entities.length > 0) {
           jovoIntent.entities = entities;
         }
 
-        jovoModel.intents!.push(jovoIntent);
+        jovoModel.intents![modelName] = jovoIntent;
       } else if (modelType === 'types') {
         const entity: GoogleActionInput = inputFile.content;
         const entities = entity.synonym?.entities || {};
@@ -330,12 +333,9 @@ export class JovoModelGoogle extends JovoModel {
           values.push(entityTypeValue);
         }
 
-        const jovoEntity: EntityType = {
-          name: modelName,
-          values,
-        };
+        const jovoEntity: EntityType = { values };
 
-        jovoModel.entityTypes!.push(jovoEntity);
+        jovoModel.entityTypes![modelName] = jovoEntity;
       } else {
         const props: GoogleActionLanguageModelProperty[] = _get(
           jovoModel,

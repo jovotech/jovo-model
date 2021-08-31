@@ -36,13 +36,12 @@ describe('JovoModelRasa.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          entityTypes: [],
-          intents: [
-            {
-              name: 'greet',
+          entityTypes: {},
+          intents: {
+            greet: {
               phrases: ['hey', 'howdy'],
             },
-          ],
+          },
         },
       },
       {
@@ -115,29 +114,25 @@ describe('JovoModelRasa.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'restaurant_search',
+          intents: {
+            restaurant_search: {
               phrases: [
                 "i'm looking for a place to eat",
                 'show me {Cuisine} restaurants',
                 'show me a {Cuisine} place in the {Location}',
               ],
-              entities: [
-                {
-                  name: 'Cuisine',
+              entities: {
+                Cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'Location',
+                Location: {
                   type: 'Location',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Cuisine',
+          },
+          entityTypes: {
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -149,8 +144,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Location',
+            Location: {
               values: [
                 {
                   value: 'centre',
@@ -158,7 +152,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
       {
@@ -210,25 +204,21 @@ describe('JovoModelRasa.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'restaurant_search',
+          intents: {
+            restaurant_search: {
               phrases: ['show me a {Cuisine} place which sells {Plates}'],
-              entities: [
-                {
-                  name: 'Cuisine',
+              entities: {
+                Cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'Plates',
+                Plates: {
                   type: 'Plates',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Plates',
+          },
+          entityTypes: {
+            Plates: {
               values: [
                 {
                   value: 'beans',
@@ -244,8 +234,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Cuisine',
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -253,7 +242,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
       {
@@ -352,38 +341,32 @@ describe('JovoModelRasa.ts', () => {
         result: {
           version: '4.0',
           invocation: '',
-          intents: [
-            {
-              name: 'greet',
+          intents: {
+            greet: {
               phrases: ['hey', 'howdy'],
             },
-            {
-              name: 'restaurant_search',
+            restaurant_search: {
               phrases: [
                 "i'm looking for a place to eat",
                 "i'm looking for a place to eat {Plates}",
                 'show me {Cuisine} restaurants',
                 'show me a {Cuisine} place in the {Location}',
               ],
-              entities: [
-                {
-                  name: 'Plates',
+              entities: {
+                Plates: {
                   type: 'Plates',
                 },
-                {
-                  name: 'Cuisine',
+                Cuisine: {
                   type: 'Cuisine',
                 },
-                {
-                  name: 'Location',
+                Location: {
                   type: 'Location',
                 },
-              ],
+              },
             },
-          ],
-          entityTypes: [
-            {
-              name: 'Plates',
+          },
+          entityTypes: {
+            Plates: {
               values: [
                 {
                   value: 'beans',
@@ -399,8 +382,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Cuisine',
+            Cuisine: {
               values: [
                 {
                   value: 'chinese',
@@ -408,8 +390,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-            {
-              name: 'Location',
+            Location: {
               values: [
                 {
                   value: 'centre',
@@ -417,7 +398,7 @@ describe('JovoModelRasa.ts', () => {
                 },
               ],
             },
-          ],
+          },
         },
       },
     ];
@@ -434,14 +415,13 @@ describe('JovoModelRasa.ts', () => {
     }
   });
 
-  describe('exportNative (fromJovoModel)', () => {
+  describe('exportNative @v3 (fromJovoModel)', () => {
     const testsData = [
       {
         description: "should export 'intents' without entities as 'common_examples'",
         input: {
           locale: 'en',
           data: {
-            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -483,29 +463,25 @@ describe('JovoModelRasa.ts', () => {
           data: {
             version: '4.0',
             invocation: '',
-            intents: [
-              {
-                name: 'restaurant_search',
+            intents: {
+              restaurant_search: {
                 phrases: [
                   "i'm looking for a place to eat",
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                entities: [
-                  {
-                    name: 'cuisine',
+                entities: {
+                  cuisine: {
                     type: 'Cuisine',
                   },
-                  {
-                    name: 'location',
+                  location: {
                     type: 'Location',
                   },
-                ],
+                },
               },
-            ],
-            entityTypes: [
-              {
-                name: 'Cuisine',
+            },
+            entityTypes: {
+              Cuisine: {
                 values: [
                   {
                     id: 1,
@@ -521,8 +497,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-              {
-                name: 'Location',
+              Location: {
                 values: [
                   {
                     value: 'centre',
@@ -530,7 +505,7 @@ describe('JovoModelRasa.ts', () => {
                   },
                 ],
               },
-            ],
+            },
           },
         },
         result: [
@@ -601,7 +576,6 @@ describe('JovoModelRasa.ts', () => {
         input: {
           locale: 'en',
           data: {
-            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -611,7 +585,7 @@ describe('JovoModelRasa.ts', () => {
               {
                 name: 'MyNameIsIntent',
                 phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
-                entities: [
+                inputs: [
                   {
                     name: 'name',
                     type: {
@@ -621,7 +595,7 @@ describe('JovoModelRasa.ts', () => {
                 ],
               },
             ],
-            entityTypes: [
+            inputTypes: [
               {
                 name: 'PERSON',
                 values: [
@@ -742,9 +716,8 @@ describe('JovoModelRasa.ts', () => {
         input: {
           locale: 'en',
           data: {
-            version: '4.0',
             invocation: '',
-            entityTypes: [
+            inputTypes: [
               {
                 name: 'Cuisine',
                 values: [
@@ -804,7 +777,6 @@ describe('JovoModelRasa.ts', () => {
         input: {
           locale: 'en',
           data: {
-            version: '4.0',
             invocation: '',
             intents: [
               {
@@ -819,7 +791,7 @@ describe('JovoModelRasa.ts', () => {
                   'show me {cuisine} restaurants',
                   'show me a {cuisine} place in the {location}',
                 ],
-                entities: [
+                inputs: [
                   {
                     name: 'cuisine',
                     type: 'Cuisine',
@@ -835,7 +807,7 @@ describe('JovoModelRasa.ts', () => {
                 ],
               },
             ],
-            entityTypes: [
+            inputTypes: [
               {
                 name: 'Cuisine',
                 values: [
@@ -975,7 +947,537 @@ describe('JovoModelRasa.ts', () => {
 
     for (const testData of testsData) {
       const jovoModel = new JovoModelRasa(
-        testData.input.data as JovoModelData,
+        (testData.input.data as unknown) as JovoModelData,
+        testData.input.locale,
+      );
+      test(testData.description, () => {
+        expect(jovoModel.exportNative()).toEqual(testData.result);
+      });
+    }
+  });
+
+  describe('exportNative @v4 (fromJovoModel)', () => {
+    const testsData = [
+      {
+        description: "should export 'intents' without entities as 'common_examples'",
+        input: {
+          locale: 'en',
+          data: {
+            version: '4.0',
+            invocation: '',
+            intents: {
+              greet: {
+                phrases: ['hey', 'howdy'],
+              },
+            },
+          },
+        },
+        result: [
+          {
+            path: ['en.json'],
+            content: {
+              rasa_nlu_data: {
+                common_examples: [
+                  {
+                    text: 'hey',
+                    intent: 'greet',
+                    entities: [],
+                  },
+                  {
+                    text: 'howdy',
+                    intent: 'greet',
+                    entities: [],
+                  },
+                ],
+                entity_synonyms: [],
+                lookup_tables: [],
+              },
+            },
+          },
+        ],
+      },
+      {
+        description:
+          "should replace placeholders with an example value and add it to 'common_examples'",
+        input: {
+          locale: 'en',
+          data: {
+            version: '4.0',
+            invocation: '',
+            intents: {
+              restaurant_search: {
+                phrases: [
+                  "i'm looking for a place to eat",
+                  'show me {cuisine} restaurants',
+                  'show me a {cuisine} place in the {location}',
+                ],
+                entities: {
+                  cuisine: {
+                    type: 'Cuisine',
+                  },
+                  location: {
+                    type: 'Location',
+                  },
+                },
+              },
+            },
+            entityTypes: {
+              Cuisine: {
+                values: [
+                  {
+                    id: 1,
+                    key: 'chinese',
+                    value: 'chinese',
+                    synonyms: ['Chinese', 'Chines', 'chines'],
+                  },
+                  {
+                    id: 2,
+                    key: 'vegetarian',
+                    value: 'vegetarian',
+                    synonyms: ['veggie', 'vegg'],
+                  },
+                ],
+              },
+              Location: {
+                values: [
+                  {
+                    value: 'centre',
+                    synonyms: ['center'],
+                  },
+                ],
+              },
+            },
+          },
+        },
+        result: [
+          {
+            path: ['en.json'],
+            content: {
+              rasa_nlu_data: {
+                common_examples: [
+                  {
+                    text: "i'm looking for a place to eat",
+                    intent: 'restaurant_search',
+                    entities: [],
+                  },
+                  {
+                    text: 'show me chinese restaurants',
+                    intent: 'restaurant_search',
+                    entities: [
+                      {
+                        start: 8,
+                        end: 15,
+                        value: 'chinese',
+                        entity: 'Cuisine',
+                      },
+                    ],
+                  },
+                  {
+                    text: 'show me a vegetarian place in the centre',
+                    intent: 'restaurant_search',
+                    entities: [
+                      {
+                        start: 10,
+                        end: 20,
+                        value: 'vegetarian',
+                        entity: 'Cuisine',
+                      },
+                      {
+                        start: 34,
+                        end: 40,
+                        value: 'centre',
+                        entity: 'Location',
+                      },
+                    ],
+                  },
+                ],
+                lookup_tables: [],
+                entity_synonyms: [
+                  {
+                    value: 'chinese',
+                    synonyms: ['Chinese', 'Chines', 'chines'],
+                  },
+                  {
+                    value: 'vegetarian',
+                    synonyms: ['veggie', 'vegg'],
+                  },
+                  {
+                    value: 'centre',
+                    synonyms: ['center'],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+      {
+        description:
+          "should replace placeholders with an example value and add it to 'common_examples' (Spacy built in type, still needs example values defined to create common_examples)",
+        input: {
+          locale: 'en',
+          data: {
+            version: '4.0',
+            invocation: '',
+            intents: {
+              HelloWorldIntent: {
+                phrases: ['hello', 'say hello', 'say hello world'],
+              },
+              MyNameIsIntent: {
+                phrases: ['{name}', 'my name is {name}', 'i am {name}', 'you can call me {name}'],
+                entities: {
+                  name: {
+                    type: {
+                      rasa: 'PERSON',
+                    },
+                  },
+                },
+              },
+            },
+            entityTypes: {
+              PERSON: {
+                values: [
+                  {
+                    value: 'Alex',
+                  },
+                  {
+                    value: 'Andre',
+                  },
+                  {
+                    value: 'Florian',
+                  },
+                  {
+                    value: 'Jan',
+                  },
+                  {
+                    value: 'Kaan',
+                  },
+                  {
+                    value: 'Max',
+                  },
+                  {
+                    value: 'Pia',
+                  },
+                  {
+                    value: 'Ruben',
+                  },
+                ],
+              },
+            },
+          },
+        },
+        result: [
+          {
+            path: ['en.json'],
+            content: {
+              rasa_nlu_data: {
+                common_examples: [
+                  {
+                    text: 'hello',
+                    intent: 'HelloWorldIntent',
+                    entities: [],
+                  },
+                  {
+                    text: 'say hello',
+                    intent: 'HelloWorldIntent',
+                    entities: [],
+                  },
+                  {
+                    text: 'say hello world',
+                    intent: 'HelloWorldIntent',
+                    entities: [],
+                  },
+                  {
+                    text: 'Alex',
+                    intent: 'MyNameIsIntent',
+                    entities: [
+                      {
+                        value: 'Alex',
+                        entity: 'PERSON',
+                        start: 0,
+                        end: 4,
+                      },
+                    ],
+                  },
+                  {
+                    text: 'my name is Andre',
+                    intent: 'MyNameIsIntent',
+                    entities: [
+                      {
+                        value: 'Andre',
+                        entity: 'PERSON',
+                        start: 11,
+                        end: 16,
+                      },
+                    ],
+                  },
+                  {
+                    text: 'i am Florian',
+                    intent: 'MyNameIsIntent',
+                    entities: [
+                      {
+                        value: 'Florian',
+                        entity: 'PERSON',
+                        start: 5,
+                        end: 12,
+                      },
+                    ],
+                  },
+                  {
+                    text: 'you can call me Jan',
+                    intent: 'MyNameIsIntent',
+                    entities: [
+                      {
+                        value: 'Jan',
+                        entity: 'PERSON',
+                        start: 16,
+                        end: 19,
+                      },
+                    ],
+                  },
+                ],
+                lookup_tables: [
+                  {
+                    name: 'PERSON',
+                    elements: ['Alex', 'Andre', 'Florian', 'Jan', 'Kaan', 'Max', 'Pia', 'Ruben'],
+                  },
+                ],
+                entity_synonyms: [],
+              },
+            },
+          },
+        ],
+      },
+      {
+        description:
+          "should export 'entityTypes' values with only 'value' set as 'lookup_tables' and all other ones as 'entity_synonyms'",
+        input: {
+          locale: 'en',
+          data: {
+            version: '4.0',
+            invocation: '',
+            entityTypes: {
+              Cuisine: {
+                values: [
+                  {
+                    id: 1,
+                    key: 'chinese',
+                    value: 'chinese',
+                    synonyms: ['Chinese', 'Chines', 'chines'],
+                  },
+                ],
+              },
+              Plates: {
+                values: [
+                  {
+                    value: 'beans',
+                  },
+                  {
+                    value: 'cheese',
+                  },
+                  {
+                    value: 'rice',
+                  },
+                  {
+                    value: 'tacos',
+                  },
+                ],
+              },
+            },
+          },
+        },
+        result: [
+          {
+            path: ['en.json'],
+            content: {
+              rasa_nlu_data: {
+                common_examples: [],
+                lookup_tables: [
+                  {
+                    name: 'Plates',
+                    elements: ['beans', 'cheese', 'rice', 'tacos'],
+                  },
+                ],
+                entity_synonyms: [
+                  {
+                    value: 'chinese',
+                    synonyms: ['Chinese', 'Chines', 'chines'],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+      {
+        description: 'should work with all above combined',
+        input: {
+          locale: 'en',
+          data: {
+            version: '4.0',
+            invocation: '',
+            intents: {
+              greet: {
+                phrases: ['hey', 'howdy'],
+              },
+              restaurant_search: {
+                phrases: [
+                  "i'm looking for a place to eat",
+                  "i'm looking for a place to eat {plates}",
+                  'show me {cuisine} restaurants',
+                  'show me a {cuisine} place in the {location}',
+                ],
+                entities: {
+                  cuisine: {
+                    type: 'Cuisine',
+                  },
+                  location: {
+                    type: 'Location',
+                  },
+                  plates: {
+                    type: 'Plates',
+                  },
+                },
+              },
+            },
+            entityTypes: {
+              Cuisine: {
+                values: [
+                  {
+                    id: 1,
+                    key: 'chinese',
+                    value: 'chinese',
+                    synonyms: ['Chinese', 'Chines', 'chines'],
+                  },
+                  {
+                    id: 2,
+                    key: 'vegetarian',
+                    value: 'vegetarian',
+                    synonyms: ['veggie', 'vegg'],
+                  },
+                ],
+              },
+              Location: {
+                values: [
+                  {
+                    value: 'centre',
+                    synonyms: ['center'],
+                  },
+                ],
+              },
+              Plates: {
+                values: [
+                  {
+                    value: 'beans',
+                  },
+                  {
+                    value: 'cheese',
+                  },
+                  {
+                    value: 'rice',
+                  },
+                  {
+                    value: 'tacos',
+                  },
+                ],
+              },
+            },
+          },
+        },
+        result: [
+          {
+            path: ['en.json'],
+            content: {
+              rasa_nlu_data: {
+                common_examples: [
+                  {
+                    text: 'hey',
+                    intent: 'greet',
+                    entities: [],
+                  },
+                  {
+                    text: 'howdy',
+                    intent: 'greet',
+                    entities: [],
+                  },
+                  {
+                    text: "i'm looking for a place to eat",
+                    intent: 'restaurant_search',
+                    entities: [],
+                  },
+                  {
+                    text: "i'm looking for a place to eat beans",
+                    intent: 'restaurant_search',
+                    entities: [
+                      {
+                        start: 31,
+                        end: 36,
+                        value: 'beans',
+                        entity: 'Plates',
+                      },
+                    ],
+                  },
+                  {
+                    text: 'show me chinese restaurants',
+                    intent: 'restaurant_search',
+                    entities: [
+                      {
+                        start: 8,
+                        end: 15,
+                        value: 'chinese',
+                        entity: 'Cuisine',
+                      },
+                    ],
+                  },
+                  {
+                    text: 'show me a vegetarian place in the centre',
+                    intent: 'restaurant_search',
+                    entities: [
+                      {
+                        start: 10,
+                        end: 20,
+                        value: 'vegetarian',
+                        entity: 'Cuisine',
+                      },
+                      {
+                        start: 34,
+                        end: 40,
+                        value: 'centre',
+                        entity: 'Location',
+                      },
+                    ],
+                  },
+                ],
+                lookup_tables: [
+                  {
+                    name: 'Plates',
+                    elements: ['beans', 'cheese', 'rice', 'tacos'],
+                  },
+                ],
+                entity_synonyms: [
+                  {
+                    value: 'chinese',
+                    synonyms: ['Chinese', 'Chines', 'chines'],
+                  },
+                  {
+                    value: 'vegetarian',
+                    synonyms: ['veggie', 'vegg'],
+                  },
+                  {
+                    value: 'centre',
+                    synonyms: ['center'],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      },
+    ];
+
+    for (const testData of testsData) {
+      const jovoModel = new JovoModelRasa(
+        (testData.input.data as unknown) as JovoModelData,
         testData.input.locale,
       );
       test(testData.description, () => {
