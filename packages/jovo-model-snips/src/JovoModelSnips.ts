@@ -9,7 +9,6 @@ import {
   NativeFileInformation,
 } from '@jovotech/model';
 import tv4 from 'tv4';
-import * as JovoModelSnipsValidator from '../validators/JovoModelSnipsData.json';
 import {
   NativeSnipsInformation,
   SnipsEntity,
@@ -251,7 +250,7 @@ export class JovoModelSnips extends JovoModel {
     return jovoModel;
   }
 
-  static getValidator(): tv4.JsonSchema {
-    return JovoModelSnipsValidator;
+  static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+    return super.getValidator(model);
   }
 }
