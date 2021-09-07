@@ -7,12 +7,11 @@ import {
   NativeFileInformation,
 } from '@jovotech/model';
 import { NlpjsData, NlpjsModelFile } from '.';
-import * as JovoModelNlpjsValidator from '../validators/JovoModelNlpjsData.json';
 
 export class JovoModelNlpjs extends JovoModel {
   static MODEL_KEY = 'nlpjs';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[], _locale: string): JovoModelData {
     const inputData: NlpjsModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
@@ -121,7 +120,7 @@ export class JovoModelNlpjs extends JovoModel {
     ];
   }
 
-  static getValidator(): tv4.JsonSchema {
-    return JovoModelNlpjsValidator;
+  static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+    return super.getValidator(model);
   }
 }
