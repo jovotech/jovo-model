@@ -548,8 +548,8 @@ export class JovoModelDialogflow extends JovoModel {
     return returnFiles;
   }
 
-  static getValidator(): tv4.JsonSchema {
-    return JovoModelDialogflowValidator;
+  static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+    return _merge(super.getValidator(model), JovoModelDialogflowValidator);
   }
 
   static skipDefaultIntentProps(
