@@ -16,12 +16,11 @@ import {
   LexModelIntentResource,
   LexModelSlotTypeResource,
 } from '.';
-import * as JovoModelLexValidator from '../validators/JovoModelLexData.json';
 
 export class JovoModelLex extends JovoModel {
   static MODEL_KEY = 'lex';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[], _locale: string): JovoModelData {
     const inputData: LexModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
@@ -196,7 +195,7 @@ export class JovoModelLex extends JovoModel {
     ];
   }
 
-  static getValidator(): tv4.JsonSchema {
-    return JovoModelLexValidator;
+  static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+    return super.getValidator(model);
   }
 }
