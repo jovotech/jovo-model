@@ -1,0 +1,100 @@
+{
+  "type": "object",
+  "properties": {
+    "inputTypes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/InputType"
+      }
+    },
+    "intents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Intent"
+      }
+    },
+    "invocation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "required": ["invocation"],
+  "definitions": {
+    "InputType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityTypeValue"
+          }
+        }
+      },
+      "required": ["name"]
+    },
+    "Intent": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phrases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IntentInput"
+          }
+        }
+      },
+      "required": ["name"]
+    },
+    "IntentInput": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Record<string,string>"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": ["name"]
+    },
+    "Record<string,string>": {
+      "type": "object"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

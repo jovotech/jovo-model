@@ -219,7 +219,11 @@ export class JovoModelHelper {
     }
   }
 
-  static getEntityByName(model: JovoModelData | JovoModelDataV3, intent: string, entity: string): IntentEntity | IntentInput | undefined {
+  static getEntityByName(
+    model: JovoModelData | JovoModelDataV3,
+    intent: string,
+    entity: string,
+  ): IntentEntity | IntentInput | undefined {
     const entities = this.getEntities(model, intent);
 
     return entities[entity];

@@ -1,0 +1,118 @@
+{
+  "type": "object",
+  "properties": {
+    "entityTypes": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/EntityType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "intents": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/Intent"
+        }
+      },
+      "additionalProperties": false
+    },
+    "invocation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "required": ["invocation"],
+  "definitions": {
+    "EntityType": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityTypeValue"
+          }
+        }
+      }
+    },
+    "EntityTypeValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["value"]
+    },
+    "Intent": {
+      "type": "object",
+      "properties": {
+        "phrases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "entities": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/IntentEntity"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "IntentEntity": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Record<string,string>"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "Record<string,string>": {
+      "type": "object"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
