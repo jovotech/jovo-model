@@ -12,7 +12,6 @@ import {
 } from '@jovotech/model';
 import { InputType } from 'zlib';
 import { RasaCommonExample, RasaEntitySynonym, RasaLookupTable, RasaNluData } from '.';
-import * as JovoModelRasaValidator from '../validators/JovoModelRasaData.json';
 
 export interface EntityTypeNameUsedCounter {
   [key: string]: number;
@@ -21,7 +20,7 @@ export interface EntityTypeNameUsedCounter {
 export class JovoModelRasa extends JovoModel {
   static MODEL_KEY = 'rasa';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[], _locale: string): JovoModelData {
     const inputData = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
@@ -384,7 +383,7 @@ export class JovoModelRasa extends JovoModel {
     return returnData;
   }
 
-  static getValidator(): tv4.JsonSchema {
-    return JovoModelRasaValidator;
+  static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+    return super.getValidator(model);
   }
 }
