@@ -28,7 +28,7 @@ const BUILTIN_PREFIX = 'AMAZON.';
 export class JovoModelAlexa extends JovoModel {
   static MODEL_KEY = 'alexa';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], _locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelData {
     const inputData = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
