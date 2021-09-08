@@ -20,7 +20,7 @@ import {
 export class JovoModelLex extends JovoModel {
   static MODEL_KEY = 'lex';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], _locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelData {
     const inputData: LexModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {

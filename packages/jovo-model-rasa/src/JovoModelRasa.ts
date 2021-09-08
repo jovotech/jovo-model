@@ -20,7 +20,7 @@ export interface EntityTypeNameUsedCounter {
 export class JovoModelRasa extends JovoModel {
   static MODEL_KEY = 'rasa';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], _locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelData {
     const inputData = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {

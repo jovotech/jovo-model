@@ -32,7 +32,7 @@ export interface IntentInformation {
 export class JovoModelLuis extends JovoModel {
   static MODEL_KEY = 'luis';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], _locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelData {
     const inputData: LuisModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {

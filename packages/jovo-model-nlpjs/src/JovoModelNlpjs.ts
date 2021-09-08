@@ -11,7 +11,7 @@ import { NlpjsData, NlpjsModelFile } from '.';
 export class JovoModelNlpjs extends JovoModel {
   static MODEL_KEY = 'nlpjs';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], _locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelData {
     const inputData: NlpjsModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
