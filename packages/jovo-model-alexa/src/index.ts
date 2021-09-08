@@ -4,6 +4,14 @@ export * from './Interfaces';
 export * from './JovoModelAlexa';
 
 declare module '@jovotech/model' {
+  interface InvocationObject {
+    alexa: string;
+  }
+
+  interface JovoModelData {
+    alexa?: AlexaModel;
+  }
+
   interface IntentEntity {
     alexa?: {
       samples: string[];
@@ -30,10 +38,5 @@ declare module '@jovotech/model' {
 
   interface IntentV3 {
     alexa?: AlexaLMIntent;
-  }
-
-  interface JovoModelAlexaData {
-    invocation: string | { alexaSkill: string };
-    alexa?: AlexaModel;
   }
 }
