@@ -28,7 +28,7 @@ const BUILTIN_PREFIX = 'AMAZON.';
 export class JovoModelAlexa extends JovoModel {
   static MODEL_KEY = 'alexa';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelData {
     const inputData = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
@@ -116,7 +116,10 @@ export class JovoModelAlexa extends JovoModel {
     return jovoModel;
   }
 
-  static fromJovoModel(model: JovoModelData | JovoModelDataV3, locale: string): NativeFileInformation[] {
+  static fromJovoModel(
+    model: JovoModelData | JovoModelDataV3,
+    locale: string,
+  ): NativeFileInformation[] {
     const errorPrefix = '/models/' + locale + '.json - ';
 
     const alexaModel: AlexaModel = {
@@ -379,7 +382,7 @@ export class JovoModelAlexa extends JovoModel {
     ];
   }
 
-  static getValidator(): tv4.JsonSchema {
-    return JovoModelAlexaValidator;
+  static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+    return _merge(super.getValidator(model), JovoModelAlexaValidator);
   }
 }

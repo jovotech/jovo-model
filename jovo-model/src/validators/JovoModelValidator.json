@@ -10,30 +10,14 @@
       },
       "additionalProperties": false
     },
-    "inputTypes": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/InputType"
-      }
-    },
     "intents": {
-      "anyOf": [
-        {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Intent"
-          }
-        },
-        {
-          "type": "object",
-          "patternProperties": {
-            ".*": {
-              "$ref": "#/definitions/Intent"
-            }
-          },
-          "additionalProperties": false
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/Intent"
         }
-      ]
+      },
+      "additionalProperties": false
     },
     "invocation": {
       "anyOf": [
@@ -61,21 +45,6 @@
         }
       }
     },
-    "InputType": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "values": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/EntityTypeValue"
-          }
-        }
-      },
-      "required": ["name"]
-    },
     "EntityTypeValue": {
       "type": "object",
       "properties": {
@@ -100,9 +69,6 @@
     "Intent": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
         "phrases": {
           "type": "array",
           "items": {
@@ -115,12 +81,6 @@
             "type": "string"
           }
         },
-        "inputs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/IntentInput"
-          }
-        },
         "entities": {
           "type": "object",
           "patternProperties": {
@@ -129,46 +89,6 @@
             }
           },
           "additionalProperties": false
-        }
-      }
-    },
-    "IntentInput": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "text": {
-          "type": "string"
-        },
-        "type": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/Record<string,string>"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        }
-      },
-      "required": ["name"]
-    },
-    "IntentEntity": {
-      "type": "object",
-      "properties": {
-        "text": {
-          "type": "string"
-        },
-        "type": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/Record<string,string>"
-            },
-            {
-              "type": "string"
-            }
-          ]
         }
       }
     },

@@ -15,7 +15,6 @@ import _mergeWith from 'lodash.mergewith';
 import _set from 'lodash.set';
 import { join as pathJoin } from 'path';
 import * as yaml from 'yaml';
-import * as JovoModelGoogleValidator from '../validators/JovoModelGoogleValidator.json';
 import {
   GoogleActionInput,
   GoogleActionIntent,
@@ -35,7 +34,10 @@ export class JovoModelGoogle extends JovoModel {
     JovoModelGoogle.defaultLocale = defaultLocale;
   }
 
-  static fromJovoModel(model: JovoModelData | JovoModelDataV3, locale: string): NativeFileInformation[] {
+  static fromJovoModel(
+    model: JovoModelData | JovoModelDataV3,
+    locale: string,
+  ): NativeFileInformation[] {
     const errorPrefix = `/models/${locale}.json - `;
     const returnFiles: NativeFileInformation[] = [];
 
@@ -350,7 +352,7 @@ export class JovoModelGoogle extends JovoModel {
     return jovoModel;
   }
 
-  static getValidator(): tv4.JsonSchema {
-    return JovoModelGoogleValidator;
+  static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+    return super.getValidator(model);
   }
 }

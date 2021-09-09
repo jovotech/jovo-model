@@ -4,6 +4,10 @@ export * from './utils';
 export * from './JovoModelDialogflow';
 
 declare module '@jovotech/model' {
+  interface InvocationObject {
+    dialogflow: string;
+  }
+
   interface JovoModelData {
     dialogflow?: DialogflowModel;
   }
