@@ -272,24 +272,22 @@ export class JovoModelDialogflow extends JovoModel {
             dataType: '',
           };
 
+          if (!entityData.type) {
+            throw new Error(`Invalid entity type in intent "${intentKey}"`);
+          }
+
           if (typeof entityData.type === 'object') {
             if (entityData.type.dialogflow) {
-              if (entityData.type.dialogflow.startsWith(BUILTIN_PREFIX)) {
-                parameterObj.dataType = entityData.type.dialogflow;
-              } else {
-                entityData.type = entityData.type.dialogflow;
-              }
+              parameterObj.dataType = entityData.type.dialogflow;
             } else {
               throw new Error(`Please add a dialogflow property for entity "${entityKey}"`);
             }
+          } else {
+            parameterObj.dataType = entityData.type as string;
           }
 
           // handle custom entity types
-          if (parameterObj.dataType === '') {
-            if (!entityData.type) {
-              throw new Error(`Invalid entity type in intent "${intentKey}"`);
-            }
-            parameterObj.dataType = entityData.type as string;
+          if (!parameterObj.dataType.startsWith(BUILTIN_PREFIX)) {
             // throw error when no entityTypes object defined
             if (!JovoModelHelper.hasEntityTypes(model)) {
               throw new Error(
@@ -367,29 +365,7 @@ export class JovoModelDialogflow extends JovoModel {
               });
             }
           } else {
-            // Parse system entities with default values for validation.
-            const dfEntityObj = {
-              ...DIALOGFLOW_LM_ENTITY,
-              id: uuidv4(),
-              name: parameterObj.dataType.replace('@', ''),
-            };
-
-            returnFiles.push({
-              path: ['entities', `${dfEntityObj.name}.json`],
-              content: dfEntityObj,
-            });
-
-            const dfEntityValueObj: DialogflowLMEntries[] = [
-              {
-                value: entityKey,
-                synonyms: [entityKey],
-              },
-            ];
-
-            returnFiles.push({
-              path: ['entities', `${dfEntityObj.name}_entries_${locale}.json`],
-              content: dfEntityValueObj,
-            });
+            // Do nothing with system entities
           }
 
           // merges dialogflow specific data
