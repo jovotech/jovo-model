@@ -1,5 +1,18 @@
 # Changelog
 
+## [@jovotech/model-lex@4.0.0-beta.3](https://github.com/jovotech/jovo-model/compare/@jovotech/model-lex@4.0.0-beta.2...@jovotech/model-lex@4.0.0-beta.3)
+
+> 13 September 2021
+
+### Merged
+- ✨ Improve Model validation [#49](https://github.com/jovotech/jovo-model/pull/49)
+- 🐛 Prevent generation of system entities [#50](https://github.com/jovotech/jovo-model/pull/50)
+
+### Commits 
+- :fire: Delete package-lock.json [#e8e4e23](https://github.com/jovotech/jovo-model/commit/e8e4e235a464264305da0edcbe814b6951fc413f)
+- :sparkles: Abstract validators [#eb38b54](https://github.com/jovotech/jovo-model/commit/eb38b544389ed32d38f6103f436dd61a622701d8)
+- :sparkles: Abstract Google validator [#d3e3ab3](https://github.com/jovotech/jovo-model/commit/d3e3ab34cbaa2d767c3218a39838668e5830df23)
+
 ## [@jovotech/model-lex@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-lex@4.0.0-beta.1...@jovotech/model-lex@4.0.0-beta.2)
 
 > 27 August 2021
