@@ -21,7 +21,7 @@ import {
   AlexaLMTypeValue,
   AlexaModel,
 } from '.';
-import * as JovoModelAlexaValidator from '../validators/JovoModelAlexaData.json';
+import JovoModelAlexaValidator from '../validators/JovoModelAlexaData.json';
 
 const BUILTIN_PREFIX = 'AMAZON.';
 

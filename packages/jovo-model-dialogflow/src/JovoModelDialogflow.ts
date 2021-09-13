@@ -22,7 +22,7 @@ import {
   DialogflowLMIntent,
   DialogflowLMIntentData,
 } from '.';
-import * as JovoModelDialogflowValidator from '../validators/JovoModelDialogflowData.json';
+import JovoModelDialogflowValidator from '../validators/JovoModelDialogflowData.json';
 import { DIALOGFLOW_LM_ENTITY } from './utils';
 import { DialogflowLMEntries } from './utils/Interfaces';
 
