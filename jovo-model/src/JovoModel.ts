@@ -5,11 +5,12 @@ import {
   IntentEntity,
   JovoModelData,
   JovoModelHelper,
-  ModelEntityType,
+  JovoModelValidator,
+  JovoModelValidatorV3,
   ModelEntityTypeValue,
   NativeFileInformation,
 } from '.';
-import { InputType, IntentInput, IntentV3 } from './Interfaces';
+import { IntentInput, IntentV3, JovoModelDataV3 } from './Interfaces';
 
 export class JovoModel {
   static MODEL_KEY = '';
@@ -355,12 +356,11 @@ export class JovoModel {
    * @returns {tv4.JsonSchema}
    * @memberof JovoModelBuilder
    */
-  static getValidator(): tv4.JsonSchema {
-    // @ts-ignore
-    throw new Error(
-      `Method "getValidator" is not implemented for model "${
-        (this.constructor as typeof JovoModel).MODEL_KEY
-      }"!`,
-    );
+  static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+    if (JovoModelHelper.isJovoModelV3(model)) {
+      return JovoModelValidatorV3;
+    } else {
+      return JovoModelValidator;
+    }
   }
 }

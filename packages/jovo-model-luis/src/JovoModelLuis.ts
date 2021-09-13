@@ -19,7 +19,6 @@ import {
   LuisModelIntent,
   LuisModelUtterances,
 } from '.';
-import * as JovoModelLuisValidator from '../validators/JovoModelLuisData.json';
 
 export interface EntityTypeNameUsedCounter {
   [key: string]: number;
@@ -33,7 +32,7 @@ export interface IntentInformation {
 export class JovoModelLuis extends JovoModel {
   static MODEL_KEY = 'luis';
 
-  static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
+  static toJovoModel(inputFiles: NativeFileInformation[]): JovoModelData {
     const inputData: LuisModelFile = inputFiles[0].content;
 
     const jovoModel: JovoModelData = {
@@ -375,7 +374,7 @@ export class JovoModelLuis extends JovoModel {
     return returnData;
   }
 
-  static getValidator(): tv4.JsonSchema {
-    return JovoModelLuisValidator;
+  static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+    return super.getValidator(model);
   }
 }
