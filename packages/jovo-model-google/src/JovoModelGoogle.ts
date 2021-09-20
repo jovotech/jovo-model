@@ -64,93 +64,111 @@ export class JovoModelGoogle extends JovoModel {
         path.push(locale);
       }
 
-      path.push(`${intentKey}.yaml`);
+      // Handle platform-specific intents
+      if (intentData.googleAssistant) {
+        const googleIntent: string = Object.keys(intentData.googleAssistant)[0];
+        const data = intentData.googleAssistant[googleIntent];
 
-      for (let phrase of intentData.phrases || []) {
-        const entityRegex: RegExp = /{(.*?)}/g;
+        console.log(Object.keys(data));
+        if (googleIntent.startsWith('actions.intent')) {
+          globalIntents[googleIntent] = Object.keys(data).length
+            ? data
+            : { handler: { webhookHandler: 'Jovo' } };
 
-        // Check if phrase contains any entities and parse them, if necessary.
-        for (;;) {
-          const match = entityRegex.exec(phrase);
+          continue;
+        } else {
+          path.push(`${googleIntent}.yaml`);
+          Object.assign(gaIntent, intentData.googleAssistant[googleIntent]);
+        }
+      } else {
+        path.push(`${intentKey}.yaml`);
 
-          if (!match) {
-            break;
-          }
+        for (let phrase of intentData.phrases || []) {
+          const entityRegex: RegExp = /{(.*?)}/g;
 
-          const matched: string = match[0];
-          const entity: string = match[1];
-          let type: string | undefined;
+          // Check if phrase contains any entities and parse them, if necessary.
+          for (;;) {
+            const match = entityRegex.exec(phrase);
 
-          // Get entity type for current entity
-          const entities = JovoModelHelper.getEntities(model, intentKey);
-          for (const [entityKey, entityData] of Object.entries(entities)) {
-            if (entity === entityKey) {
-              if (typeof entityData.type === 'object') {
-                if (!entityData.type.googleAssistant) {
-                  throw new Error(
-                    `${errorPrefix}Please add a "googleAssistant" property for entity "${entityKey}"`,
-                  );
+            if (!match) {
+              break;
+            }
+
+            const matched: string = match[0];
+            const entity: string = match[1];
+            let type: string | undefined;
+
+            // Get entity type for current entity
+            const entities = JovoModelHelper.getEntities(model, intentKey);
+            for (const [entityKey, entityData] of Object.entries(entities)) {
+              if (entity === entityKey) {
+                if (typeof entityData.type === 'object') {
+                  if (!entityData.type.googleAssistant) {
+                    throw new Error(
+                      `${errorPrefix}Please add a "googleAssistant" property for entity "${entityKey}"`,
+                    );
+                  }
+                  type = entityData.type.googleAssistant;
+                  continue;
                 }
-                type = entityData.type.googleAssistant;
+
+                type = entityData.type;
+              }
+            }
+
+            if (!type) {
+              throw new Error(
+                `Couldn't find entity type for entity ${entity} for intent ${intentKey}.`,
+              );
+            }
+
+            // For entity type, get an example value to work with.
+            let sampleValue = '';
+            const entityTypes = JovoModelHelper.getEntityTypes(model);
+            for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
+              if (entityTypeKey !== type) {
                 continue;
               }
 
-              type = entityData.type;
-            }
-          }
-
-          if (!type) {
-            throw new Error(
-              `Couldn't find entity type for entity ${entity} for intent ${intentKey}.`,
-            );
-          }
-
-          // For entity type, get an example value to work with.
-          let sampleValue = '';
-          const entityTypes = JovoModelHelper.getEntityTypes(model);
-          for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
-            if (entityTypeKey !== type) {
-              continue;
+              sampleValue = entityTypeData.values![0].value;
+              break;
             }
 
-            sampleValue = entityTypeData.values![0].value;
-            break;
-          }
-
-          // If no sample value is given, take the entity id as a sample value.
-          if (!sampleValue) {
-            sampleValue = entity;
-          }
-
-          phrase = phrase.replace(matched, `($${entity} '${sampleValue}' auto=true)`);
-
-          // Check for freeText entity type.
-          if (type === 'actions.type.FreeText') {
-            // Create InputType with content freeText: {}.
-            JovoModelHelper.addEntityType(model, 'FreeTextType', {});
-            // Change type to that InputType.
-            type = 'FreeTextType';
-          }
-
-          if (locale === this.defaultLocale && JovoModelHelper.hasEntities(model, intentKey)) {
-            if (!gaIntent.parameters) {
-              gaIntent.parameters = [];
+            // If no sample value is given, take the entity id as a sample value.
+            if (!sampleValue) {
+              sampleValue = entity;
             }
 
-            // If parameters already contain entity, skip.
-            if (gaIntent.parameters.find((el) => el.name === entity)) {
-              continue;
+            phrase = phrase.replace(matched, `($${entity} '${sampleValue}' auto=true)`);
+
+            // Check for freeText entity type.
+            if (type === 'actions.type.FreeText') {
+              // Create InputType with content freeText: {}.
+              JovoModelHelper.addEntityType(model, 'FreeTextType', {});
+              // Change type to that InputType.
+              type = 'FreeTextType';
             }
 
-            gaIntent.parameters.push({
-              name: entity,
-              type: {
-                name: type,
-              },
-            });
+            if (locale === this.defaultLocale && JovoModelHelper.hasEntities(model, intentKey)) {
+              if (!gaIntent.parameters) {
+                gaIntent.parameters = [];
+              }
+
+              // If parameters already contain entity, skip.
+              if (gaIntent.parameters.find((el) => el.name === entity)) {
+                continue;
+              }
+
+              gaIntent.parameters.push({
+                name: entity,
+                type: {
+                  name: type,
+                },
+              });
+            }
           }
+          gaIntent.trainingPhrases.push(phrase);
         }
-        gaIntent.trainingPhrases.push(phrase);
       }
 
       returnFiles.push({
