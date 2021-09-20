@@ -69,7 +69,6 @@ export class JovoModelGoogle extends JovoModel {
         const googleIntent: string = Object.keys(intentData.googleAssistant)[0];
         const data = intentData.googleAssistant[googleIntent];
 
-        console.log(Object.keys(data));
         if (googleIntent.startsWith('actions.intent')) {
           globalIntents[googleIntent] = Object.keys(data).length
             ? data
