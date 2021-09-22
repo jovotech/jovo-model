@@ -133,11 +133,11 @@ export class JovoModelAlexa extends JovoModel {
     let invocationName: string = model.invocation as string;
 
     if (typeof model.invocation === 'object') {
-      if (!model.invocation.alexaSkill) {
+      if (!model.invocation.alexa) {
         throw new Error(`Can\'t find invocation name for locale ${locale}.`);
       }
 
-      invocationName = model.invocation.alexaSkill;
+      invocationName = model.invocation.alexa;
     }
 
     _set(alexaModel, 'interactionModel.languageModel.invocationName', invocationName);
