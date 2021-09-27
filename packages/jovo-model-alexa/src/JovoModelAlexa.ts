@@ -50,13 +50,11 @@ export class JovoModelAlexa extends JovoModel {
       _set(jovoModel, 'alexa.interactionModel.dialog', _get(inputData, 'interactionModel.dialog'));
     }
 
-    const alexaIntents: Record<string, Intent> = {};
+    const alexaIntents: Intent[] = [];
     const jovoIntents: Record<string, Intent> = {};
     for (const intent of _get(inputData, 'interactionModel.languageModel.intents')) {
       if (_startsWith(intent.name, BUILTIN_PREFIX)) {
-        const intentName: string = intent.name;
-        delete intent.name;
-        alexaIntents[intentName] = intent;
+        alexaIntents.push(intent);
       } else {
         const jovoIntent: Intent = {
           phrases: intent.samples,
