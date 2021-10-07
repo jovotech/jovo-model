@@ -4,15 +4,11 @@
 
 > 22 September 2021
 
-### Merged
-
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
 ## [@jovotech/model@4.0.0-beta.3](https://github.com/jovotech/jovo-model/compare/@jovotech/model@4.0.0-beta.2...@jovotech/model@4.0.0-beta.3)
 
 > 13 September 2021
-
-### Merged
 
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
@@ -20,8 +16,6 @@
 ## [@jovotech/model@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model@4.0.0-beta.1...@jovotech/model@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -32,15 +26,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-util@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-util@4.0.0-beta.3...@jovotech/model-util@4.0.0-beta.4)
 
 > 22 September 2021
-
-### Merged
 
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
@@ -48,16 +38,12 @@
 
 > 13 September 2021
 
-### Merged
-
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
 
 ## [@jovotech/model-util@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-util@4.0.0-beta.1...@jovotech/model-util@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -68,15 +54,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-snips@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-snips@4.0.0-beta.3...@jovotech/model-snips@4.0.0-beta.4)
 
 > 22 September 2021
-
-### Merged
 
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
@@ -84,16 +66,12 @@
 
 > 13 September 2021
 
-### Merged
-
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
 
 ## [@jovotech/model-snips@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-snips@4.0.0-beta.1...@jovotech/model-snips@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -104,15 +82,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-rasa@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-rasa@4.0.0-beta.3...@jovotech/model-rasa@4.0.0-beta.4)
 
 > 22 September 2021
-
-### Merged
 
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
@@ -120,16 +94,12 @@
 
 > 13 September 2021
 
-### Merged
-
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
 
 ## [@jovotech/model-rasa@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-rasa@4.0.0-beta.1...@jovotech/model-rasa@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -140,15 +110,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-nlpjs@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-nlpjs@4.0.0-beta.3...@jovotech/model-nlpjs@4.0.0-beta.4)
 
 > 22 September 2021
-
-### Merged
 
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
@@ -156,16 +122,12 @@
 
 > 13 September 2021
 
-### Merged
-
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
 
 ## [@jovotech/model-nlpjs@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-nlpjs@4.0.0-beta.1...@jovotech/model-nlpjs@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -176,15 +138,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-luis@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-luis@4.0.0-beta.3...@jovotech/model-luis@4.0.0-beta.4)
 
 > 22 September 2021
-
-### Merged
 
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
@@ -192,16 +150,12 @@
 
 > 13 September 2021
 
-### Merged
-
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
 
 ## [@jovotech/model-luis@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-luis@4.0.0-beta.1...@jovotech/model-luis@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -212,15 +166,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-lex@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-lex@4.0.0-beta.3...@jovotech/model-lex@4.0.0-beta.4)
 
 > 22 September 2021
-
-### Merged
 
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
@@ -228,16 +178,12 @@
 
 > 13 September 2021
 
-### Merged
-
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
 
 ## [@jovotech/model-lex@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-lex@4.0.0-beta.1...@jovotech/model-lex@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -248,15 +194,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-google@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-google@4.0.0-beta.3...@jovotech/model-google@4.0.0-beta.4)
 
 > 22 September 2021
-
-### Merged
 
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
@@ -264,16 +206,12 @@
 
 > 13 September 2021
 
-### Merged
-
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
 
 ## [@jovotech/model-google@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-google@4.0.0-beta.1...@jovotech/model-google@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -284,15 +222,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-dialogflow@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-dialogflow@4.0.0-beta.3...@jovotech/model-dialogflow@4.0.0-beta.4)
 
 > 22 September 2021
-
-### Merged
 
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
@@ -300,16 +234,12 @@
 
 > 13 September 2021
 
-### Merged
-
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
 
 ## [@jovotech/model-dialogflow@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-dialogflow@4.0.0-beta.1...@jovotech/model-dialogflow@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -320,15 +250,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-alexa@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-alexa@4.0.0-beta.3...@jovotech/model-alexa@4.0.0-beta.4)
 
 > 22 September 2021
-
-### Merged
 
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 
@@ -336,16 +262,12 @@
 
 > 13 September 2021
 
-### Merged
-
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
 
 ## [@jovotech/model-alexa@4.0.0-beta.2](https://github.com/jovotech/jovo-model/compare/@jovotech/model-alexa@4.0.0-beta.1...@jovotech/model-alexa@4.0.0-beta.2)
 
 > 27 August 2021
-
-### Merged
 
 - ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
 - 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
@@ -356,15 +278,11 @@
 
 > 18 August 2021
 
-### Merged
-
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
 ## [@jovotech/model-alexa@4.0.0-beta.0]()
 
 > 20 August 2021
-
-### Merged
 
 - 🐛 Fix bug causing intents to duplicate [`#33`](https://github.com/jovotech/jovo-model/pull/33)
 - 🐛 Parse FreeTextType to platform-specific property [`#28`](https://github.com/jovotech/jovo-model/pull/28)
