@@ -81,7 +81,7 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   hasPhrase!: (phrase: string) => boolean;
 
-  prepareModel!: () => JovoModelBuilder;
+  prepareModel!: () => JovoModelData | JovoModelDataV3;
 
   removeEntity!: (intent: string, entity: string) => JovoModelBuilder;
 
@@ -97,7 +97,7 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
 
   getEntityTypes!: () => Record<string, EntityType | InputType>;
 
-  updateEntityType!: (entityType: string, entityTypeData: EntityType) => JovoModelBuilder;
+  updateEntityType!: (entityType: string, entityTypeData: EntityType | InputType) => JovoModelBuilder;
 
   updateIntent!: (intent: string, intentData: Intent) => JovoModelBuilder;
 
@@ -130,6 +130,16 @@ export class JovoModelBuilder implements JovoModelBuilderInterface {
     oldSynonym: string,
     newSynonym: string,
   ) => JovoModelBuilder;
+
+  getIntentIndex!: (intentName: string) => number;
+
+  getInputIndex!: (intent: string, input: string) => number;
+
+  getInputTypeIndex!: (inputType: string) => number;
+
+  getInputTypeByName!: (inputType: string) => InputType | undefined;
+
+  getInputTypeValueIndex!: (inputType: string, inputTypeValue: string) => number;
 
   isJovoModelV3!: () => boolean;
 
