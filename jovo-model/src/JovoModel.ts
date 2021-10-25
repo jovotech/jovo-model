@@ -267,7 +267,7 @@ export class JovoModel {
    * See [[JovoModelHelper]]
    * @param entityType EntityType-object or string
    */
-  getEntityTypeValues(entityType: string): EntityTypeValue[] {
+  getEntityTypeValues(entityType: string): Array<string | EntityTypeValue> {
     return this.data ? JovoModelHelper.getEntityTypeValues(this.data, entityType) : [];
   }
 

@@ -110,7 +110,11 @@ export class JovoModelSnips extends JovoModel {
                 const randomIndex: number = Math.round(
                   Math.random() * (entityTypeData.values.length - 1),
                 );
-                entitySample = entityTypeData.values[randomIndex]?.value || entitySample;
+                const entityTypeValue = entityTypeData.values[randomIndex];
+                entitySample =
+                  typeof entityTypeValue === 'string'
+                    ? entityTypeValue
+                    : entityTypeValue?.value || entitySample;
               }
             }
 
@@ -167,16 +171,20 @@ export class JovoModelSnips extends JovoModel {
 
         if (entityTypeData.values) {
           for (const value of entityTypeData.values) {
-            const entityData: SnipsEntityData = { value: value.value, synonyms: [] };
+            if (typeof value === 'string') {
+              entity.data!.push({ value, synonyms: [] });
+            } else {
+              const entityData: SnipsEntityData = { value: value.value, synonyms: [] };
 
-            if (value.synonyms) {
-              entity.use_synonyms = true;
-              for (const synonym of value.synonyms) {
-                entityData.synonyms.push(synonym);
+              if (value.synonyms) {
+                entity.use_synonyms = true;
+                for (const synonym of value.synonyms) {
+                  entityData.synonyms.push(synonym);
+                }
               }
-            }
 
-            entity.data!.push(entityData);
+              entity.data!.push(entityData);
+            }
           }
         }
 

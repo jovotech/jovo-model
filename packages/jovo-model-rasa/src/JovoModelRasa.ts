@@ -3,14 +3,13 @@ import {
   EntityTypeValue,
   Intent,
   IntentEntity,
-  IntentV3,
+  InputType,
   JovoModel,
   JovoModelData,
   JovoModelDataV3,
   JovoModelHelper,
   NativeFileInformation,
 } from '@jovotech/model';
-import { InputType } from 'zlib';
 import { RasaCommonExample, RasaEntitySynonym, RasaLookupTable, RasaNluData } from '.';
 
 export interface EntityTypeNameUsedCounter {
@@ -204,8 +203,6 @@ export class JovoModelRasa extends JovoModel {
               model,
               phrase,
               intentKey,
-              intentData,
-              JovoModelHelper.getEntityTypes(model),
               entityTypeNameUsedCounter,
             );
             returnData.common_examples.push(rasaExample);
@@ -215,7 +212,6 @@ export class JovoModelRasa extends JovoModel {
     }
 
     let saveAsLookupTable: boolean;
-    let rasaSynonym: RasaEntitySynonym;
     if (JovoModelHelper.hasEntityTypes(model)) {
       const entityTypes = JovoModelHelper.getEntityTypes(model);
       for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
@@ -230,7 +226,10 @@ export class JovoModelRasa extends JovoModel {
         // Check it it should be saved under synonyms or lookupTable
 
         for (const typeValue of entityTypeData.values) {
-          if (Object.keys(typeValue).length !== 1 || typeValue.value === undefined) {
+          if (
+            Object.keys(typeValue).length !== 1 ||
+            (typeValue as EntityTypeValue).value === undefined
+          ) {
             // It can only be saved as lookupTable if it does not
             // have any other properties than "value"
             saveAsLookupTable = false;
@@ -243,21 +242,21 @@ export class JovoModelRasa extends JovoModel {
           returnData.lookup_tables!.push({
             name: entityTypeKey,
             // TODO: remove the !
-            elements: entityTypeData.values.map((data) => data.value),
+            elements: entityTypeData.values.map((data) =>
+              typeof data === 'string' ? data : data.value,
+            ),
           });
         } else {
           // Save as synonyms
           for (const typeValue of entityTypeData.values) {
-            rasaSynonym = {
-              value: typeValue.value,
-              synonyms: [],
-            };
-
-            if (typeValue.synonyms !== undefined) {
-              rasaSynonym.synonyms = typeValue.synonyms;
+            if (typeof typeValue === 'string') {
+              returnData.entity_synonyms!.push({ value: typeValue, synonyms: [] });
+            } else {
+              returnData.entity_synonyms!.push({
+                value: typeValue.value,
+                synonyms: typeValue.synonyms || [],
+              });
             }
-
-            returnData.entity_synonyms!.push(rasaSynonym);
           }
         }
       }
@@ -277,8 +276,6 @@ export class JovoModelRasa extends JovoModel {
     model: JovoModelData | JovoModelDataV3,
     phrase: string,
     intent: string,
-    intentData: Intent | IntentV3,
-    entityTypes: Record<string, EntityType | InputType>,
     entityTypeNameUsedCounter: EntityTypeNameUsedCounter,
   ): RasaCommonExample {
     const returnData: RasaCommonExample = {
@@ -288,7 +285,7 @@ export class JovoModelRasa extends JovoModel {
     };
 
     let startIndex: number;
-    let entityType: EntityType | undefined;
+    let entityType: EntityType | InputType | undefined;
     let intentEntity: IntentEntity | undefined;
     let exampleValue = '';
     let entityTypeName:
@@ -366,7 +363,9 @@ export class JovoModelRasa extends JovoModel {
         }
         const exampleEntityIndex =
           entityTypeNameUsedCounter[entityTypeName]++ % entityType.values.length;
-        exampleValue = entityType.values[exampleEntityIndex].value;
+        const entityTypeValue = entityType.values[exampleEntityIndex];
+        exampleValue =
+          typeof entityTypeValue === 'string' ? entityTypeValue : entityTypeValue.value;
 
         returnData.entities.push({
           value: exampleValue,

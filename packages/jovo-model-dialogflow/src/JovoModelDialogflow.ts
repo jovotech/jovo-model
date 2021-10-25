@@ -189,9 +189,9 @@ export class JovoModelDialogflow extends JovoModel {
         continue;
       }
       const dialogFlowEntity = fileInformation.content;
-      const jovoInput: EntityType = {};
+      const jovoEntity: EntityType = { values: [] };
       // skip default intent properties
-      JovoModelDialogflow.skipDefaultEntityProps(jovoInput, dialogFlowEntity);
+      JovoModelDialogflow.skipDefaultEntityProps(jovoEntity, dialogFlowEntity);
 
       // iterate through usersays intent files and generate sample phrases
       const userSaysFile = entityFiles.find((file) => {
@@ -203,7 +203,6 @@ export class JovoModelDialogflow extends JovoModel {
       });
 
       if (userSaysFile !== undefined) {
-        const values = [];
         const entries = userSaysFile.content;
 
         for (const entry of entries) {
@@ -223,18 +222,11 @@ export class JovoModelDialogflow extends JovoModel {
               value.synonyms = tempSynonyms;
             }
           }
-          values.push(value);
-        }
-        if (values.length > 0) {
-          jovoInput.values = values;
+          jovoEntity.values.push(value);
         }
       }
 
-      jovoModel.entityTypes![dialogFlowEntity.name] = jovoInput;
-    }
-
-    if (jovoModel.entityTypes!.length === 0) {
-      delete jovoModel.entityTypes;
+      jovoModel.entityTypes![dialogFlowEntity.name] = jovoEntity;
     }
 
     return jovoModel;
@@ -341,22 +333,26 @@ export class JovoModelDialogflow extends JovoModel {
               const entityValues = [];
               // create dfEntityValueObj
               for (const value of matchedEntityType.values) {
-                const dfEntityValueObj: DialogflowLMEntries = {
-                  value: value.value,
-                };
+                if (typeof value === 'string') {
+                  entityValues.push({ value });
+                } else {
+                  const dfEntityValueObj: DialogflowLMEntries = {
+                    value: value.value,
+                  };
 
-                // save synonyms, if defined
-                if (!dfEntityObj.isEnum && !dfEntityObj.isRegexp) {
-                  dfEntityValueObj.synonyms = [value.value.replace(/[^0-9A-Za-zÀ-ÿ-_' ]/gi, '')];
-                  if (value.synonyms) {
-                    for (let i = 0; i < value.synonyms.length; i++) {
-                      value.synonyms[i] = value.synonyms[i].replace(/[^0-9A-Za-zÀ-ÿ-_' ]/gi, '');
+                  // save synonyms, if defined
+                  if (!dfEntityObj.isEnum && !dfEntityObj.isRegexp) {
+                    dfEntityValueObj.synonyms = [value.value.replace(/[^0-9A-Za-zÀ-ÿ-_' ]/gi, '')];
+                    if (value.synonyms) {
+                      for (let i = 0; i < value.synonyms.length; i++) {
+                        value.synonyms[i] = value.synonyms[i].replace(/[^0-9A-Za-zÀ-ÿ-_' ]/gi, '');
+                      }
+
+                      dfEntityValueObj.synonyms = dfEntityValueObj.synonyms.concat(value.synonyms);
                     }
-
-                    dfEntityValueObj.synonyms = dfEntityValueObj.synonyms.concat(value.synonyms);
                   }
+                  entityValues.push(dfEntityValueObj);
                 }
-                entityValues.push(dfEntityValueObj);
               }
 
               returnFiles.push({
