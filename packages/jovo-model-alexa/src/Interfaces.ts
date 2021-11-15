@@ -4,7 +4,7 @@ export interface AlexaLMTypeObject {
 }
 
 export interface AlexaLMTypeValue {
-  id: string | null;
+  id?: string;
   name: {
     value: string;
     synonyms?: string[];

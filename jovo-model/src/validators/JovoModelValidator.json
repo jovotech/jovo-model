@@ -43,28 +43,36 @@
             "$ref": "#/definitions/EntityTypeValue"
           }
         }
-      }
+      },
+      "required": ["values"]
     },
     "EntityTypeValue": {
-      "type": "object",
-      "properties": {
-        "value": {
+      "anyOf": [
+        {
           "type": "string"
         },
-        "id": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        },
-        "synonyms": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["value"]
         }
-      },
-      "required": ["value"]
+      ]
     },
     "Intent": {
       "type": "object",

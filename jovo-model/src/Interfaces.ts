@@ -1,5 +1,5 @@
 export interface EntityType {
-  values?: EntityTypeValue[];
+  values: Array<string | EntityTypeValue>;
 }
 
 export interface EntityTypeValue {

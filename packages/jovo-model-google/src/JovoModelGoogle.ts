@@ -129,7 +129,12 @@ export class JovoModelGoogle extends JovoModel {
                 continue;
               }
 
-              sampleValue = entityTypeData.values![0].value;
+              const entityTypeDataValue = entityTypeData.values![0];
+              if (typeof entityTypeDataValue === 'string') {
+                sampleValue = entityTypeDataValue;
+              } else {
+                sampleValue = entityTypeDataValue.value;
+              }
               break;
             }
 
@@ -143,7 +148,7 @@ export class JovoModelGoogle extends JovoModel {
             // Check for freeText entity type.
             if (type === 'actions.type.FreeText') {
               // Create InputType with content freeText: {}.
-              JovoModelHelper.addEntityType(model, 'FreeTextType', {});
+              JovoModelHelper.addEntityType(model, 'FreeTextType', {} as EntityType);
               // Change type to that InputType.
               type = 'FreeTextType';
             }
@@ -196,13 +201,17 @@ export class JovoModelGoogle extends JovoModel {
       path.push(`${entityTypeKey}.yaml`);
 
       // prettier-ignore
-      for (const entityTypeValue of (entityTypeData.values || []) as EntityTypeValue[]) {
-        gaInput.synonym.entities[entityTypeValue.key || entityTypeValue.value] = {
-          synonyms: [
-            entityTypeValue.value,
-            ...(entityTypeValue.synonyms || [])
-          ]
-        };
+      for (const entityTypeValue of (entityTypeData.values || [])) {
+        if(typeof entityTypeValue === 'string') {
+          gaInput.synonym.entities[entityTypeValue] = {synonyms: [entityTypeValue]};
+        } else {
+          gaInput.synonym.entities[entityTypeValue.key || entityTypeValue.value] = {
+            synonyms: [
+              entityTypeValue.value,
+              ...(entityTypeValue.synonyms || [])
+            ]
+          };
+        }
       }
 
       // If InputType is FreeText, don't include any entity values.

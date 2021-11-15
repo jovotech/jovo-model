@@ -99,11 +99,15 @@ export class JovoModelNlpjs extends JovoModel {
       for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
         const options: Record<string, string[]> = {};
 
-        entityTypeData.values!.forEach((entityTypeValue: EntityTypeValue) => {
-          const key = entityTypeValue.value;
-          options[key] = [entityTypeValue.value];
-          if (entityTypeValue.synonyms) {
-            options[key] = options[key].concat(entityTypeValue.synonyms);
+        entityTypeData.values!.forEach((entityTypeValue: string | EntityTypeValue) => {
+          if (typeof entityTypeValue === 'string') {
+            options[entityTypeValue] = [entityTypeValue];
+          } else {
+            const key = entityTypeValue.value;
+            options[key] = [entityTypeValue.value];
+            if (entityTypeValue.synonyms) {
+              options[key] = options[key].concat(entityTypeValue.synonyms);
+            }
           }
         });
         returnData.entities![entitiesMap[entityTypeKey]] = {

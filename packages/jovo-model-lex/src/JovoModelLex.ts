@@ -69,13 +69,12 @@ export class JovoModelLex extends JovoModel {
       let entityType: EntityType;
       let entityTypeValue: EntityTypeValue;
       for (const lexSlotType of lexModel.slotTypes) {
-        entityType = {};
+        entityType = { values: [] };
 
         if (
           lexSlotType.enumerationValues !== undefined &&
           lexSlotType.enumerationValues.length !== 0
         ) {
-          entityType.values = [];
           for (const enumerationValue of lexSlotType.enumerationValues) {
             entityTypeValue = {
               value: enumerationValue.value,
@@ -156,7 +155,6 @@ export class JovoModelLex extends JovoModel {
 
     if (JovoModelHelper.hasEntityTypes(model)) {
       let lexSlot: LexModelSlotTypeResource;
-      let lexEnumerationValue: LexModelEnumerationValue;
       const entityTypes = JovoModelHelper.getEntityTypes(model);
 
       for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
@@ -165,14 +163,16 @@ export class JovoModelLex extends JovoModel {
         if (entityTypeData.values) {
           lexSlot.enumerationValues = [];
           for (const entityTypeValue of entityTypeData.values) {
-            lexEnumerationValue = {
-              value: entityTypeValue.value,
-            };
-
-            if (entityTypeValue.synonyms !== undefined && entityTypeValue.synonyms.length) {
-              lexEnumerationValue.synonyms = entityTypeValue.synonyms;
+            if (typeof entityTypeValue === 'string') {
+              lexSlot.enumerationValues.push({
+                value: entityTypeValue,
+              });
+            } else {
+              lexSlot.enumerationValues.push({
+                value: entityTypeValue.value,
+                synonyms: entityTypeValue.synonyms,
+              });
             }
-            lexSlot.enumerationValues.push(lexEnumerationValue);
           }
         }
 

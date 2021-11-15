@@ -175,7 +175,6 @@ export class JovoModelLuis extends JovoModel {
 
     // Convert the entityTypes to closedLists
     let tempSubLists: LuisModelClosedSubList[];
-    let tempSubList: LuisModelClosedSubList;
     if (JovoModelHelper.hasEntityTypes(model)) {
       const entityTypes = JovoModelHelper.getEntityTypes(model);
       for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
@@ -193,15 +192,14 @@ export class JovoModelLuis extends JovoModel {
         }
 
         for (const typeValue of entityTypeData.values) {
-          tempSubList = {
-            canonicalForm: typeValue.value,
-          };
-
-          if (typeValue.synonyms) {
-            tempSubList.list = typeValue.synonyms;
+          if (typeof typeValue === 'string') {
+            tempSubLists.push({ canonicalForm: typeValue });
+          } else {
+            tempSubLists.push({
+              canonicalForm: typeValue.value,
+              list: typeValue.synonyms,
+            });
           }
-
-          tempSubLists.push(tempSubList);
         }
 
         luisClosedLists.push({
@@ -254,7 +252,7 @@ export class JovoModelLuis extends JovoModel {
     let tempUtterance: LuisModelUtterances;
 
     let startIndex: number;
-    let entityType: EntityType | undefined;
+    let entityType: EntityType | InputType | undefined;
     let intentEntity: IntentEntity | undefined;
     let exampleValue = '';
     let entityTypeName:
@@ -346,7 +344,9 @@ export class JovoModelLuis extends JovoModel {
             }
             const exampleEntityIndex =
               entityTypeNameUsedCounter[entityTypeName]++ % entityType.values.length;
-            exampleValue = entityType.values[exampleEntityIndex].value;
+            const entityTypeValue: string | EntityTypeValue = entityType.values[exampleEntityIndex];
+            exampleValue =
+              typeof entityTypeValue === 'string' ? entityTypeValue : entityTypeValue.value;
 
             tempUtterance.entities.push({
               // value: exampleValue,
