@@ -162,7 +162,7 @@ You can also choose to provide different entity types for each NLU service:
 
 You can either reference entity types defined in the [`entityTypes` object](#entity-types), or reference built-in entity types provided by the respective NLU platforms (like `AMAZON.US_FIRST_NAME` for Alexa).
 
-### entityTypes
+## entityTypes
 
 The `entityTypes` object lists all the entity types that are referenced as `entities` inside `intents`.
 
@@ -185,7 +185,7 @@ Each input type contains:
 }
 ```
 
-#### values
+### values
 
 You can define the values for an entity type by either adding as strings or objects. For example this is how the `myCityEntityType` looks like with two values:
 
@@ -215,7 +215,7 @@ Some entity values could be expressed in the same way. For this, you can add `sy
 }
 ```
 
-### Platform-specific Elements
+## Platform-specific Elements
 
 Some intents or entity types may be needed for just some platforms. You can define them as additional elements as shown for Alexa in the example below:
 
