@@ -1,7 +1,7 @@
 {
   "name": "@jovotech/model-alexa",
   "private": false,
-  "version": "4.0.0-beta.4",
+  "version": "4.0.0-beta.5",
   "description": "Jovo Model for Alexa",
   "main": "dist/src/index",
   "types": "dist/src/index.d.ts",
@@ -19,7 +19,7 @@
   "author": "jovotech",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@jovotech/model-util": "^4.0.0-beta.4",
+    "@jovotech/model-util": "^4.0.0-beta.5",
     "@types/jest": "^24.0.25",
     "@types/lodash.assign": "^4.2.6",
     "@types/lodash.get": "^4.4.6",
@@ -36,7 +36,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@jovotech/model": "^4.0.0-beta.4",
+    "@jovotech/model": "^4.0.0-beta.5",
     "lodash.assign": "^4.2.0",
     "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.2",
