@@ -1,7 +1,7 @@
 {
     "name": "@jovotech/model-google",
     "private": false,
-    "version": "4.0.0-beta.5",
+    "version": "4.0.0",
     "description": "Jovo Model for Google Conversational Actions.",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -16,7 +16,7 @@
     "author": "jovotech",
     "license": "Apache-2.0",
     "devDependencies": {
-        "@jovotech/model-util": "^4.0.0-beta.5",
+        "@jovotech/model-util": "^4.0.0",
         "@types/jest": "^24.0.25",
         "@types/lodash.get": "^4.4.6",
         "@types/lodash.mergewith": "^4.6.6",
@@ -31,7 +31,7 @@
         "typescript": "^4.3.5"
     },
     "dependencies": {
-        "@jovotech/model": "^4.0.0-beta.5",
+        "@jovotech/model": "^4.0.0",
         "lodash.get": "^4.4.2",
         "lodash.mergewith": "^4.6.2",
         "lodash.set": "^4.3.2",
