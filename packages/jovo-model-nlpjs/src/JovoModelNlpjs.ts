@@ -48,7 +48,7 @@ export class JovoModelNlpjs extends JovoModel {
       for (const [intentKey, intentData] of Object.entries(intents)) {
         const intentObj = {
           intent: intentKey,
-          utterances: [],
+          utterances: [] as string[],
         };
 
         if (JovoModelHelper.hasEntities(model, intentKey)) {
@@ -57,15 +57,13 @@ export class JovoModelNlpjs extends JovoModel {
 
           for (const [entityKey, entityData] of Object.entries(entities)) {
             if (entityData.type && typeof entityData.type === 'string') {
-              // inputsMap[input.name] = input.type;
-              entitiesMap[entityData.type] = entityKey;
+              entitiesMap[entityKey] = entityData.type;
             } else if (
               entityData.type &&
               typeof entityData.type === 'object' &&
               entityData.type.nlpjs
             ) {
-              // inputsMap[input.name] = input.type.nlpjs;
-              entitiesMap[entityData.type.nlpjs] = entityKey;
+              entitiesMap[entityKey] = entityData.type.nlpjs;
             }
           }
         }
@@ -76,15 +74,9 @@ export class JovoModelNlpjs extends JovoModel {
             if (matches) {
               matches.forEach((match: string) => {
                 const matchValue = match.replace('{', '').replace('}', '');
-
-                if (entitiesMap[matchValue]) {
-                  phrase = phrase.replace(match, `@${entitiesMap[matchValue]}`);
-                } else {
-                  phrase = phrase.replace(match, `@${matchValue}`);
-                }
+                phrase = phrase.replace(match, `@${matchValue}`);
               });
             }
-            // @ts-ignore
             intentObj.utterances.push(phrase);
           });
         }
@@ -93,13 +85,14 @@ export class JovoModelNlpjs extends JovoModel {
     }
 
     if (JovoModelHelper.hasEntityTypes(model)) {
-      const entityTypes = JovoModelHelper.getEntityTypes(model);
       returnData.entities = {};
-
-      for (const [entityTypeKey, entityTypeData] of Object.entries(entityTypes)) {
+      for (const [entityKey, entityTypeName] of Object.entries(entitiesMap)) {
+        const relatedEntityType = JovoModelHelper.getEntityTypeByName(model, entityTypeName);
+        if (!relatedEntityType?.values?.length) {
+          continue;
+        }
         const options: Record<string, string[]> = {};
-
-        entityTypeData.values!.forEach((entityTypeValue: string | EntityTypeValue) => {
+        relatedEntityType.values.forEach((entityTypeValue: string | EntityTypeValue) => {
           if (typeof entityTypeValue === 'string') {
             options[entityTypeValue] = [entityTypeValue];
           } else {
@@ -110,7 +103,7 @@ export class JovoModelNlpjs extends JovoModel {
             }
           }
         });
-        returnData.entities![entitiesMap[entityTypeKey]] = {
+        returnData.entities[entityKey] = {
           options,
         };
       }
