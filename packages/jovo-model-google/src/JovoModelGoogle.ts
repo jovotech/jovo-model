@@ -96,6 +96,7 @@ export class JovoModelGoogle extends JovoModel {
             const matched: string = match[0];
             const entity: string = match[1];
             let type: string | undefined;
+            let isList = false;
 
             // Get entity type for current entity
             const entities = JovoModelHelper.getEntities(model, intentKey);
@@ -112,6 +113,8 @@ export class JovoModelGoogle extends JovoModel {
                 }
 
                 type = entityData.type;
+                // @ts-ignore
+                isList = entityData.list ?? false;
               }
             }
 
@@ -167,6 +170,7 @@ export class JovoModelGoogle extends JovoModel {
                 name: entity,
                 type: {
                   name: type,
+                  list: isList,
                 },
               });
             }
