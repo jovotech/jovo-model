@@ -243,8 +243,14 @@ export class JovoModelGoogle extends JovoModel {
       }
 
       for (const [name, content] of Object.entries(googleProps)) {
+        const path = ['custom', key];
+        if (key !== 'global' && locale !== this.defaultLocale) {
+          path.push(locale);
+        }
+        path.push(`${name}.yaml`);
+
         returnFiles.push({
-          path: ['custom', key, `${name}.yaml`],
+          path: path,
           content: yaml.stringify(content),
         });
       }
