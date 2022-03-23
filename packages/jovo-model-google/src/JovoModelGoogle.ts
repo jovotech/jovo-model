@@ -250,7 +250,7 @@ export class JovoModelGoogle extends JovoModel {
         path.push(`${name}.yaml`);
 
         returnFiles.push({
-          path: path,
+          path,
           content: yaml.stringify(content),
         });
       }
