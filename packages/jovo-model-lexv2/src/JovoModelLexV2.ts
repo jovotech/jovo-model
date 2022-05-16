@@ -1,4 +1,4 @@
-import {IntentEntity, JovoModel, JovoModelData, NativeFileInformation} from "@jovotech/model";
+import {EntityTypeValue, IntentEntity, JovoModel, JovoModelData, NativeFileInformation} from "@jovotech/model";
 import {JovoModelDataLexV2, LexV2BotLocale, LexV2Intent, LexV2Manifest, LexV2Slot, LexV2SlotType} from "./Interfaces";
 
 function createLexV2Identifier(): string {
@@ -14,12 +14,12 @@ export class JovoModelLexV2 extends JovoModel {
         const manifest: LexV2Manifest = {
             metaData: {
                 schemaVersion: "1",
-                fileFormat: "LexJson",
                 resourceType: "BOT_LOCALE",
+                fileFormat: "LexJson",
             }
         };
         yield {
-            path: ['manifest.json'],
+            path: ['Manifest.json'],
             content: manifest
         };
 
@@ -31,13 +31,13 @@ export class JovoModelLexV2 extends JovoModel {
         const botLocale: LexV2BotLocale = {
             name: "English (US)", // TODO: Revert if possible
             identifier: locale,
-            nluConfidenceThreshold: model.lexv2?.nluConfidenceThreshold ?? 0.4,
+            version: null,
+            description: null,
             voiceSettings: {
                 engine: model.lexv2?.voiceSettings?.engine ?? 'neural',
                 voiceId: model.lexv2?.voiceSettings?.voiceId ?? 'Ivy'
             },
-            version: null,
-            description: null
+            nluConfidenceThreshold: model.lexv2?.nluConfidenceThreshold ?? 0.4
         };
         yield {
             path: [botName, 'BotLocales', locale, 'BotLocale.json'],
@@ -63,7 +63,7 @@ export class JovoModelLexV2 extends JovoModel {
                 description: null,
                 valueSelectionSetting: {
                     regexFilter: null,
-                    resolutionStrategy: "ORIGINAL_VALUE",
+                    resolutionStrategy: entityType.values?.some(value => ((value as EntityTypeValue).synonyms?.length ?? 0) > 0) ? "TOP_RESOLUTION" : "ORIGINAL_VALUE",
                 }
             };
 
