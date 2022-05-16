@@ -1,16 +1,21 @@
 import {IntentEntity, JovoModel, JovoModelData, NativeFileInformation} from "@jovotech/model";
 import {JovoModelDataLexV2, LexV2BotLocale, LexV2Intent, LexV2Manifest, LexV2Slot, LexV2SlotType} from "./Interfaces";
-import {Intent} from "@jovotech/model/dist/src/Interfaces";
+
+function createLexV2Identifier(): string {
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return [...new Array(10).keys()].map(() => charset.charAt(Math.floor(Math.random() * charset.length))).join("");
+}
 
 export class JovoModelLexV2 extends JovoModel {
     static MODEL_KEY = 'lexv2';
 
     private static *generateFiles(model: JovoModelDataLexV2, locale: string): Generator<NativeFileInformation, void, undefined> {
+        console.log("Running generateFiles");
         const manifest: LexV2Manifest = {
-            metadata: {
-                schemaVersion: "1.0",
+            metaData: {
+                schemaVersion: "1",
                 fileFormat: "LexJson",
-                resourceType: "BotLocale",
+                resourceType: "BOT_LOCALE",
             }
         };
         yield {
@@ -24,13 +29,15 @@ export class JovoModelLexV2 extends JovoModel {
         locale = locale.replace("-", "_");
 
         const botLocale: LexV2BotLocale = {
-            name: locale, // should probably be Language (COUNTRY_CODE)
+            name: "English (US)", // TODO: Revert if possible
             identifier: locale,
             nluConfidenceThreshold: model.lexv2?.nluConfidenceThreshold ?? 0.4,
             voiceSettings: {
                 engine: model.lexv2?.voiceSettings?.engine ?? 'neural',
                 voiceId: model.lexv2?.voiceSettings?.voiceId ?? 'Ivy'
             },
+            version: null,
+            description: null
         };
         yield {
             path: [botName, 'BotLocales', locale, 'BotLocale.json'],
@@ -40,16 +47,24 @@ export class JovoModelLexV2 extends JovoModel {
         for (const [entityName, entityType] of Object.entries(model.entityTypes ?? {})) {
             const slotType: LexV2SlotType = {
                 name: entityName,
+                identifier: createLexV2Identifier(),
                 slotTypeValues: entityType.values?.map(value => (typeof value === "string" ? {
                     sampleValue: {
                         value
-                    }
+                    },
+                    synonyms: null
                 } : {
                     sampleValue: {
                         value: value.value
                     },
-                    synonyms: value.synonyms?.map(synonym => ({value: synonym}))
-                })) ?? []
+                    synonyms: value.synonyms?.map(synonym => ({value: synonym})) ?? null
+                })) ?? [],
+                parentSlotTypeSignature: null,
+                description: null,
+                valueSelectionSetting: {
+                    regexFilter: null,
+                    resolutionStrategy: "ORIGINAL_VALUE",
+                }
             };
 
             yield {
@@ -61,9 +76,22 @@ export class JovoModelLexV2 extends JovoModel {
         for (const [intentName, intent] of Object.entries(model.intents ?? {})) {
             const lexIntent: LexV2Intent = {
                 name: intentName,
+                identifier: createLexV2Identifier(),
                 sampleUtterances: intent.phrases?.map(sample => ({
                     utterance: sample
                 })) ?? [],
+                intentConfirmationSetting: null,
+                description: null,
+                inputContexts: null,
+                parentIntentSignature: null,
+                dialogCodeHook: null,
+                outputContexts: null,
+                fulfillmentCodeHook: null,
+                intentClosingSetting: null,
+                kendraConfiguration: null,
+                slotPriorities: Object.keys(intent.entities ?? {}).map((key, idx) => ({
+                    slotName: key, priority: idx + 1
+                })),
             };
 
             yield {
@@ -74,22 +102,34 @@ export class JovoModelLexV2 extends JovoModel {
             for (const [entityName, entity] of Object.entries(intent.entities ?? {})) {
                 const slot: LexV2Slot = {
                     name: entityName,
+                    identifier: createLexV2Identifier(),
                     slotTypeName: (entity.type as Record<string, string>).lex ?? entity.type,
                     valueElicitationSetting: {
                         promptSpecification: {
                             maxRetries: 4,
-                            messageGroups: [
+                            messageGroupsList: [
                                 {
                                     message: {
                                         plainTextMessage: {
-                                            value: entity.text!
-                                        }
-                                    }
+                                            value: entity.text ?? `What should ${entityName} be?`
+                                        },
+                                        ssmlMessage: null,
+                                        customPayload: null,
+                                        imageResponseCard: null
+                                    },
+                                    variations: null
                                 }
-                            ]
+                            ],
+                            allowInterrupt: true
                         },
-                        slotConstraint: "Required"
-                    }
+                        slotConstraint: "Required",
+                        sampleUtterances: null,
+                        defaultValueSpecification: null,
+                        waitAndContinueSpecification: null
+                    },
+                    multipleValuesSetting: null,
+                    description: null,
+                    obfuscationSetting: null,
                 };
 
                 yield {
@@ -98,6 +138,28 @@ export class JovoModelLexV2 extends JovoModel {
                 };
             }
         }
+
+        const fallbackIntent: LexV2Intent = {
+            name: "FallbackIntent",
+            identifier: "FALLBCKINT",
+            description: "Default intent when no other intent matches",
+            parentIntentSignature: "AMAZON.FallbackIntent",
+            sampleUtterances: null,
+            intentConfirmationSetting: null,
+            intentClosingSetting: null,
+            inputContexts: null,
+            outputContexts: null,
+            kendraConfiguration: null,
+            dialogCodeHook: null,
+            fulfillmentCodeHook: null,
+            slotPriorities: []
+        };
+
+        yield {
+            path: [botName, 'BotLocales', locale, 'Intents', "FallbackIntent", 'Intent.json'],
+            content: fallbackIntent
+        };
+
     }
 
     static fromJovoModel(model: JovoModelData, locale: string): NativeFileInformation[] {

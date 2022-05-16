@@ -1,7 +1,7 @@
 import {JovoModelData} from "@jovotech/model";
 
 export interface LexV2CustomPayload {
-    value?: string;
+    value: string | null;
 }
 
 export interface LexV2Button {
@@ -10,9 +10,9 @@ export interface LexV2Button {
 }
 
 export interface LexV2ImageResponseCard {
-    buttons?: LexV2Button[];
-    imageUrl?: string;
-    subtitle?: string;
+    buttons: LexV2Button[] | null;
+    imageUrl: string | null;
+    subtitle: string | null;
     title: string;
 }
 
@@ -25,25 +25,25 @@ export interface LexV2SSMLMessage {
 }
 
 export interface LexV2Message {
-    customPayload?: LexV2CustomPayload;
-    imageResponseCard?: LexV2ImageResponseCard;
-    plainTextMessage?: LexV2PlainTextMessage;
-    ssmlMessage?: LexV2SSMLMessage;
+    customPayload: LexV2CustomPayload | null;
+    imageResponseCard: LexV2ImageResponseCard | null;
+    plainTextMessage: LexV2PlainTextMessage | null;
+    ssmlMessage: LexV2SSMLMessage | null;
 }
 
 export interface LexV2MessageGroup {
     message: LexV2Message;
-    variations?: LexV2Message[];
+    variations: LexV2Message[] | null;
 }
 
 export interface LexV2FulfillmentStartResponseSpecification {
-    allowInterrupt?: boolean;
+    allowInterrupt: boolean | null;
     delayInSecond: number;
     messageGroups: LexV2MessageGroup[];
 }
 
 export interface LexV2FulfillmentUpdateResponseSpecification {
-    allowInterrupt?: boolean;
+    allowInterrupt: boolean | null;
     frequencyInSeconds: number;
     messageGroups: LexV2MessageGroup[];
 }
@@ -56,20 +56,20 @@ export type LexV2FulfillmentUpdatesSpecification = {active: false} | {
 };
 
 export interface LexV2ResponseSpecification {
-    allowInterrupt?: boolean;
+    allowInterrupt: boolean | null;
     messageGroups: LexV2MessageGroup[];
 }
 
 export interface LexV2PostFulfillmentStatusSpecification {
-    failureResponse?: LexV2ResponseSpecification;
-    successResponse?: LexV2ResponseSpecification;
-    timeoutResponse?: LexV2ResponseSpecification;
+    failureResponse: LexV2ResponseSpecification | null;
+    successResponse: LexV2ResponseSpecification | null;
+    timeoutResponse: LexV2ResponseSpecification | null;
 }
 
 export interface LexV2FulfillmentCodeHookSettings {
     enabled: boolean;
-    fulfillmentUpdatesSpecification?: LexV2FulfillmentUpdatesSpecification;
-    postFulfillmentStatusSpecification?: LexV2PostFulfillmentStatusSpecification;
+    fulfillmentUpdatesSpecification: LexV2FulfillmentUpdatesSpecification | null;
+    postFulfillmentStatusSpecification: LexV2PostFulfillmentStatusSpecification | null;
 }
 
 export interface LexV2InputContext {
@@ -83,26 +83,26 @@ export interface LexV2OutputContext {
 }
 
 export interface LexV2IntentClosingSetting {
-    active?: boolean;
+    active: boolean | null;
     closingResponse: LexV2ResponseSpecification;
 }
 
 export interface LexV2PromptSpecification {
-    allowInterrupt?: boolean;
+    allowInterrupt: boolean | null;
     maxRetries: number;
-    messageGroups: LexV2MessageGroup[];
+    messageGroupsList: LexV2MessageGroup[];
 }
 
 export interface LexV2IntentConfirmationSetting {
-    active?: boolean;
-    declinationResponse?: LexV2ResponseSpecification;
-    promptSpecification?: LexV2PromptSpecification;
+    active: boolean | null;
+    declinationResponse: LexV2ResponseSpecification | null;
+    promptSpecification: LexV2PromptSpecification | null;
 }
 
 export interface LexV2KendraConfiguration {
     kendraIndex: string;
-    queryFilterString?: string;
-    queryFilterStringEnabled?: boolean;
+    queryFilterString: string | null;
+    queryFilterStringEnabled: boolean | null;
 }
 
 export interface LexV2SampleUtterance {
@@ -122,39 +122,39 @@ export interface LexV2SlotDefaultValueSpecification {
 }
 
 export interface LexV2StillWaitingResponseSpecification {
-    allowInterrupt?: boolean;
+    allowInterrupt: boolean | null;
     frequencyInSeconds: number;
     messageGroups: LexV2MessageGroup[];
     timeoutInSeconds: number;
 }
 
 export interface LexV2WaitAndContinueSpecification {
-    active?: boolean;
-    continueResponse?: LexV2ResponseSpecification;
-    stillWaitingResponse?: LexV2StillWaitingResponseSpecification;
-    waitingResponse?: LexV2ResponseSpecification;
+    active: boolean | null;
+    continueResponse: LexV2ResponseSpecification | null;
+    stillWaitingResponse: LexV2StillWaitingResponseSpecification | null;
+    waitingResponse: LexV2ResponseSpecification | null;
 }
 
 export interface LexV2SlotValueElicitationSetting {
-    defaultValueSpecification?: LexV2SlotDefaultValueSpecification;
-    promptSpecification?: LexV2PromptSpecification;
-    sampleUtterances?: LexV2SampleUtterance[];
+    defaultValueSpecification: LexV2SlotDefaultValueSpecification | null;
+    promptSpecification: LexV2PromptSpecification | null;
+    sampleUtterances: LexV2SampleUtterance[] | null;
     slotConstraint: "Required" | "Optional";
-    waitAndContinueSpecification?: LexV2WaitAndContinueSpecification;
+    waitAndContinueSpecification: LexV2WaitAndContinueSpecification | null;
 }
 
 export interface LexV2GrammarSlotTypeSource {
-    kmsKeyArn?: string;
+    kmsKeyArn: string | null;
     s3BucketName: string;
     s3ObjectKey: string;
 }
 
 export interface LexV2GrammarSlotTypeSetting {
-    source?: LexV2GrammarSlotTypeSource;
+    source: LexV2GrammarSlotTypeSource | null;
 }
 
 export interface LexV2ExternalSourceSetting {
-    grammarSlotTypeSetting?: LexV2GrammarSlotTypeSetting;
+    grammarSlotTypeSetting: LexV2GrammarSlotTypeSetting | null;
 }
 
 export interface LexV2SampleValue {
@@ -162,12 +162,12 @@ export interface LexV2SampleValue {
 }
 
 export interface LexV2SlotTypeValue {
-    sampleValue?: LexV2SampleValue;
-    synonyms?: LexV2SampleValue[];
+    sampleValue: LexV2SampleValue | null;
+    synonyms: LexV2SampleValue[] | null;
 }
 
 export interface LexV2AdvancedRecognitionSetting {
-    audioRecognitionStrategy?: "UseSlotValuesAsCustomVocabulary";
+    audioRecognitionStrategy: "UseSlotValuesAsCustomVocabulary" | null;
 }
 
 export interface LexV2SlotValueRegexFilter {
@@ -175,29 +175,29 @@ export interface LexV2SlotValueRegexFilter {
 }
 
 export interface LexV2SlotValueSelectionSetting {
-    advancedRecognitionSetting: LexV2AdvancedRecognitionSetting;
-    regexFilter?: LexV2SlotValueRegexFilter;
-    resolutionStrategy: "OriginalValue" | "TopResolution";
+    advancedRecognitionSetting?: LexV2AdvancedRecognitionSetting;
+    regexFilter: LexV2SlotValueRegexFilter | null;
+    resolutionStrategy: "ORIGINAL_VALUE" | "TOP_RESOLUTION";
 }
 
 export interface LexV2CustomVocabularyItem {
-    weight?: number;
+    weight: number | null;
     phrase: string;
 }
 
 export interface LexV2Manifest {
-    metadata: {
-        schemaVersion: "1.0";
+    metaData: {
+        schemaVersion: "1";
         fileFormat: "LexJson";
-        resourceType: "Bot" | "BotLocale" | "CustomVocabulary";
+        resourceType: "BOT" | "BOT_LOCALE" | "CUSTOM_VOCABULARY";
     };
 }
 
 export interface LexV2Bot {
     name: string;
-    identifier?: string;
+    identifier: string | null;
     version: string;
-    description?: string;
+    description: string | null;
     dataPrivacy: {
         childDirected: boolean;
     };
@@ -212,8 +212,8 @@ export interface LexV2Voice {
 export interface LexV2BotLocale {
     name: string;
     identifier: string;
-    version?: string;
-    description?: string;
+    version: string | null;
+    description: string | null;
     voiceSettings: LexV2Voice;
     nluConfidenceThreshold: number;
 }
@@ -224,40 +224,43 @@ export interface LexV2SlotPriority {
 }
 
 export interface LexV2Intent {
-    description?: string;
-    dialogCodeHook?: {
+    description: string | null;
+    dialogCodeHook: {
         enabled: boolean;
-    };
-    fulfillmentCodeHook?: LexV2FulfillmentCodeHookSettings;
-    inputContexts?: LexV2InputContext[];
-    intentClosingSetting?: LexV2IntentClosingSetting;
-    intentConfirmationSetting?: LexV2IntentConfirmationSetting;
+    } | null;
+    fulfillmentCodeHook: LexV2FulfillmentCodeHookSettings | null;
+    inputContexts: LexV2InputContext[] | null;
+    identifier: string | null;
+    intentClosingSetting: LexV2IntentClosingSetting | null;
+    intentConfirmationSetting: LexV2IntentConfirmationSetting | null;
     name: string;
-    kendraConfiguration?: LexV2KendraConfiguration;
-    outputContexts?: LexV2OutputContext[];
-    parentIntentSignature?: string;
-    sampleUtterances?: LexV2SampleUtterance[];
-    slotPriorities?: LexV2SlotPriority[];
+    kendraConfiguration: LexV2KendraConfiguration | null;
+    outputContexts: LexV2OutputContext[] | null;
+    parentIntentSignature: string | null;
+    sampleUtterances: LexV2SampleUtterance[] | null;
+    slotPriorities: LexV2SlotPriority[] | null;
 }
 
 export interface LexV2Slot {
-    description?: string;
-    multipleValuesSetting?: {
-        allowMutlipleValues: boolean;
-    };
-    obfuscationSetting?: LexV2ObfuscationSetting;
     name: string;
+    identifier: string | null;
+    description: string | null;
+    multipleValuesSetting: {
+        allowMutlipleValues: boolean;
+    } | null;
+    obfuscationSetting: LexV2ObfuscationSetting | null;
     slotTypeName: string;
     valueElicitationSetting: LexV2SlotValueElicitationSetting;
 }
 
 export interface LexV2SlotType {
     name: string;
-    description?: string;
+    identifier: string;
+    description: string | null;
     externalSourceSetting?: LexV2ExternalSourceSetting;
-    parentSlotTypeSignature?: "AMAZON.AlphaNumeric";
+    parentSlotTypeSignature: "AMAZON.AlphaNumeric" | null;
     slotTypeValues: LexV2SlotTypeValue[];
-    valueSelectionSetting?: LexV2SlotValueSelectionSetting;
+    valueSelectionSetting: LexV2SlotValueSelectionSetting | null;
 }
 
 export interface LexV2CustomVocabulary {
@@ -265,8 +268,8 @@ export interface LexV2CustomVocabulary {
 }
 
 export interface LexV2ModelExtensions {
-    nluConfidenceThreshold?: number;
-    voiceSettings?: LexV2Voice;
+    nluConfidenceThreshold: number | null;
+    voiceSettings: LexV2Voice | null;
 }
 
 export interface JovoModelDataLexV2 extends JovoModelData {
