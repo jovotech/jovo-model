@@ -36,14 +36,10 @@ describe('JovoModelLexV2.ts', () => {
                 Cuisine: {
                     values: [
                         {
-                            id: "1",
-                            key: 'chinese',
                             value: 'chinese',
                             synonyms: ['Chinese', 'Chines', 'chines'],
                         },
                         {
-                            id: "2",
-                            key: 'vegetarian',
                             value: 'vegetarian',
                             synonyms: ['veggie', 'vegg'],
                         },
@@ -76,18 +72,25 @@ describe('JovoModelLexV2.ts', () => {
             },
         };
 
-        const model = new JovoModelLexV2(jovoModel as JovoModelData, 'en-US');
-        const lexModelFiles = model.exportNative();
+        test('expect roundtrip conversion to keep model consistent', () => {
+            const model = new JovoModelLexV2(jovoModel as JovoModelData, 'en-US');
+            const lexModelFiles = model.exportNative();
 
-        test('expect files to save', () => {
-            expect((async () => {
-                for (const file of lexModelFiles ?? []) {
-                    const filePath = join('./lex_models', ...file.path);
-                    const dir = dirname(filePath);
-                    await fs.mkdir(dir, {recursive: true});
-                    await fs.writeFile(filePath, JSON.stringify(file.content, null, 4));
-                }
-            })()).resolves.toBeUndefined();
+            expect(lexModelFiles).toBeDefined();
+            if (lexModelFiles === undefined) {
+                return;
+            }
+
+            const importer = new JovoModelLexV2();
+            importer.importNative(lexModelFiles, 'en-US');
+            const roundtripModel = importer.exportJovoModel();
+
+            expect(roundtripModel).toBeDefined();
+            if (roundtripModel === undefined) {
+                return;
+            }
+
+            expect(roundtripModel).toEqual(jovoModel);
         });
     });
 });

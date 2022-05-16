@@ -6,6 +6,44 @@ function createLexV2Identifier(): string {
     return [...new Array(10).keys()].map(() => charset.charAt(Math.floor(Math.random() * charset.length))).join("");
 }
 
+type DeepPartial<T> = T extends object ? {
+    [P in keyof T]?: DeepPartial<T[P]>;
+} : T;
+
+function stripUndefined<T>(object: T, recursive: false): Partial<T>;
+// tslint:disable-next-line
+function stripUndefined<T>(object: T[], recursive: false): Partial<T>[];
+function stripUndefined<T>(object: T, recursive: boolean): DeepPartial<T>;
+// tslint:disable-next-line
+function stripUndefined<T>(object: T[], recursive: boolean): DeepPartial<T>[];
+// tslint:disable-next-line
+function stripUndefined<T>(object: T | T[], recursive: boolean = false): DeepPartial<T> | DeepPartial<T>[] {
+    if (object === null || object === undefined) {
+        return object as DeepPartial<T>;
+    } else if (typeof object !== "object") {
+        return object as DeepPartial<T>;
+    }
+    if (Array.isArray(object)) {
+        const stripped = object.filter(x => x !== undefined);
+        if (recursive) {
+            return stripped.map(x => stripUndefined(x, recursive));
+        } else {
+            // tslint:disable-next-line
+            return stripped as DeepPartial<T>[];
+        }
+    } else {
+        const stripped = Object.entries(object).filter(([key, value]) => value !== undefined);
+
+        if (recursive) {
+            return Object.fromEntries(
+                stripped.map(([key, value]) => [key, stripUndefined(value, recursive)])
+            ) as DeepPartial<T>;
+        } else {
+            return Object.fromEntries(stripped) as DeepPartial<T>;
+        }
+    }
+}
+
 export class JovoModelLexV2 extends JovoModel {
     static MODEL_KEY = 'lexv2';
 
@@ -29,7 +67,7 @@ export class JovoModelLexV2 extends JovoModel {
         locale = locale.replace("-", "_");
 
         const botLocale: LexV2BotLocale = {
-            name: "English (US)", // TODO: Revert if possible
+            name: locale,
             identifier: locale,
             version: null,
             description: null,
@@ -204,6 +242,11 @@ export class JovoModelLexV2 extends JovoModel {
                         continue;
                     }
                     const intentName = file.path[4];
+
+                    if (intentName === "FallbackIntent") {
+                        continue;
+                    }
+
                     switch (file.path[5]) {
                         case "Intent.json": {
                             const intent: LexV2Intent = file.content;
@@ -260,6 +303,6 @@ export class JovoModelLexV2 extends JovoModel {
             }
         }
 
-        return jovoModel;
+        return stripUndefined(jovoModel, true) as unknown as JovoModelData;
     }
 }
