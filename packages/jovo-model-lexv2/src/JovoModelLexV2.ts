@@ -133,10 +133,16 @@ export class JovoModelLexV2 extends JovoModel {
             };
 
             for (const [entityName, entity] of Object.entries(intent.entities ?? {})) {
+                const slotTypeName = (typeof entity.type === "string" ? entity.type : entity.type?.lex);
+
+                if (slotTypeName === undefined) {
+                    throw new Error(`Property "entity.type" must be defined for lex for entity "${entityName}" in intent "${intentName}".`);
+                }
+
                 const slot: LexV2Slot = {
                     name: entityName,
                     identifier: createLexV2Identifier(),
-                    slotTypeName: (entity.type as Record<string, string>).lex ?? entity.type,
+                    slotTypeName,
                     valueElicitationSetting: {
                         promptSpecification: {
                             maxRetries: 4,
