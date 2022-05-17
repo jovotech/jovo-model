@@ -48,7 +48,6 @@ export class JovoModelLexV2 extends JovoModel {
     static MODEL_KEY = 'lexv2';
 
     private static *generateFiles(model: JovoModelDataLexV2, locale: string): Generator<NativeFileInformation, void, undefined> {
-        console.log("Running generateFiles");
         const manifest: LexV2Manifest = {
             metaData: {
                 schemaVersion: "1",
@@ -61,16 +60,13 @@ export class JovoModelLexV2 extends JovoModel {
             content: manifest
         };
 
-        const botName = (model as unknown as {name: string}).name ?? 'JovoBot';
-        const botVersion = (model as unknown as {version: string}).version ?? '1';
+        const botName = ((model as unknown as {name: string}).name ?? 'JovoBot').replace(" ", "_");
 
         locale = locale.replace("-", "_");
 
         const botLocale: LexV2BotLocale = {
             name: locale,
             identifier: locale,
-            version: null,
-            description: null,
             voiceSettings: {
                 engine: model.lexv2?.voiceSettings?.engine ?? 'neural',
                 voiceId: model.lexv2?.voiceSettings?.voiceId ?? 'Ivy'
@@ -90,17 +86,13 @@ export class JovoModelLexV2 extends JovoModel {
                     sampleValue: {
                         value
                     },
-                    synonyms: null
                 } : {
                     sampleValue: {
                         value: value.value
                     },
-                    synonyms: value.synonyms?.map(synonym => ({value: synonym})) ?? null
+                    synonyms: value.synonyms?.map(synonym => ({value: synonym}))
                 })) ?? [],
-                parentSlotTypeSignature: null,
-                description: null,
                 valueSelectionSetting: {
-                    regexFilter: null,
                     resolutionStrategy: entityType.values?.some(value => ((value as EntityTypeValue).synonyms?.length ?? 0) > 0) ? "TOP_RESOLUTION" : "ORIGINAL_VALUE",
                 }
             };
@@ -118,15 +110,6 @@ export class JovoModelLexV2 extends JovoModel {
                 sampleUtterances: intent.phrases?.map(sample => ({
                     utterance: sample
                 })) ?? [],
-                intentConfirmationSetting: null,
-                description: null,
-                inputContexts: null,
-                parentIntentSignature: null,
-                dialogCodeHook: null,
-                outputContexts: null,
-                fulfillmentCodeHook: null,
-                intentClosingSetting: null,
-                kendraConfiguration: null,
                 slotPriorities: Object.keys(intent.entities ?? {}).map((key, idx) => ({
                     slotName: key, priority: idx + 1
                 })),
@@ -151,23 +134,13 @@ export class JovoModelLexV2 extends JovoModel {
                                         plainTextMessage: {
                                             value: entity.text ?? `What should ${entityName} be?`
                                         },
-                                        ssmlMessage: null,
-                                        customPayload: null,
-                                        imageResponseCard: null
                                     },
-                                    variations: null
                                 }
                             ],
                             allowInterrupt: true
                         },
                         slotConstraint: "Required",
-                        sampleUtterances: null,
-                        defaultValueSpecification: null,
-                        waitAndContinueSpecification: null
                     },
-                    multipleValuesSetting: null,
-                    description: null,
-                    obfuscationSetting: null,
                 };
 
                 yield {
@@ -182,14 +155,6 @@ export class JovoModelLexV2 extends JovoModel {
             identifier: "FALLBCKINT",
             description: "Default intent when no other intent matches",
             parentIntentSignature: "AMAZON.FallbackIntent",
-            sampleUtterances: null,
-            intentConfirmationSetting: null,
-            intentClosingSetting: null,
-            inputContexts: null,
-            outputContexts: null,
-            kendraConfiguration: null,
-            dialogCodeHook: null,
-            fulfillmentCodeHook: null,
             slotPriorities: []
         };
 
