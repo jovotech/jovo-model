@@ -133,10 +133,10 @@ export class JovoModelLexV2 extends JovoModel {
             };
 
             for (const [entityName, entity] of Object.entries(intent.entities ?? {})) {
-                const slotTypeName = (typeof entity.type === "string" ? entity.type : entity.type?.lex);
+                const slotTypeName = (typeof entity.type === "string" ? entity.type : entity.type?.lexv2);
 
                 if (slotTypeName === undefined) {
-                    throw new Error(`Property "entity.type" must be defined for lex for entity "${entityName}" in intent "${intentName}".`);
+                    throw new Error(`Property "entity.type" must be defined for lexv2 for entity "${entityName}" in intent "${intentName}".`);
                 }
 
                 const slot: LexV2Slot = {
