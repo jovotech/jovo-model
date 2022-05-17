@@ -8,6 +8,7 @@ import {
     LexV2Slot,
     LexV2SlotType
 } from "./Interfaces";
+import {strip} from "jest-docblock";
 
 function createLexV2Identifier(): string {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -77,11 +78,8 @@ export class JovoModelLexV2 extends JovoModel {
         const botLocale: LexV2BotLocale = {
             name: locale,
             identifier: locale,
-            voiceSettings: {
-                engine: extensions.voiceSettings?.engine ?? 'neural',
-                voiceId: extensions.voiceSettings?.voiceId ?? 'Ivy'
-            },
-            nluConfidenceThreshold: extensions.nluConfidenceThreshold ?? 0.4
+            nluConfidenceThreshold: 0.4,
+            ...extensions.locale
         };
         yield {
             path: [botName, 'BotLocales', locale, 'BotLocale.json'],
@@ -185,12 +183,17 @@ export class JovoModelLexV2 extends JovoModel {
     }
 
     static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
-        const jovoModel: JovoModelData = {
+        const jovoModel: JovoModelDataLexV2 = {
             invocation: '',
             version: '4.0',
             intents: {},
             entityTypes: {},
         };
+
+        const extensions: LexV2ModelExtensions = {};
+
+        extensions.intents = {};
+        extensions.slotTypes = {};
 
         locale = locale.replace("-", "_");
 
@@ -215,6 +218,9 @@ export class JovoModelLexV2 extends JovoModel {
             }
             switch (file.path[3]) {
                 case "BotLocale.json":
+                    const locale: LexV2BotLocale = file.content;
+                    const {identifier, ...rest} = locale as LexV2BotLocale;
+                    extensions.locale = rest;
                     break;
 
                 case "Intents": {
@@ -230,10 +236,16 @@ export class JovoModelLexV2 extends JovoModel {
                     switch (file.path[5]) {
                         case "Intent.json": {
                             const intent: LexV2Intent = file.content;
+                            const {name, sampleUtterances, ...rest} = intent;
                             jovoModel.intents[intentName] = {
                                 ...jovoModel.intents[intentName],
-                                phrases: intent.sampleUtterances?.map(utterance => utterance.utterance) ?? [],
+                                phrases: sampleUtterances?.map(utterance => utterance.utterance) ?? [],
                             };
+
+                            if (Object.keys(rest).length > 0) {
+                                extensions.intents[intentName] = {...extensions.intents[intentName], ...rest};
+                            }
+
                             break;
                         }
 
@@ -242,8 +254,9 @@ export class JovoModelLexV2 extends JovoModel {
                                 continue;
                             }
                             const slotName = file.path[6];
+                            const {name, slotTypeName, ...rest} = file.content as LexV2Slot;
                             const entity: IntentEntity = {
-                                type: (file.content as LexV2Slot).slotTypeName,
+                                type: slotTypeName,
                             };
                             const existingIntent = jovoModel.intents[intentName] ?? {};
                             jovoModel.intents[intentName] = {
@@ -253,6 +266,17 @@ export class JovoModelLexV2 extends JovoModel {
                                     [slotName]: entity
                                 }
                             };
+
+                            if (Object.keys(rest).length > 0) {
+                                extensions.intents[intentName] = {
+                                    ...extensions.intents[intentName],
+                                    slots: {
+                                        ...extensions.intents[intentName].slots,
+                                        [slotName]: rest
+                                    }
+                                };
+                            }
+
                             break;
                         }
 
@@ -268,13 +292,18 @@ export class JovoModelLexV2 extends JovoModel {
                     }
 
                     const slotName = file.path[4];
-                    const slotType: LexV2SlotType = file.content;
+                    const {name, slotTypeValues, ...rest} = file.content as LexV2SlotType;
                     jovoModel.entityTypes[slotName] = {
-                        values: slotType.slotTypeValues.map(value => ({
+                        values: slotTypeValues.map(value => ({
                             value: value.sampleValue?.value ?? '',
                             synonyms: value.synonyms?.map(synonym => synonym.value)
                         }))
                     };
+
+                    if (Object.keys(rest).length > 0) {
+                        extensions.slotTypes[slotName] = rest;
+                    }
+
                     break;
                 }
 
@@ -283,6 +312,14 @@ export class JovoModelLexV2 extends JovoModel {
             }
         }
 
+        if (Object.keys(extensions.intents).length === 0) {
+            delete extensions.intents;
+        }
+        if (Object.keys(extensions.slotTypes).length === 0) {
+            delete extensions.slotTypes;
+        }
+
+        jovoModel.lexv2 = extensions;
         return stripUndefined(jovoModel, true) as unknown as JovoModelData;
     }
 }

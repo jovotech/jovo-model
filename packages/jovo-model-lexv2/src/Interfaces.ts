@@ -214,7 +214,7 @@ export interface LexV2BotLocale {
     identifier: string;
     version?: string;
     description?: string;
-    voiceSettings: LexV2Voice;
+    voiceSettings?: LexV2Voice;
     nluConfidenceThreshold: number;
 }
 
@@ -270,8 +270,7 @@ export interface LexV2CustomVocabulary {
 export type LexV2IntentExtensions = {slots?: {[slotName: string]: Partial<LexV2Slot>}} & Partial<LexV2Intent>;
 
 export interface LexV2ModelExtensions {
-    nluConfidenceThreshold?: number;
-    voiceSettings?: LexV2Voice;
+    locale?: Partial<LexV2BotLocale>;
     intents?: {[intentName: string]: LexV2IntentExtensions};
     slotTypes?: {[slotTypeName: string]: Partial<LexV2SlotType>};
 }

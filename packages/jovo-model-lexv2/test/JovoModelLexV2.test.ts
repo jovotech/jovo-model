@@ -2,10 +2,11 @@ import {JovoModel, JovoModelData} from "@jovotech/model";
 import {JovoModelLexV2} from "../src/JovoModelLexV2";
 import {promises as fs} from "fs";
 import {join, dirname} from "path";
+import {JovoModelDataLexV2} from "../src";
 
 describe('JovoModelLexV2.ts', () => {
     describe('exportNative @v4 (fromJovoModel)', () => {
-        const jovoModel: JovoModelData = {
+        const jovoModel: JovoModelDataLexV2 = {
             version: '4.0',
             invocation: '',
             intents: {
@@ -70,6 +71,118 @@ describe('JovoModelLexV2.ts', () => {
                     ],
                 },
             },
+            lexv2:     {
+                intents: {
+                    Welcome: {
+                        identifier: "0TZW8H05Y5",
+                        slotPriorities: []
+                    },
+                    RestaurantSearch: {
+                        identifier: "G36WE2Y5P6",
+                        slotPriorities: [
+                            {
+                                slotName: "cuisine",
+                                priority: 1
+                            },
+                            {
+                                slotName: "location",
+                                priority: 2
+                            },
+                            {
+                                slotName: "plates",
+                                priority: 3
+                            }
+                        ],
+                        slots: {
+                            cuisine: {
+                                identifier: "PVS1V1P0RE",
+                                valueElicitationSetting: {
+                                    promptSpecification: {
+                                        maxRetries: 4,
+                                        messageGroupsList: [
+                                            {
+                                                message: {
+                                                    plainTextMessage: {
+                                                        value: "What should cuisine be?"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        allowInterrupt: true
+                                    },
+                                    slotConstraint: "Required"
+                                }
+                            },
+                            location: {
+                                identifier: "Y1Z5N3HQZM",
+                                valueElicitationSetting: {
+                                    promptSpecification: {
+                                        maxRetries: 4,
+                                        messageGroupsList: [
+                                            {
+                                                message: {
+                                                    plainTextMessage: {
+                                                        value: "What should location be?"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        allowInterrupt: true
+                                    },
+                                    slotConstraint: "Required"
+                                }
+                            },
+                            plates: {
+                                identifier: "PIRRALI865",
+                                valueElicitationSetting: {
+                                    promptSpecification: {
+                                        maxRetries: 4,
+                                        messageGroupsList: [
+                                            {
+                                                message: {
+                                                    plainTextMessage: {
+                                                        value: "What should plates be?"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        allowInterrupt: true
+                                    },
+                                    slotConstraint: "Required"
+                                }
+                            }
+                        }
+                    }
+                },
+                slotTypes: {
+                    Cuisine: {
+                        identifier: "N50JV4LVCF",
+                        valueSelectionSetting: {
+                            resolutionStrategy: "TOP_RESOLUTION"
+                        }
+                    },
+                    Location: {
+                        identifier: "TCLUY3J2U2",
+                        valueSelectionSetting: {
+                            resolutionStrategy: "TOP_RESOLUTION"
+                        }
+                    },
+                    Plates: {
+                        identifier: "GM7QMUGDM5",
+                        valueSelectionSetting: {
+                            resolutionStrategy: "ORIGINAL_VALUE"
+                        }
+                    }
+                },
+                locale: {
+                    name: "English (US)",
+                    nluConfidenceThreshold: 0.4,
+                    voiceSettings: {
+                        engine: "neural",
+                        voiceId: "Ivy"
+                    }
+                }
+            }
         };
 
         test('expect roundtrip conversion to keep model consistent', () => {
