@@ -267,11 +267,13 @@ export interface LexV2CustomVocabulary {
     customVocabularyItems: LexV2CustomVocabularyItem[];
 }
 
+export type LexV2IntentExtensions = {slots?: {[slotName: string]: Partial<LexV2Slot>}} & Partial<LexV2Intent>;
+
 export interface LexV2ModelExtensions {
     nluConfidenceThreshold?: number;
     voiceSettings?: LexV2Voice;
-    intents: {[intentName: string]: Partial<LexV2Intent> & {slots: {[slotName: string]: Partial<LexV2Slot>}}};
-    slotTypes: {[slotTypeName: string]: Partial<LexV2SlotType>};
+    intents?: {[intentName: string]: LexV2IntentExtensions};
+    slotTypes?: {[slotTypeName: string]: Partial<LexV2SlotType>};
 }
 
 export interface JovoModelDataLexV2 extends JovoModelData {

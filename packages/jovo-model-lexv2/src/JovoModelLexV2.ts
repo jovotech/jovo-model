@@ -1,5 +1,13 @@
 import {EntityTypeValue, IntentEntity, JovoModel, JovoModelData, NativeFileInformation} from "@jovotech/model";
-import {JovoModelDataLexV2, LexV2BotLocale, LexV2Intent, LexV2Manifest, LexV2Slot, LexV2SlotType} from "./Interfaces";
+import {
+    JovoModelDataLexV2,
+    LexV2BotLocale,
+    LexV2Intent,
+    LexV2Manifest,
+    LexV2ModelExtensions,
+    LexV2Slot,
+    LexV2SlotType
+} from "./Interfaces";
 
 function createLexV2Identifier(): string {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -60,6 +68,8 @@ export class JovoModelLexV2 extends JovoModel {
             content: manifest
         };
 
+        const extensions: LexV2ModelExtensions = model.lexv2 ?? {};
+
         const botName = ((model as unknown as {name: string}).name ?? 'JovoBot').replace(" ", "_");
 
         locale = locale.replace("-", "_");
@@ -68,10 +78,10 @@ export class JovoModelLexV2 extends JovoModel {
             name: locale,
             identifier: locale,
             voiceSettings: {
-                engine: model.lexv2?.voiceSettings?.engine ?? 'neural',
-                voiceId: model.lexv2?.voiceSettings?.voiceId ?? 'Ivy'
+                engine: extensions.voiceSettings?.engine ?? 'neural',
+                voiceId: extensions.voiceSettings?.voiceId ?? 'Ivy'
             },
-            nluConfidenceThreshold: model.lexv2?.nluConfidenceThreshold ?? 0.4
+            nluConfidenceThreshold: extensions.nluConfidenceThreshold ?? 0.4
         };
         yield {
             path: [botName, 'BotLocales', locale, 'BotLocale.json'],
@@ -94,7 +104,8 @@ export class JovoModelLexV2 extends JovoModel {
                 })) ?? [],
                 valueSelectionSetting: {
                     resolutionStrategy: entityType.values?.some(value => ((value as EntityTypeValue).synonyms?.length ?? 0) > 0) ? "TOP_RESOLUTION" : "ORIGINAL_VALUE",
-                }
+                },
+                ...(extensions.slotTypes?.[entityName])
             };
 
             yield {
@@ -104,6 +115,8 @@ export class JovoModelLexV2 extends JovoModel {
         }
 
         for (const [intentName, intent] of Object.entries(model.intents ?? {})) {
+            const {slots: slotExtensions, ...intentExtensions} = extensions.intents?.[intentName] ?? {};
+
             const lexIntent: LexV2Intent = {
                 name: intentName,
                 identifier: createLexV2Identifier(),
@@ -113,6 +126,7 @@ export class JovoModelLexV2 extends JovoModel {
                 slotPriorities: Object.keys(intent.entities ?? {}).map((key, idx) => ({
                     slotName: key, priority: idx + 1
                 })),
+                ...intentExtensions
             };
 
             yield {
@@ -141,6 +155,7 @@ export class JovoModelLexV2 extends JovoModel {
                         },
                         slotConstraint: "Required",
                     },
+                    ...(slotExtensions?.[entityName])
                 };
 
                 yield {
