@@ -157,21 +157,12 @@ describe('JovoModelLexV2.ts', () => {
                 slotTypes: {
                     Cuisine: {
                         identifier: "N50JV4LVCF",
-                        valueSelectionSetting: {
-                            resolutionStrategy: "TOP_RESOLUTION"
-                        }
                     },
                     Location: {
                         identifier: "TCLUY3J2U2",
-                        valueSelectionSetting: {
-                            resolutionStrategy: "TOP_RESOLUTION"
-                        }
                     },
                     Plates: {
                         identifier: "GM7QMUGDM5",
-                        valueSelectionSetting: {
-                            resolutionStrategy: "ORIGINAL_VALUE"
-                        }
                     }
                 },
                 locale: {

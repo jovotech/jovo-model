@@ -90,18 +90,35 @@ export class JovoModelLexV2 extends JovoModel {
             const slotType: LexV2SlotType = {
                 name: entityName,
                 identifier: createLexV2Identifier(),
-                slotTypeValues: entityType.values?.map(value => (typeof value === "string" ? {
-                    sampleValue: {
-                        value
-                    },
-                } : {
-                    sampleValue: {
-                        value: value.value
-                    },
-                    synonyms: value.synonyms?.map(synonym => ({value: synonym}))
-                })) ?? [],
+                slotTypeValues: entityType.values?.map(value => {
+                    if (typeof value === "string") {
+                        return {
+                            sampleValue: {value}
+                        };
+                    } else if (value.id !== undefined) {
+                        return {
+                            sampleValue: {
+                                value: value.id
+                            },
+                            synonyms: [value.value, ...value.synonyms ?? []].map(synonym => ({value: synonym}))
+                        };
+                    } else {
+                        return {
+                            sampleValue: {
+                                value: value.value
+                            },
+                            synonyms: value.synonyms?.map(synonym => ({value: synonym}))
+                        };
+                    }
+                }) ?? [],
                 valueSelectionSetting: {
-                    resolutionStrategy: entityType.values?.some(value => ((value as EntityTypeValue).synonyms?.length ?? 0) > 0) ? "TOP_RESOLUTION" : "ORIGINAL_VALUE",
+                    resolutionStrategy: entityType.values?.some(value => {
+                        if (typeof value === "string") {
+                            return false;
+                        } else {
+                            return value.id !== undefined || (value.synonyms?.length ?? 0) > 0;
+                        }
+                    }) ? "TOP_RESOLUTION" : "ORIGINAL_VALUE",
                 },
                 ...(extensions.slotTypes?.[entityName])
             };
@@ -181,7 +198,6 @@ export class JovoModelLexV2 extends JovoModel {
             path: [botName, 'BotLocales', locale, 'Intents', "FallbackIntent", 'Intent.json'],
             content: fallbackIntent
         };
-
     }
 
     static fromJovoModel(model: JovoModelData, locale: string): NativeFileInformation[] {
@@ -298,7 +314,7 @@ export class JovoModelLexV2 extends JovoModel {
                     }
 
                     const slotName = file.path[4];
-                    const {name, slotTypeValues, ...rest} = file.content as LexV2SlotType;
+                    const {name, slotTypeValues, valueSelectionSetting, ...rest} = file.content as LexV2SlotType;
                     jovoModel.entityTypes[slotName] = {
                         values: slotTypeValues.map(value => ({
                             value: value.sampleValue?.value ?? '',
