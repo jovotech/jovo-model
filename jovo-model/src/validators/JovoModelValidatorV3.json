@@ -37,12 +37,33 @@
         "values": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/EntityTypeValue"
+            "$ref": "#/definitions/InputTypeValue"
           }
         }
       },
       "required": ["name"]
     },
+    "InputTypeValue": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "synonyms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["value"]
+      },
     "Intent": {
       "type": "object",
       "properties": {
