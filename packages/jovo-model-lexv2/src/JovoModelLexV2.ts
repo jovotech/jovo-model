@@ -56,7 +56,9 @@ function stripUndefined<T>(object: T | T[], recursive: boolean = false): DeepPar
 export class JovoModelLexV2 extends JovoModel {
     static MODEL_KEY = 'lexv2';
 
-    private static *generateFiles(model: JovoModelDataLexV2, locale: string): Generator<NativeFileInformation, void, undefined> {
+    static fromJovoModel(model: JovoModelDataLexV2, locale: string): NativeFileInformation[] {
+        const files: NativeFileInformation[] = [];
+
         const manifest: LexV2Manifest = {
             metaData: {
                 schemaVersion: "1",
@@ -64,10 +66,10 @@ export class JovoModelLexV2 extends JovoModel {
                 fileFormat: "LexJson",
             }
         };
-        yield {
+        files.push({
             path: ['Manifest.json'],
             content: manifest
-        };
+        });
 
         const extensions: LexV2ModelExtensions = model.lexv2 ?? {};
 
@@ -81,10 +83,10 @@ export class JovoModelLexV2 extends JovoModel {
             nluConfidenceThreshold: 0.4,
             ...extensions.locale
         };
-        yield {
+        files.push({
             path: [botName, 'BotLocales', locale, 'BotLocale.json'],
             content: botLocale
-        };
+        });
 
         for (const [entityName, entityType] of Object.entries(model.entityTypes ?? {})) {
             const slotType: LexV2SlotType = {
@@ -123,10 +125,10 @@ export class JovoModelLexV2 extends JovoModel {
                 ...(extensions.slotTypes?.[entityName])
             };
 
-            yield {
+            files.push({
                 path: [botName, 'BotLocales', locale, 'SlotTypes', entityName, 'SlotType.json'],
                 content: slotType
-            };
+            });
         }
 
         for (const [intentName, intent] of Object.entries(model.intents ?? {})) {
@@ -144,10 +146,10 @@ export class JovoModelLexV2 extends JovoModel {
                 ...intentExtensions
             };
 
-            yield {
+            files.push({
                 path: [botName, 'BotLocales', locale, 'Intents', intentName, 'Intent.json'],
                 content: lexIntent
-            };
+            });
 
             for (const [entityName, entity] of Object.entries(intent.entities ?? {})) {
                 const slotTypeName = (typeof entity.type === "string" ? entity.type : entity.type?.lexv2);
@@ -179,10 +181,10 @@ export class JovoModelLexV2 extends JovoModel {
                     ...(slotExtensions?.[entityName])
                 };
 
-                yield {
+                files.push({
                     path: [botName, 'BotLocales', locale, 'Intents', intentName, 'Slots', entityName, 'Slot.json'],
                     content: slot
-                };
+                });
             }
         }
 
@@ -194,14 +196,12 @@ export class JovoModelLexV2 extends JovoModel {
             slotPriorities: []
         };
 
-        yield {
+        files.push({
             path: [botName, 'BotLocales', locale, 'Intents', "FallbackIntent", 'Intent.json'],
             content: fallbackIntent
-        };
-    }
+        });
 
-    static fromJovoModel(model: JovoModelData, locale: string): NativeFileInformation[] {
-        return [...this.generateFiles(model, locale)];
+        return files
     }
 
     static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
