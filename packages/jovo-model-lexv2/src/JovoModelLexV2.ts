@@ -188,6 +188,42 @@ export class JovoModelLexV2 extends JovoModel {
             }
         }
 
+
+        if (model.lexv2?.slotTypes) {
+            const jovoSlots = new Set([...Object.keys(model.entityTypes ?? {})]);
+
+            for (const [slotName, slotType] of Object.entries(model.lexv2.slotTypes)) {
+                if (jovoSlots.has(slotName)) {
+                    continue;
+                }
+
+                files.push({
+                    path: [botName, 'BotLocales', locale, 'SlotTypes', slotName, 'SlotType.json'],
+                    content: slotType
+                });
+            }
+        }
+
+        if (model.lexv2?.intents) {
+            const jovoIntents = new Set([...Object.keys(model.intents ?? {})]);
+
+            for (const [intentName, {slots, ...lexIntent}] of Object.entries(model.lexv2.intents)) {
+                if (jovoIntents.has(intentName)) {
+                    continue;
+                }
+                files.push({
+                    path: [botName, 'BotLocales', locale, 'Intents', intentName, 'Intent.json'],
+                    content: lexIntent
+                });
+                for (const [entityName, slot] of Object.entries(slots ?? {})) {
+                    files.push({
+                        path: [botName, 'BotLocales', locale, 'Intents', intentName, 'Slots', entityName, 'Slot.json'],
+                        content: slot
+                    });
+                }
+            }
+        }
+
         const fallbackIntent: LexV2Intent = {
             name: "FallbackIntent",
             identifier: "FALLBCKINT",
@@ -201,7 +237,7 @@ export class JovoModelLexV2 extends JovoModel {
             content: fallbackIntent
         });
 
-        return files
+        return files;
     }
 
     static toJovoModel(inputFiles: NativeFileInformation[], locale: string): JovoModelData {
