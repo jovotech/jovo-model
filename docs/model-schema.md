@@ -1,13 +1,11 @@
+---
+title: 'Model Schema'
+excerpt: 'Learn more about all the elements that are part of the Jovo Model.'
+---
+
 # Jovo Model Schema
 
-Learn more about all the elements that are part of the Jovo Model.
-- [Introduction](#introduction)
-- [Model Elements](#model-elements)
-  - [Version](#version)
-  - [Invocation](#invocation)
-  - [Intents](#intents)
-  - [Entity Types](#entity-types)
-  - [Platform-specific Elements](#platform-specific-elements)
+Learn more about all the elements that are part of the [Jovo Model](https://v4.jovo.tech/docs/models).
 
 ## Introduction
 
@@ -35,17 +33,15 @@ Each locale is represented by its own model. For example, the `en.json` in the [
 }
 ```
 
-## Model Elements
+Learn more about all properties in the sections below:
 
-The model schema supports the following properties:
+- [`version`](#version): The Jovo Model version (introduced with Jovo `v4`)
+- [`invocation`](#invocation): How the app is launched on voice assistant platforms
+- [`intents`](#intents): Groups of `phrases` and `entities`
+- [`entityTypes`](#entitytypes): Types of entities that can be used across intents
+- [platform-specific elements](#platform-specific-elements): Elements that are only added for some platforms, e.g. `alexa`
 
-* [`version`](#version): The Jovo Model version (introduced with Jovo `v4`)
-* [`invocation`](#invocation): How the app is launched on voice assistant platforms
-* [`intents`](#intents): Groups of `phrases` and `entities`
-* [`entityTypes`](#entity-types): Types of entities that can be used across intents
-* [platform-specific elements](#platform-specific-elements): Elements that are only added for some platforms, e.g. `alexa`
-
-### Version
+## version
 
 ```javascript
 {
@@ -54,9 +50,9 @@ The model schema supports the following properties:
 }
 ```
 
-### Invocation
+## invocation
 
-The `invocation` is used by some voice assistant platforms as the "app name" to access the app (see [Voice App Basics](https://www.jovo.tech/docs/voice-app-basics) in the Jovo Docs).
+The `invocation` is used by some voice assistant platforms as the _app name_ to access the app.
 
 ```javascript
 {
@@ -64,7 +60,6 @@ The `invocation` is used by some voice assistant platforms as the "app name" to 
   // ...
 }
 ```
-
 
 It is possible to add platform-specific invocations like this:
 
@@ -78,16 +73,15 @@ It is possible to add platform-specific invocations like this:
 }
 ```
 
-Currently, this element is supported by Alexa Skills and Google Assistant Conversational Actions. If you use Google Assistant with Dialogflow, you need to set the invocation name manually in the Actions on Google console.  
+Currently, this element is supported by Alexa Skills and Google Assistant Conversational Actions.
 
-
-### Intents
+## intents
 
 Intents can be added to the JSON as objects that include:
 
-* a name as object key
-* sample [`phrases`](#phrases) 
-* [`entities`](#entities) (optional)
+- a name as object key
+- sample [`phrases`](#phrases)
+- [`entities`](#entities) (optional)
 
 This is how a `MyNameIsIntent` could look like:
 
@@ -95,15 +89,15 @@ This is how a `MyNameIsIntent` could look like:
 {
   "intents": {
     "MyNameIsIntent": {
-      "phrases": [  
+      "phrases": [
         "{name}",
         "my name is {name}",
         "i am {name}",
         "you can call me {name}"
       ],
-      "entities": {  
-        "name": {  
-          "type": {  
+      "entities": {
+        "name": {
+          "type": {
               "alexa": "AMAZON.US_FIRST_NAME",
               "dialogflow": "@sys.given-name"
           }
@@ -115,8 +109,7 @@ This is how a `MyNameIsIntent` could look like:
 }
 ```
 
-
-#### Phrases
+### phrases
 
 This is an array of example `phrases` that will be used to train the language model on the respective NLU platforms.
 
@@ -124,7 +117,7 @@ Some providers use different names for these phrases, for example utterances, sa
 
 ```javascript
 "MyNameIsIntent": {
-  "phrases": [  
+  "phrases": [
     "{name}",
     "my name is {name}",
     "i am {name}",
@@ -134,12 +127,11 @@ Some providers use different names for these phrases, for example utterances, sa
 }
 ```
 
-
-#### Entities
+### entities
 
 Often, phrases contain variable input such as slots or entities, as some NLU services call them. In the Jovo Model, they are called `entities`.
 
-Entities consist of a `name` (how it's reference in the phrases) and a `type` (learn more in the [Entity Types](#entity-types) section). For example an intent with phrases like `I live in {city}` would come with an entity like this:
+Entities consist of a `name` (how it's referenced in the phrases) and a `type` (learn more in the [`entityTypes`](#entity-types) section). For example an intent with phrases like `I live in {city}` would come with an entity like this:
 
 ```javascript
 "MyCityIntent": {
@@ -170,14 +162,14 @@ You can also choose to provide different entity types for each NLU service:
 
 You can either reference entity types defined in the [`entityTypes` object](#entity-types), or reference built-in entity types provided by the respective NLU platforms (like `AMAZON.US_FIRST_NAME` for Alexa).
 
-
-### Entity Types
+## entityTypes
 
 The `entityTypes` object lists all the entity types that are referenced as `entities` inside `intents`.
 
 Each input type contains:
-* a name as object key
-* [`values`](#values)
+
+- a name as object key
+- [`values`](#values)
 
 ```javascript
 {
@@ -193,8 +185,7 @@ Each input type contains:
 }
 ```
 
-
-#### Values
+### values
 
 You can define the values for an entity type by either adding as strings or objects. For example this is how the `myCityEntityType` looks like with two values:
 
@@ -224,8 +215,7 @@ Some entity values could be expressed in the same way. For this, you can add `sy
 }
 ```
 
-
-### Platform-specific Elements
+## Platform-specific Elements
 
 Some intents or entity types may be needed for just some platforms. You can define them as additional elements as shown for Alexa in the example below:
 
