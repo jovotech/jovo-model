@@ -2,6 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "setup:dev": "npm run bootstrap && npm run build",
     "lerna": "lerna",
     "init": "lerna bootstrap",
     "tsc": "lerna exec npm run tsc",
@@ -14,7 +15,10 @@
     "typedoc": "npm run lerna exec npm run typedoc",
     "preparePublish": "npm run rimraf && npm run tsc && npm run tslint && npm run test",
     "publish": "lerna publish",
-    "setup": "npm run init && npm run tsc "
+    "setup": "npm run init && npm run tsc",
+    "updateVersions:minor": "lerna version minor --yes --no-push --no-git-tag-version",
+    "updateVersions:patch": "lerna version patch --yes --no-push --no-git-tag-version",
+    "publishPackages": "lerna publish from-package --yes --no-verify-access"
   },
   "devDependencies": {
     "@lerna/project": "^4.0.0",
