@@ -1,4 +1,5 @@
-import {EntityTypeValue, IntentEntity, JovoModel, JovoModelData, NativeFileInformation} from "@jovotech/model";
+import { IntentEntity, JovoModel, JovoModelData, JovoModelDataV3, NativeFileInformation } from '@jovotech/model';
+import _merge from 'lodash.merge';
 import {
     JovoModelDataLexV2,
     LexV2BotLocale,
@@ -6,9 +7,9 @@ import {
     LexV2Manifest,
     LexV2ModelExtensions,
     LexV2Slot,
-    LexV2SlotType
-} from "./Interfaces";
-import {strip} from "jest-docblock";
+    LexV2SlotType,
+} from './Interfaces';
+import JovoModelLexV2Validator from '../validators/JovoModelDataLexV2.json';
 
 function createLexV2Identifier(): string {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -379,5 +380,9 @@ export class JovoModelLexV2 extends JovoModel {
 
         jovoModel.lexv2 = extensions;
         return stripUndefined(jovoModel, true) as unknown as JovoModelData;
+    }
+
+    static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
+        return _merge(super.getValidator(model), JovoModelLexV2Validator);
     }
 }

@@ -6,13 +6,7 @@ function build() {
         {
             path: 'src/Interfaces',
             types: [
-                'LexV2CustomVocabulary',
-                'LexV2SlotType',
-                'LexV2Slot',
-                'LexV2Intent',
-                'LexV2BotLocale',
-                'LexV2Bot',
-                'LexV2Manifest'
+                'JovoModelDataLexV2',
             ]
         }
     ];
