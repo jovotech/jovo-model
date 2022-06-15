@@ -50,13 +50,11 @@ export class JovoModelAlexa extends JovoModel {
       _set(jovoModel, 'alexa.interactionModel.dialog', _get(inputData, 'interactionModel.dialog'));
     }
 
-    const alexaIntents: Record<string, Intent> = {};
+    const alexaIntents: Intent[] = [];
     const jovoIntents: Record<string, Intent> = {};
     for (const intent of _get(inputData, 'interactionModel.languageModel.intents')) {
       if (_startsWith(intent.name, BUILTIN_PREFIX)) {
-        const intentName: string = intent.name;
-        delete intent.name;
-        alexaIntents[intentName] = intent;
+        alexaIntents.push(intent);
       } else {
         const jovoIntent: Intent = {
           phrases: intent.samples,
@@ -252,17 +250,20 @@ export class JovoModelAlexa extends JovoModel {
 
               // create alexaTypeValueObj
               for (const value of matchedEntityType.values) {
-                const alexaTypeValueObj: AlexaLMTypeValue = {
-                  id: value.id ? value.id.toString() : null,
-                  name: {
-                    value: value.value,
-                  },
-                };
-                // save synonyms, if defined
-                if (value.synonyms) {
-                  alexaTypeValueObj.name.synonyms = value.synonyms;
+                if (typeof value === 'string') {
+                  alexaTypeObj.values.push({
+                    name: { value },
+                  });
+                } else {
+                  alexaTypeObj.values.push({
+                    id: value.id?.toString(),
+                    name: {
+                      value: value.value,
+                      // save synonyms, if defined
+                      synonyms: value.synonyms,
+                    },
+                  });
                 }
-                alexaTypeObj.values.push(alexaTypeValueObj);
               }
 
               // skip existing alexa types
@@ -355,18 +356,19 @@ export class JovoModelAlexa extends JovoModel {
         // iterate through values
         if (entityTypeData.values) {
           for (const value of entityTypeData.values) {
-            const alexaTypeValue: AlexaLMTypeValue = {
-              id: value.id ? value.id.toString() : null,
-              name: {
-                value: value.value,
-              },
-            };
-
-            if (value.synonyms) {
-              alexaTypeValue.name.synonyms = value.synonyms;
+            if (typeof value === 'string') {
+              alexaType.values.push({
+                name: { value },
+              });
+            } else {
+              alexaType.values.push({
+                id: value.id?.toString(),
+                name: {
+                  value: value.value,
+                  synonyms: value.synonyms,
+                },
+              });
             }
-
-            alexaType.values.push(alexaTypeValue);
           }
         }
 

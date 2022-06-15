@@ -1,7 +1,7 @@
 {
     "name": "@jovotech/model-lex",
     "private": false,
-    "version": "4.0.0-beta.4",
+    "version": "4.0.0",
     "description": "Jovo Model for Amazon Lex",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
@@ -19,7 +19,7 @@
     "author": "jovotech",
     "license": "Apache-2.0",
     "devDependencies": {
-        "@jovotech/model-util": "^4.0.0-beta.4",
+        "@jovotech/model-util": "^4.0.0",
         "@types/jest": "^24.0.25",
         "@types/node": "^13.1.5",
         "@types/tv4": "^1.2.29",
@@ -31,7 +31,7 @@
         "typescript": "^4.3.5"
     },
     "dependencies": {
-        "@jovotech/model": "^4.0.0-beta.4"
+        "@jovotech/model": "^4.0.0"
     },
     "jest": {
         "transform": {
@@ -49,5 +49,6 @@
             "js",
             "json"
         ]
-    }
+    },
+    "gitHead": "e7a3560860e41654c07b5b07d1c6e11d9b9b6ba4"
 }

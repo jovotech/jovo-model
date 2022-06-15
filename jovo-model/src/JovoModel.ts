@@ -10,7 +10,7 @@ import {
   ModelEntityTypeValue,
   NativeFileInformation,
 } from '.';
-import { IntentInput, IntentV3, JovoModelDataV3 } from './Interfaces';
+import { InputType, IntentInput, IntentV3, JovoModelDataV3 } from './Interfaces';
 
 export class JovoModel {
   static MODEL_KEY = '';
@@ -259,7 +259,7 @@ export class JovoModel {
    * See [[JovoModelHelper]]
    * @param entityType EntityType-object or string
    */
-  getEntityTypeByName(entityType: string): EntityType | undefined {
+  getEntityTypeByName(entityType: string): EntityType  | InputType | undefined {
     return this.data ? JovoModelHelper.getEntityTypeByName(this.data, entityType) : undefined;
   }
 
@@ -267,7 +267,7 @@ export class JovoModel {
    * See [[JovoModelHelper]]
    * @param entityType EntityType-object or string
    */
-  getEntityTypeValues(entityType: string): EntityTypeValue[] {
+  getEntityTypeValues(entityType: string): Array<string | EntityTypeValue> {
     return this.data ? JovoModelHelper.getEntityTypeValues(this.data, entityType) : [];
   }
 
