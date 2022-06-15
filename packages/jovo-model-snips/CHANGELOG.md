@@ -1,5 +1,16 @@
 # Changelog
 
+## [@jovotech/model-snips@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-snips@4.0.0-beta.5...@jovotech/model-snips@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-snips@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-snips@4.0.0-beta.4...@jovotech/model-snips@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
+
 ## [@jovotech/model-snips@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-snips@4.0.0-beta.3...@jovotech/model-snips@4.0.0-beta.4)
 
 > 22 September 2021

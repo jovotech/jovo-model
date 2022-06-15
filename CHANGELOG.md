@@ -1,5 +1,38 @@
 # Changelog
 
+## [jovo-model@3.0.1](https://github.com/jovotech/jovo-model/compare/jovo-model-util@3.0.1...jovo-model@3.0.1)
+
+> 20 August 2021
+
+- 🐛 Fix bug causing intents to duplicate [`#33`](https://github.com/jovotech/jovo-model/pull/33)
+- 🐛 Parse FreeTextType to platform-specific property [`#28`](https://github.com/jovotech/jovo-model/pull/28)
+
+## [jovo-model-google@3.0.9](https://github.com/jovotech/jovo-model/compare/jovo-model-google@3.0.8...jovo-model-google@3.0.9)
+
+> 6 May 2021
+
+- 🐛 Fix bug causing intents to duplicate [`#33`](https://github.com/jovotech/jovo-model/pull/33)
+
+## [jovo-model-google@3.0.8](https://github.com/jovotech/jovo-model/compare/jovo-model-google@3.0.7...jovo-model-google@3.0.8)
+
+> 3 December 2020
+
+- 🐛 Parse FreeTextType to platform-specific property [`#28`](https://github.com/jovotech/jovo-model/pull/28)
+
+## [jovo-model-dialogflow@3.0.3](https://github.com/jovotech/jovo-model/compare/jovo-model-dialogflow@3.0.2...jovo-model-dialogflow@3.0.3)
+
+> 6 May 2021
+
+- 🐛 Fix bug causing intents to duplicate [`#33`](https://github.com/jovotech/jovo-model/pull/33)
+- 🐛 Parse FreeTextType to platform-specific property [`#28`](https://github.com/jovotech/jovo-model/pull/28)
+
+## [@jovotech/model@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model@4.0.0-beta.4...@jovotech/model@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
+
 ## [@jovotech/model@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model@4.0.0-beta.3...@jovotech/model@4.0.0-beta.4)
 
 > 22 September 2021
@@ -27,6 +60,17 @@
 > 18 August 2021
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
+
+## [@jovotech/model@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-util@4.0.0-beta.5...@jovotech/model@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-util@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-util@4.0.0-beta.4...@jovotech/model-util@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
 
 ## [@jovotech/model-util@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-util@4.0.0-beta.3...@jovotech/model-util@4.0.0-beta.4)
 
@@ -56,6 +100,17 @@
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
+## [@jovotech/model-util@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-snips@4.0.0-beta.5...@jovotech/model-util@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-snips@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-snips@4.0.0-beta.4...@jovotech/model-snips@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
+
 ## [@jovotech/model-snips@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-snips@4.0.0-beta.3...@jovotech/model-snips@4.0.0-beta.4)
 
 > 22 September 2021
@@ -83,6 +138,17 @@
 > 18 August 2021
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
+
+## [@jovotech/model-snips@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-rasa@4.0.0-beta.5...@jovotech/model-snips@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-rasa@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-rasa@4.0.0-beta.4...@jovotech/model-rasa@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
 
 ## [@jovotech/model-rasa@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-rasa@4.0.0-beta.3...@jovotech/model-rasa@4.0.0-beta.4)
 
@@ -112,6 +178,17 @@
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
+## [@jovotech/model-rasa@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-nlpjs@4.0.0-beta.5...@jovotech/model-rasa@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-nlpjs@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-nlpjs@4.0.0-beta.4...@jovotech/model-nlpjs@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
+
 ## [@jovotech/model-nlpjs@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-nlpjs@4.0.0-beta.3...@jovotech/model-nlpjs@4.0.0-beta.4)
 
 > 22 September 2021
@@ -139,6 +216,17 @@
 > 18 August 2021
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
+
+## [@jovotech/model-nlpjs@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-luis@4.0.0-beta.5...@jovotech/model-nlpjs@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-luis@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-luis@4.0.0-beta.4...@jovotech/model-luis@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
 
 ## [@jovotech/model-luis@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-luis@4.0.0-beta.3...@jovotech/model-luis@4.0.0-beta.4)
 
@@ -168,6 +256,17 @@
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
+## [@jovotech/model-luis@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-lex@4.0.0-beta.5...@jovotech/model-luis@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-lex@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-lex@4.0.0-beta.4...@jovotech/model-lex@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
+
 ## [@jovotech/model-lex@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-lex@4.0.0-beta.3...@jovotech/model-lex@4.0.0-beta.4)
 
 > 22 September 2021
@@ -195,6 +294,17 @@
 > 18 August 2021
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
+
+## [@jovotech/model-lex@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-google@4.0.0-beta.5...@jovotech/model-lex@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-google@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-google@4.0.0-beta.4...@jovotech/model-google@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
 
 ## [@jovotech/model-google@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-google@4.0.0-beta.3...@jovotech/model-google@4.0.0-beta.4)
 
@@ -224,6 +334,17 @@
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
+## [@jovotech/model-google@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-dialogflow@4.0.0-beta.5...@jovotech/model-google@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-dialogflow@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-dialogflow@4.0.0-beta.4...@jovotech/model-dialogflow@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
+
 ## [@jovotech/model-dialogflow@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-dialogflow@4.0.0-beta.3...@jovotech/model-dialogflow@4.0.0-beta.4)
 
 > 22 September 2021
@@ -251,6 +372,17 @@
 > 18 August 2021
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
+
+## [@jovotech/model-dialogflow@4.0.0](https://github.com/jovotech/jovo-model/compare/@jovotech/model-alexa@4.0.0-beta.5...@jovotech/model-dialogflow@4.0.0)
+
+> 18 November 2021
+
+## [@jovotech/model-alexa@4.0.0-beta.5](https://github.com/jovotech/jovo-model/compare/@jovotech/model-alexa@4.0.0-beta.4...@jovotech/model-alexa@4.0.0-beta.5)
+
+> 16 November 2021
+
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
 
 ## [@jovotech/model-alexa@4.0.0-beta.4](https://github.com/jovotech/jovo-model/compare/@jovotech/model-alexa@4.0.0-beta.3...@jovotech/model-alexa@4.0.0-beta.4)
 
@@ -280,10 +412,20 @@
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
-## [@jovotech/model-alexa@4.0.0-beta.0]()
+## [@jovotech/model-alexa@4.0.0]()
 
-> 20 August 2021
+> 18 November 2021
 
+- :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
+- :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
+- ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
+- ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
+- 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
+- ✨ Introduce backwards compatibility [`#47`](https://github.com/jovotech/jovo-model/pull/47)
+- 🐛 Match against entityKey [`#46`](https://github.com/jovotech/jovo-model/pull/46)
+- ♻️ Convert Arrays to Maps [`#45`](https://github.com/jovotech/jovo-model/pull/45)
+- 🐛 Set package scope to public [`#44`](https://github.com/jovotech/jovo-model/pull/44)
+- 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 - 🐛 Fix bug causing intents to duplicate [`#33`](https://github.com/jovotech/jovo-model/pull/33)
 - 🐛 Parse FreeTextType to platform-specific property [`#28`](https://github.com/jovotech/jovo-model/pull/28)
 - ✨ Add FreeTextType for Google Conversational Actions [`#27`](https://github.com/jovotech/jovo-model/pull/27)
