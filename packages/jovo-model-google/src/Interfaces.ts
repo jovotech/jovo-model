@@ -4,6 +4,7 @@ export interface GoogleActionParameter {
   name: string;
   type: {
     name: string;
+    list?: boolean;
   };
 }
 
