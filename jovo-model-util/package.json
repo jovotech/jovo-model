@@ -1,7 +1,7 @@
 {
   "name": "@jovotech/model-util",
   "private": false,
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Jovo Model Util",
   "main": "dist/index",
   "types": "dist/index.d.ts",
@@ -30,7 +30,7 @@
     "typescript-json-schema": "^0.53.1"
   },
   "dependencies": {
-    "@jovotech/model": "^4.0.1"
+    "@jovotech/model": "^4.0.2"
   },
   "jest": {
     "transform": {
