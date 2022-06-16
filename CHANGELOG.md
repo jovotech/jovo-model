@@ -412,12 +412,19 @@
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
-## [@jovotech/model-alexa@4.0.0]()
+## [2022-06-15-minor]()
 
-> 18 November 2021
+> 15 June 2022
 
+- 🔖 Prepare latest release [`#80`](https://github.com/jovotech/jovo-model/pull/80)
+- :construction_worker: Add publish to npm Github action [`#79`](https://github.com/jovotech/jovo-model/pull/79)
+- Support for Amazon Lex V2 [`#72`](https://github.com/jovotech/jovo-model/pull/72)
+- :construction_worker: Update node version in Github workflow [`#78`](https://github.com/jovotech/jovo-model/pull/78)
+- :bug: Fix validator for JovoModel v3 [`#77`](https://github.com/jovotech/jovo-model/pull/77)
+- feat(google): allow translatable entity synonyms [`#67`](https://github.com/jovotech/jovo-model/pull/67)
 - :children_crossing: Allow entity values to contain strings or objects [`#60`](https://github.com/jovotech/jovo-model/pull/60)
 - :rewind: Reverse alexa-specific intents back to array [`#59`](https://github.com/jovotech/jovo-model/pull/59)
+- :bookmark: Publish [`#58`](https://github.com/jovotech/jovo-model/pull/58)
 - ✨ Add support for adding system intents directly [`#51`](https://github.com/jovotech/jovo-model/pull/51)
 - ✨ Improve Model validation [`#49`](https://github.com/jovotech/jovo-model/pull/49)
 - 🐛 Prevent generation of system entities [`#50`](https://github.com/jovotech/jovo-model/pull/50)
