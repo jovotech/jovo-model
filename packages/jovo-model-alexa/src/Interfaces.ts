@@ -1,3 +1,5 @@
+import { JovoModelData } from '@jovotech/model';
+
 export interface AlexaLMTypeObject {
   name: string;
   values: AlexaLMTypeValue[];
@@ -35,4 +37,7 @@ export interface AlexaModel {
       types?: AlexaLMTypeObject[];
     };
   };
+}
+export interface JovoModelAlexaData extends JovoModelData {
+    alexa?: AlexaModel;
 }

@@ -22,7 +22,6 @@ import {
   DialogflowLMIntent,
   DialogflowLMIntentData,
 } from '.';
-import JovoModelDialogflowValidator from '../validators/JovoModelDialogflowData.json';
 import { DIALOGFLOW_LM_ENTITY } from './utils';
 import { DialogflowLMEntries } from './utils/Interfaces';
 
@@ -521,7 +520,7 @@ export class JovoModelDialogflow extends JovoModel {
   }
 
   static getValidator(model: JovoModelData | JovoModelDataV3): tv4.JsonSchema {
-    return _merge(super.getValidator(model), JovoModelDialogflowValidator);
+    return _merge(super.getValidator(model));
   }
 
   static skipDefaultIntentProps(

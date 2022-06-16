@@ -6,7 +6,6 @@ function build() {
         {
             path: 'src/Interfaces',
             types: [
-                'JovoModelDialogflowData'
             ]
         }
     ];
