@@ -1,3 +1,5 @@
+import { JovoModelData } from '@jovotech/model';
+
 export interface GoogleActionParameter {
   name: string;
   type: {
@@ -25,4 +27,15 @@ export interface GoogleActionInput {
 
 export interface GoogleActionLanguageModelProperty {
   [key: string]: object;
+}
+
+export interface JovoModelGoogleActionData extends JovoModelData {
+    googleAssistant?: {
+        custom?: {
+            global?: GoogleActionLanguageModelProperty;
+            intents?: GoogleActionLanguageModelProperty;
+            scenes?: GoogleActionLanguageModelProperty;
+            types?: GoogleActionLanguageModelProperty;
+        };
+    };
 }

@@ -4,9 +4,8 @@ const jovoModel = require('@jovotech/model-util');
 function build() {
     const validators = [
         {
-            path: 'src/JovoModelAlexa',
+            path: 'src/Interfaces',
             types: [
-                'JovoModelAlexa'
             ]
         }
     ];
