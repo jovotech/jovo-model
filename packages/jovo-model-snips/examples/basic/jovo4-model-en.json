@@ -1,0 +1,103 @@
+{
+  "invocation": "my test app",
+  "version": "4.0",
+  "intents": {
+    "YesIntent": {
+      "phrases": [
+        "yes",
+        "yes please",
+        "sure"
+      ]
+    },
+    "NoIntent": {
+      "phrases": [
+        "no",
+        "no thanks"
+      ]
+    },
+    "ColorIntent": {
+      "phrases": [
+        "i pick {color}",
+        "my favorite color is {color}"
+      ],
+      "entities": {
+        "color": {
+          "type": "CUSTOM_COLORS"
+        }
+      }      
+    },
+    "NumberIntent": {
+      "phrases": [
+        "my number is {myNumber}"
+      ],
+      "entities": {
+        "myNumber": {
+          "type": "snips/number"
+        }
+      }      
+    },
+    "WeatherIntent": {
+      "phrases": [
+        "give me the weather forecast for {weatherLocation} {weatherDate}"
+      ],
+      "entities": {
+        "weatherLocation": {
+          "type": "CUSTOM_WEATHER_LOCATION"
+        },
+        "weatherDate": {
+          "type": "snips/datetime"
+        }
+      }      
+    }
+  },
+  "entityTypes": {
+    "CUSTOM_COLORS": {
+      "name": "CUSTOM_COLORS",
+      "values": [
+        {
+          "value": "red",
+          "synonyms": [
+            "crimson"
+          ]
+        },
+        {
+          "value": "yellow",
+          "synonyms": []
+        },
+        {
+          "value": "blue",
+          "synonyms": []
+        },
+        {
+          "value": "green",
+          "synonyms": []
+        },
+        {
+          "value": "orange",
+          "synonyms": []
+        },
+        {
+          "value": "purple",
+          "synonyms": []
+        }
+      ]
+    },
+    "CUSTOM_WEATHER_LOCATION": {
+      "name": "CUSTOM_WEATHER_LOCATION",
+      "values": [
+        {
+          "value": "phoenix",
+          "synonyms": []
+        },
+        {
+          "value": "los angeles",
+          "synonyms": []
+        },
+        {
+          "value": "new york city",
+          "synonyms": []
+        }
+      ]
+    }    
+  }
+}
