@@ -1,0 +1,179 @@
+[
+  {
+    "path": [
+      ""
+    ],
+    "content": {
+      "language": "en",
+      "intents": {
+        "YesIntent": {
+          "utterances": [
+            {
+              "data": [
+                {
+                  "text": "yes"
+                }
+              ]
+            },
+            {
+              "data": [
+                {
+                  "text": "yes please"
+                }
+              ]
+            },
+            {
+              "data": [
+                {
+                  "text": "sure"
+                }
+              ]
+            }
+          ]
+        },
+        "NoIntent": {
+          "utterances": [
+            {
+              "data": [
+                {
+                  "text": "no"
+                }
+              ]
+            },
+            {
+              "data": [
+                {
+                  "text": "no thanks"
+                }
+              ]
+            }
+          ]
+        },
+        "ColorIntent": {
+          "utterances": [
+            {
+              "data": [
+                {
+                  "text": "i pick "
+                },
+                {
+                  "text": "red",
+                  "entity": "CUSTOM_COLORS",
+                  "slot_name": "color"
+                }
+              ]
+            },
+            {
+              "data": [
+                {
+                  "text": "my favorite color is "
+                },
+                {
+                  "text": "blue",
+                  "entity": "CUSTOM_COLORS",
+                  "slot_name": "color"
+                }
+              ]
+            }
+          ]
+        },
+        "NumberIntent": {
+          "utterances": [
+            {
+              "data": [
+                {
+                  "text": "my number is "
+                },
+                {
+                  "text": "myNumber",
+                  "entity": "snips/number",
+                  "slot_name": "myNumber"
+                }
+              ]
+            }
+          ]
+        },
+        "WeatherIntent": {
+          "utterances": [
+            {
+              "data": [
+                {
+                  "text": "give me the weather forecast for "
+                },
+                {
+                  "text": "los angeles",
+                  "entity": "CUSTOM_WEATHER_LOCATION",
+                  "slot_name": "weatherLocation"
+                },
+                {
+                  "text": " "
+                },
+                {
+                  "text": "weatherDate",
+                  "entity": "snips/datetime",
+                  "slot_name": "weatherDate"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "entities": {
+        "snips/number": {},
+        "snips/datetime": {},
+        "CUSTOM_COLORS": {
+          "data": [
+            {
+              "value": "red",
+              "synonyms": [
+                "crimson"
+              ]
+            },
+            {
+              "value": "yellow",
+              "synonyms": []
+            },
+            {
+              "value": "blue",
+              "synonyms": []
+            },
+            {
+              "value": "green",
+              "synonyms": []
+            },
+            {
+              "value": "orange",
+              "synonyms": []
+            },
+            {
+              "value": "purple",
+              "synonyms": []
+            }
+          ],
+          "matching_strictness": 1,
+          "use_synonyms": true,
+          "automatically_extensible": true
+        },
+        "CUSTOM_WEATHER_LOCATION": {
+          "data": [
+            {
+              "value": "phoenix",
+              "synonyms": []
+            },
+            {
+              "value": "los angeles",
+              "synonyms": []
+            },
+            {
+              "value": "new york city",
+              "synonyms": []
+            }
+          ],
+          "matching_strictness": 1,
+          "use_synonyms": true,
+          "automatically_extensible": true
+        }
+      }
+    }
+  }
+]
