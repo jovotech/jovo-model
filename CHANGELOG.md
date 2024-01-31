@@ -412,6 +412,10 @@
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
+## [2024-01-31-patch](https://github.com/jovotech/jovo-model/compare/2022-06-16-patch...2024-01-31-patch)
+
+> 31 January 2024
+
 ## [2022-06-16-patch](https://github.com/jovotech/jovo-model/compare/2022-06-15-minor...2022-06-16-patch)
 
 > 16 June 2022
