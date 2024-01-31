@@ -412,6 +412,13 @@
 
 - 🚀 Prepare v4 Beta Launch [`#43`](https://github.com/jovotech/jovo-model/pull/43)
 
+## [2022-06-16-patch](https://github.com/jovotech/jovo-model/compare/2022-06-15-minor...2022-06-16-patch)
+
+> 16 June 2022
+
+- Prepare latest release  [`#83`](https://github.com/jovotech/jovo-model/pull/83)
+- :recycle: Disable validators after refactoring [`#82`](https://github.com/jovotech/jovo-model/pull/82)
+
 ## [2022-06-15-minor]()
 
 > 15 June 2022
