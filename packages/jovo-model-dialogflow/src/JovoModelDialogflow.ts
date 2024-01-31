@@ -477,9 +477,11 @@ export class JovoModelDialogflow extends JovoModel {
         });
       }
     }
+      // tslint:disable-next-line:no-any
+    const dialogFlowIntents =_get(model, 'dialogflow.intents') as any;
     // dialogflow intents form locale.json
-    if (_get(model, 'dialogflow.intents')) {
-      for (const modelDialogflowIntent of _get(model, 'dialogflow.intents')) {
+    if (dialogFlowIntents) {
+      for (const modelDialogflowIntent of dialogFlowIntents) {
         // user says
         if (modelDialogflowIntent.userSays) {
           returnFiles.push({
@@ -496,9 +498,11 @@ export class JovoModelDialogflow extends JovoModel {
       }
     }
 
+      // tslint:disable-next-line:no-any
+    const dialogFlowEntities = _get(model, 'dialogflow.entities') as any;
     // dialogflow entities form locale.json
-    if (_get(model, 'dialogflow.entities')) {
-      for (const modelDialogflowEntity of _get(model, 'dialogflow.entities')) {
+    if (dialogFlowEntities) {
+      for (const modelDialogflowEntity of dialogFlowEntities) {
         // entries
         if (modelDialogflowEntity.entries) {
           returnFiles.push({
@@ -606,13 +610,15 @@ export class JovoModelDialogflow extends JovoModel {
         );
       }
 
+        // tslint:disable-next-line:no-any
+      const dialogFlowIntentResponseMessages = _get(dialogFlowIntent, 'responses[0].messages') as any;
       if (
         !_isEqual(
-          _get(dialogFlowIntent, 'responses[0].messages'),
+            dialogFlowIntentResponseMessages,
           _get(DEFAULT_INTENT, 'responses[0].messages'),
         )
       ) {
-        for (const message of _get(dialogFlowIntent, 'responses[0].messages')) {
+        for (const message of dialogFlowIntentResponseMessages) {
           if (_get(message, 'lang') === locale) {
             const jovoIntentDialogflowMessages = _get(
               jovoIntent,
@@ -621,7 +627,8 @@ export class JovoModelDialogflow extends JovoModel {
             );
 
             if (_get(message, 'speech', '').length > 0) {
-              jovoIntentDialogflowMessages.push(message);
+              // @ts-ignore
+                jovoIntentDialogflowMessages.push(message);
               _set(jovoIntent, 'dialogflow.responses[0].messages', jovoIntentDialogflowMessages);
             }
           }

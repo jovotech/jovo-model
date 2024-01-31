@@ -294,9 +294,10 @@ export class JovoModelAlexa extends JovoModel {
       }
     }
 
+    const alexaLanguageModelIntents = _get(model, 'alexa.interactionModel.languageModel.intents') || [];
     // convert alexa specific intents
-    if (_get(model, 'alexa.interactionModel.languageModel.intents')) {
-      for (const intent of _get(model, 'alexa.interactionModel.languageModel.intents')) {
+    if (alexaLanguageModelIntents) {
+      for (const intent of alexaLanguageModelIntents) {
         alexaIntents.push(intent);
       }
     }
