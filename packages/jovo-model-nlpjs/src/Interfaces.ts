@@ -16,5 +16,5 @@ export interface NlpjsModelFile {
   name: string;
   locale: string;
   data: NlpjsData[];
-  entities?: Record<string, NlpjsEntity>;
+  entities?: Record<string, NlpjsEntity | string>;
 }

@@ -8,6 +8,8 @@ import {
 } from '@jovotech/model';
 import { NlpjsData, NlpjsModelFile } from '.';
 
+const REGEX_PREFIX = 'regex:';
+
 export class JovoModelNlpjs extends JovoModel {
   static MODEL_KEY = 'nlpjs';
 
@@ -87,6 +89,12 @@ export class JovoModelNlpjs extends JovoModel {
     if (JovoModelHelper.hasEntityTypes(model)) {
       returnData.entities = {};
       for (const [entityKey, entityTypeName] of Object.entries(entitiesMap)) {
+
+        if (entityTypeName.startsWith(REGEX_PREFIX)) {
+          returnData.entities![entityKey] = entityTypeName.slice(REGEX_PREFIX.length);
+          continue;
+        }
+
         const relatedEntityType = JovoModelHelper.getEntityTypeByName(model, entityTypeName);
         if (!relatedEntityType?.values?.length) {
           continue;
