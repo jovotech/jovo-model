@@ -330,6 +330,15 @@ export class JovoModelAlexa extends JovoModel {
       _set(alexaModel, 'interactionModel.dialog', _get(model, 'alexa.interactionModel.dialog'));
     }
 
+    // name-free interaction
+    if (_get(model, 'alexa.interactionModel._nameFreeInteraction')) {
+      _set(
+        alexaModel,
+        'interactionModel._nameFreeInteraction',
+        _get(model, 'alexa.interactionModel._nameFreeInteraction')
+      );
+    }
+
     // types
     if (JovoModelHelper.hasEntityTypes(model)) {
       const entityTypes = JovoModelHelper.getEntityTypes(model);
