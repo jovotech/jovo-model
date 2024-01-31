@@ -371,7 +371,8 @@ export class JovoModelGoogle extends JovoModel {
 
         jovoModel.entityTypes![modelName] = jovoEntity;
       } else {
-        const props: GoogleActionLanguageModelProperty[] = _get(
+        // @ts-ignore
+          const props: GoogleActionLanguageModelProperty[] = _get(
           jovoModel,
           `googleAssistant.custom.${modelType}`,
           {},
